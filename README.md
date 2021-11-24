@@ -1,5 +1,8 @@
 # 1. SAA-C02 Notes
 
+![image](https://user-images.githubusercontent.com/52617475/143162691-8180bc68-c3e2-487d-9d1b-a6c825a4210d.png)
+
+
 > These are my personal notes from Adrian Cantrill's (SAA-C02) course.Learning Aids from [aws-sa-associate-saac02](https://github.com/acantril/aws-sa-associate-saac02). There may be errors, so please purchase his course to get the original content and show support <https://learn.cantrill.io.>
 
 **Table of Contents**
