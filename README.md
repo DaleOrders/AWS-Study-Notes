@@ -2038,6 +2038,8 @@ This cannot be edited and is defaulted on each rule list.
 If no other rules match the traffic being evaluated, it will be denied.
 
 #### 1.5.6.1. NACLs example below
+![image](https://user-images.githubusercontent.com/52617475/143162545-c3257095-d00e-451d-8412-8773666e5820.png)
+
 
 - Bob wants to view a blog using https(tcp/443)
 - We need a NACL rule to allow TCP on port 443.
