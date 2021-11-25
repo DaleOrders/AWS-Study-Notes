@@ -170,7 +170,8 @@ VPC is a virtual network inside of AWS.
 A VPC is within 1 account and 1 region which makes it regionally resilient.
 A VPC is private and isolated until decided otherwise.
 
-One default VPC per region. Can have many custom VPCs which are all private
+One default VPC per region. Default VPC can be deleted and recreated if you want.
+Can have many custom VPCs which are all private
 by default.
 
 #### 1.2.4.1. Default VPC Facts
@@ -675,8 +676,8 @@ identity which can be used in this way.
 
 There are two ways to authenticate:
 
-- Username and Password
-- Access Keys (CLI)
+- 1 Username and 1 Password
+- 0, 1 or at most 2 Access Keys (CLI)
 
 Once the **Principal** has authenticated, it becomes an **authenticated identity**
 
@@ -706,7 +707,7 @@ arn:partition:service:region:account-id:resource-type:resource-id
 An example that leads to confusion:
 
 - arn:aws:s3:::catgifs
-  - This references an actual bucket
+  - This references an actual bucket and not the objects inside
 - arn:aws:s3:::catgifs/*
   - This refers to objects in that bucket, but not the bucket itself.
 
@@ -715,7 +716,7 @@ These two ARNs do not overlap
 #### 1.3.2.2. IAM FACTS
 
 - 5,000 IAM users per account
-- IAM user can be a member of 10 groups
+- IAM user can be a member of 10 groups maximum
 
 ### 1.3.3. IAM Groups
 
@@ -727,7 +728,7 @@ Groups bring two benefits
 1. Effective administrative style management of users based on the team
 2. Groups can have Inline and Managed policies attached.
 
-AWS merges all of the policies from all groups the user is in together.
+AWS merges all of the policies from all groups the user is in together. It then uses deny, allow, deny approach to grant permissions.
 
 - The 5000 IAM user limit applies to groups.
 - There is **no all users** IAM group.
@@ -749,7 +750,7 @@ Groups are used to allow permissions to be assigned to IAM users.
 
 ### 1.3.4. IAM Roles
 
-A single thing that uses an identity is an IAM User. It can be a person, application or service, but it must just be a single thing.
+A single thing that uses an identity is an IAM User. It can be a person, application or service, but it must just be one thing.
 
 IAM Roles are also identities that are used by large groups of individuals.
 If have more than 5000 principals, it could be a candidate for an IAM Role.
