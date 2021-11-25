@@ -1,8 +1,5 @@
 # 1. SAA-C02 Notes
 
-![image](https://user-images.githubusercontent.com/52617475/143162691-8180bc68-c3e2-487d-9d1b-a6c825a4210d.png)
-
-
 > These are my personal notes from Adrian Cantrill's (SAA-C02) course.Learning Aids from [aws-sa-associate-saac02](https://github.com/acantril/aws-sa-associate-saac02). There may be errors, so please purchase his course to get the original content and show support <https://learn.cantrill.io.>
 
 **Table of Contents**
@@ -193,6 +190,15 @@ A subnet is smaller such as /20
 The higher the / number is, the smaller the grouping.
 
 Two /17's will fit into a /16, sixteen /20 subnets can fit into one /16.
+/17 = 1 subnet
+/18 = 2 subnets
+/19 = 4 subnets
+/20 = 16 subnets (2 **x)
+
+To calculate number of IP adddress:
+/20 example
+(32-20= 12)
+Number of IPs = 2**12
 
 ### 1.2.5. Elastic Compute Cloud (EC2)
 
