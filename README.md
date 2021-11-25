@@ -202,7 +202,7 @@ Number of IPs = 2**12
 
 ### 1.2.5. Elastic Compute Cloud (EC2)
 
-Default compute service. Provides access to virtual machines called instances.
+Default compute service. Provides access to virtual machines called instances. Private by default.
 
 #### 1.2.5.1. Infrastructure as as Service (IaaS)
 
@@ -212,18 +212,18 @@ Private service by default, public access must be configured.
 The VPC needs to support public access. If you use a custom VPC then you must
 handle the networking on your own.
 
-EC2 deploys into one AZ. If it fails, the instance fails.
+EC2 deploys into one AZ. If the AZ fails, the instance fails.
 
 Different sizes and capabilities. All use On-Demand Billing - Per second.
 Only pay for what you consume.
 
 Local on-host storage or **Elastic Block Storage**
 
-Pricing based on:
+Pricing based on the four categories:
 
 - CPU
 - Memory
-- Storage
+- Storage (EBS)
 - Networking
 
 Extra cost for any commercial software the instance deploys with.
@@ -244,7 +244,7 @@ Charged for EBS storage  only.
 - No CPU resources are being consumed
 - No memory is being used
 - Networking is not running
-- Storage is allocated to the instance for the OS together with any applications.
+- Storage is allocated to the instance for the OS together with any applications so you will still be charged for this.
 
 #### 1.2.5.4. Terminated State
 
@@ -323,7 +323,7 @@ Other components:
 - All objects are stored within the bucket at the same level.
 
 If the objects name starts with a slash such as `/old/Koala1.jpg` the UI will
-present this as a folder. In actuality this is not true, there are no folders.
+present this as a folder. In actuality this is not true, there are no folders. Each file in this case just starts with the prefix 'old/'
 
 ### 1.2.7. CloudFormation Basics
 
@@ -749,7 +749,7 @@ Groups are used to allow permissions to be assigned to IAM users.
 
 ### 1.3.4. IAM Roles
 
-A single thing that uses an identity is an IAM User.
+A single thing that uses an identity is an IAM User. It can be a person, application or service, but it must just be a single thing.
 
 IAM Roles are also identities that are used by large groups of individuals.
 If have more than 5000 principals, it could be a candidate for an IAM Role.
