@@ -843,7 +843,7 @@ need to approve their joining to the org.
 
 When standard AWS accounts become part of the org, they
 become **member accounts**.
-Organizations can only have one **master accounts** and zero or more
+Organizations can only have one **master account** and zero or more
 **member accounts**
 
 #### 1.3.6.1. Organization Root
@@ -885,7 +885,7 @@ JSON policy document that can be attached:
 The master account cannot be restricted by SCPs which means this
 should not be used because it is a security risk.
 
-SCPs limit what the account, **including root** can do inside that account.
+SCPs limit what the account, **including root user** can do inside that account.
 They don't grant permissions themselves, just act as a barrier.
 
 #### 1.3.7.1. Allow List vs Deny List
