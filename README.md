@@ -851,7 +851,7 @@ Organizations can only have one **master account** and zero or more
 
 This is a container that can hold AWS member accounts or the master account.
 It could also contain **organizational units** which can contain other
-units or member accounts.
+units or member accounts inside.
 
 #### 1.3.6.2. Consolidated billing
 
@@ -859,7 +859,7 @@ The individual billing for the member accounts is removed and they pass their
 billing to the master account.
 Inside an AWS organization, you get a single monthly bill for the master
 account which covers all the billing for each users.
-Can offer a discount with consolidation of reservations and volume discounts
+Can offer a discount with consolidation of reservations and volume discounts due to pooling of resources.
 
 #### 1.3.6.3. Create new accounts in an org
 
@@ -871,7 +871,7 @@ Some enterprises may use an AWS account while smaller ones may use the master.
 
 #### 1.3.6.4. Role Switching
 
-Allows you to switch between accounts from the command line
+Allows you to switch between accounts from the command line.
 
 ### 1.3.7. Service Control Policies
 
@@ -992,7 +992,7 @@ Two types of events. Default only logs Management Events
 
 - Management Events:
 Provide information about management operations performed on resources
-in the AWS account. Create an EC2 instance or terminating one.
+in the AWS account. Ex: Create an EC2 instance or terminating one.
 
 - Data Events:
 Objects being uploaded to S3 or a Lambda function being invoked. This is not
@@ -1030,8 +1030,8 @@ management point for all the APIs and management events for that org.
 
 #### 1.3.9.2. CloudTrail Exam PowerUp
 
-- It is enabled by default for 90 days without S3
-- Trails are how you configure S3 and CWLogs
+- It is enabled by default for 90 days without configuartion.
+- It can be configured to store data indefinitely in S3 or CloudWatch Logs.
 - Management events are only saved by default
 - IAM, STS, CloudFront are Global Service events and log to `us-east-1`
   - Trail must be enabled to do this
@@ -2135,7 +2135,7 @@ that boundary. If the resource is in the same subnet, it will not do anything.
 
 ### 1.5.8. Network Address Translation (NAT) Gateway
 
-Set of different processes that can address IP packets by changing
+Set of different processes that can address IP packets to public internet, via IGW, by changing
 their source or destination addresses.
 
 **IP masquerading**, hides CIDR block behind one IP. This allows many IPv4
@@ -2143,7 +2143,7 @@ addresses to use one public IP for **outgoing** internet access.
 Incoming connections don't work. Outgoing connections can get a response
 returned.
 
-- Must run from a public subnet to allow for public IP address.
+- Must run from within a public subnet to allow for public IP address.
   - Internet Gateway subnets configure to allocate public IPv4 addresses
   and default routes for those subnets pointing at the IGW.
 - Uses Elastic IPs (Static IPv4 Public)
@@ -2153,17 +2153,23 @@ returned.
   - If that AZ fails, then the NATGW will fail as well
 - For a fully region resilient service, you must deploy one NATGW in each AZ
 with a Route Table in each private subnet AZ pointing to the NATGW as target.
+
+![image](https://user-images.githubusercontent.com/52617475/143529944-f89c5814-8eea-43c4-afc6-347396a4c942.png)
+
+
 - NAT instance is limited by capabilities of the instance it is running on and that instance is also general purpose, so won't offer the same level of custom design performance as NAT Gateway.
 - NAT instance is single instance running in single AZ it'll fail if EC2 hardware fails, network fails, storage fails or AZ itself fails.
 - NAT Gateway has benefit over NAT instance, inside one AZ it is highly available.
 - You can connect to NAT instance just like any other instance, you can use them as Bastion host or can use them for port forwarding.
 - With NAT Gateway it is not possible, it is managed service. NAT Gateway cannot be used as Bastion host and it cannot do port forwarding.
-- You cannot use SG with NAT instance, you can only use NACLs.
+- **You cannot use SG with NAT instance, you can only use NACLs.**
+
+
 - NAT is not required for IPv6. Inside AWS all IPv6 addresses are publicly routable. IG works with all IPv6 addresses directly.
 - That means if you choose to make an instance in private subnet that have a default IPv6 route to IG, it'll become public instance.
-- Managed service, scales up to 45 Gbps. Can deploy multiple NATGW to increase
+- Managed service, scales automatically up to 45 Gbps. Can deploy multiple NATGW to increase
 bandwidth.
-- AWS charges on usage per hour increments and data volume processed. Partial use is still charged on an hourly basis.
+- AWS charges on (1) usage per hour and (2) data volume processed. Partial use is still charged on an hourly basis.
 
 NATGW cannot do port forwarding or be a bastion server. In that case it might
 be necessary to run a NAT EC2 instance instead.
@@ -2234,21 +2240,21 @@ handles it all. In EC2 this feature is called **enhanced networking**.
 
 ### 1.6.2. EC2 Architecture and Resilience
 
-EC2 instances are virtual machines run on EC2 hosts.
+EC2 instances are virtual machines run on EC2 hosts (which are physical hardware managed by aws). Generally runs instances of all the same type, but different sizes.
 
 Tenancy:
 
-- **Shared** - Instances are run on shared hardware, but isolated from other customers.
-- **Dedicated** - Instances are run on hardware that's dedicates to a single customer.
+- **Shared** - Instances are run on shared hardware, but isolated from other customers. It is the default.
+- **Dedicated** - Instances are run on hardware that's dedicated to a single customer.
   Dedicated instances may share hardware with other instances from the same AWS account
   that are not Dedicated instances.
 - **Dedicated host** - Instances are run on a physical server fully dedicated for your use.
   Pay for entire host, don't pay for instances.
 
-- AZ resilient service. They run within only one AZ system.
-  - You can't access them cross zone.
+- **AZ resilient service. They run within only one AZ.**
+  - You can't access them cross AZ.
 
-EC2 host contains
+EC2 host contains:
 
 - Local hardware such as CPU and memory
 - Also have temporary instance store
@@ -2259,6 +2265,7 @@ within the same AZ.
 - 2 types of networking
   - Storage networking
   - Data networking
+
 
 EC2 Networking (ENI)
 
@@ -2284,27 +2291,30 @@ The only difference will generally be their size.
 
 #### 1.6.2.1. EC2 Strengths
 
-Long running compute needs. Many other AWS services have run time limits.
-
-Server style applications
-
-- things waiting for network response
+- Long running compute needs. Many other AWS services have run time limits.
+- Server style applications
 - burst or stead-load
 - monolithic application stack
   - middle ware or specific run time components
-- migrating application workloads or disaster recovery
-  - existing applications running on a server and a backup system to intervene
+- migrating application workloads or disaster recovery (DR)
+  - existing applications running on a server and require a backup system for DR
 
 ### 1.6.3. EC2 Instance Types
 
-- **General Purpose** (T, M) - default steady state workloads with even resources
-- **Compute Optimized** (C) - Media processing, scientific modeling and gaming
-- **Memory Optimized** (R, X) - Processing large in-memory data sets
+![image](https://user-images.githubusercontent.com/52617475/143538776-0af80104-e38f-44d3-8e1e-5cb9a0cb33de.png)
+
+
+- **General Purpose** (T, M) - default steady state workloads with even resource distribution
+- **Compute Optimized** (C) - Media processing, scientific modeling and gaming, Machine Learning
+- **Memory Optimized** (R, X) - Processing large in-memory data sets, some database loads
 - **Accelerated Computing** (P, G, F) - Hardware GPU, FPGAs
 - **Storage Optimized** (H, I, D) - Large amounts of super fast local storage.
-  Massive amounts of IO per second. Elastic search and analytic workloads.
+  Massive amounts of IO per second. Elastic search, data warehousing and analytic workloads.
 
 #### 1.6.3.1. Naming Scheme
+
+![image](https://user-images.githubusercontent.com/52617475/143538611-09374b44-0cdc-40ef-842e-77ac32a57851.png)
+
 
 R5dn.8xlarge - whole thing is the instance type. When in doubt give the
 full instance type
@@ -2313,7 +2323,7 @@ full instance type
 - 2nd char: Instance generation. Generally always select the newest generation.
 - char after period: Instance size. Memory and CPU considerations.
   - Often easier to scale system with a larger number of smaller instance sizes.
-- 3rd char - before period: additional capabilities
+- 3rd char - before period: additional capabilities (optional)
   - a: amd cpu
   - d: NVMe storage
   - n: network optimized
@@ -2322,7 +2332,7 @@ full instance type
 ### 1.6.4. Storage Refresher
 
 - **Instance Store**
-  - Direct (local) attached storage
+  - Direct (local) attached storage attached to host
   - Super fast
   - Ephemeral storage or temporary storage
 - **Elastic Block Store (EBS)**
@@ -2346,9 +2356,12 @@ can mount it.
 - Object Storage: It is a flat collection of objects. An object can be anything
 with or without attached metadata. To retrieve the object, you need to provide
 the key and then the value will be returned. This is not mountable or
-bootable. It scales very well and can have simultaneous access.
+bootable. It scales very well and can have simultaneous access. Ex: S3.
 
 #### 1.6.4.2. Storage Performance
+
+![image](https://user-images.githubusercontent.com/52617475/143544873-bbc4dd40-3053-479c-88d4-4dfd30592906.png)
+
 
 - IO Block Size: Determines how to split up the data.
 - IOPS: How many reads or writes a system can accommodate per second.
