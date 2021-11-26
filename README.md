@@ -244,8 +244,9 @@ Charged for EBS storage  only.
 
 - No CPU resources are being consumed
 - No memory is being used
-- Networking is not running
 - Storage is allocated to the instance for the OS together with any applications so you will still be charged for this.
+- Networking is not running
+
 
 #### 1.2.5.4. Terminated State
 
@@ -701,7 +702,7 @@ arn:partition:service:region:account-id:resource-type:resource-id
 - region: can be a double colon (::) if that doesn't matter
 - account-id: the account that owns the resource
   - EC2 needs this
-  - S3 does not need account-id because its globally unique
+  - S3 does not need region and account-id because its globally unique
 - resource-type/id: changes based on the resource
 
 An example that leads to confusion:
@@ -753,7 +754,7 @@ Groups are used to allow permissions to be assigned to IAM users.
 A single thing that uses an identity is an IAM User. It can be a person, application or service, but it must just be one thing.
 
 IAM Roles are also identities that are used by large groups of individuals.
-If have more than 5000 principals, it could be a candidate for an IAM Role.
+If have more than 5000 principals, it could be a candidate for an IAM Role due to limit of 5000 users per account.
 
 IAM Roles are **assumed** you become that role.
 
@@ -1883,10 +1884,10 @@ Two options that manage how DNS works in a VPC:
 - 1 subnet can only have 1 AZ.
 - 1 AZ can have zero or many subnets.
 - IPv4 CIDR is a subset of the VPC CIDR block.
-  - Cannot overlap with any other subnets in that VPC
+  - Cannot overlap CIDR range with any other subnets in that VPC
 - Subnet can optionally be allocated IPv6 CIDR block.
   - (256 /64 subnets can fit in the /56 VPC)
-- Subnets can communicate with other subnets in the VPC by default.
+- Subnets can freely communicate with other subnets in the VPC by default. No configuration required. 
 
 #### 1.5.4.1. Reserved IP addresses
 
