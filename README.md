@@ -2083,7 +2083,10 @@ back on a different port.
 
 #### 1.5.6.2. NACL Exam PowerUp
 
+
 - **NACLs are stateless**
+![image](https://user-images.githubusercontent.com/52617475/143520699-de9a010d-1a37-4fc8-9252-cbe77c947409.png)
+
   - Initiation and response traffic are separate streams requiring two rules.
 - NACLs are attached to subnets and only filter data as it crosses the
 subnet boundary. Two EC2 instances in the same subnet will not check against
@@ -2102,6 +2105,10 @@ before another rule with a higher rule number.
 
 ### 1.5.7. Security Groups
 
+**SGs are stateful**
+
+![image](https://user-images.githubusercontent.com/52617475/143520585-ccd33ab8-1444-48cf-8608-b08c35011d54.png)
+
 - SGs are boundaries which can filter traffic.
 - Attached to a resource and not a subnet.
 - SGs have two sets of rules like NACLs.
@@ -2115,7 +2122,7 @@ before another rule with a higher rule number.
   by this rule.
 - SGs have a hidden implicit **Deny**.
   - Anything that is not allowed in the rule set for the SG is implicitly denied.
-- SG cannot explicit deny anything.
+- **SG cannot explicitly deny anything.**
   - NACLs are used in conjunction with SGs to do explicit denys.
 
 #### 1.5.7.1. SGs vs NACL
@@ -2143,9 +2150,9 @@ returned.
   - Don't change
   - Allocated to your account
 - AZ resilient service , but HA in that AZ.
-  - If that AZ fails, there is no recovery.
+  - If that AZ fails, then the NATGW will fail as well
 - For a fully region resilient service, you must deploy one NATGW in each AZ
-with a Route Table in each AZ with NATGW as target.
+with a Route Table in each private subnet AZ pointing to the NATGW as target.
 - NAT instance is limited by capabilities of the instance it is running on and that instance is also general purpose, so won't offer the same level of custom design performance as NAT Gateway.
 - NAT instance is single instance running in single AZ it'll fail if EC2 hardware fails, network fails, storage fails or AZ itself fails.
 - NAT Gateway has benefit over NAT instance, inside one AZ it is highly available.
@@ -2156,10 +2163,13 @@ with a Route Table in each AZ with NATGW as target.
 - That means if you choose to make an instance in private subnet that have a default IPv6 route to IG, it'll become public instance.
 - Managed service, scales up to 45 Gbps. Can deploy multiple NATGW to increase
 bandwidth.
-- AWS charges on usage per hour and data volume processed.
+- AWS charges on usage per hour increments and data volume processed. Partial use is still charged on an hourly basis.
 
 NATGW cannot do port forwarding or be a bastion server. In that case it might
 be necessary to run a NAT EC2 instance instead.
+
+![image](https://user-images.githubusercontent.com/52617475/143522449-6fb40242-e5b6-46e0-9f9c-706750cc600b.png)
+
 
 ---
 
