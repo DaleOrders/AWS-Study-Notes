@@ -1909,10 +1909,10 @@ one options set applied to a VPC at one time and this configuration flows
 through to subnets.
 
 - This can be changed, can create new ones, but you cannot edit one.
-- If you want to change the settings
-  - You can create a new one
-  - Change the VPC allocation to the new one
-  - Delete the old one
+- If you want to change the settings doing the following three steps:
+  - 1. Create a new one
+  - 2. Change the VPC allocation to the new one
+  - 3. Delete the old one
 
 #### 1.5.4.3. IP allocation Options
 
@@ -1939,6 +1939,9 @@ main route table is disassociated. A subnet can only have one route table
 associated at a time, but a route table can be associated by many subnets.
 
 #### 1.5.5.1. Route Tables
+
+![image](https://user-images.githubusercontent.com/52617475/143519162-b62d983e-b8b1-4daa-8b0f-cfeb373d3b78.png)
+
 
 When traffic leaves the subnet that this route table is associated with, the
 VPC router reviews the IP packets looking for the destination address.
@@ -2016,9 +2019,9 @@ NACLs are used when traffic enters or leaves a subnet.
 Since they are attached to a subnet and not a resource, they only filter
 data as it crosses in or out.
 If two EC2 instances in a VPC communicate, the NACL does nothing because
-it is not involved.
+it is not involved with resources communicating within a subnet.
 
-NACLs have an inbound and outbound sets of rules.
+NACLs have an inbound and outbound sets of rules as they are **stateless**.
 
 When a specific rule set has been called, the one with the lowest
 rule number first.
@@ -2072,7 +2075,7 @@ back on a different port.
 
 #### 1.5.6.2. NACL Exam PowerUp
 
-- NACLs are stateless
+- **NACLs are stateless**
   - Initiation and response traffic are separate streams requiring two rules.
 - NACLs are attached to subnets and only filter data as it crosses the
 subnet boundary. Two EC2 instances in the same subnet will not check against
