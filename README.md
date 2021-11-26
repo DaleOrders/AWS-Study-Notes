@@ -1940,8 +1940,9 @@ associated at a time, but a route table can be associated by many subnets.
 
 #### 1.5.5.1. Route Tables
 
-![image](https://user-images.githubusercontent.com/52617475/143519162-b62d983e-b8b1-4daa-8b0f-cfeb373d3b78.png)
+![image](https://user-images.githubusercontent.com/52617475/143519402-b6f6a208-c4d7-40e7-a2a2-b974ae4a05d7.png)
 
+**Higer prefix=higher priority except for local routes, they are always top priority.**
 
 When traffic leaves the subnet that this route table is associated with, the
 VPC router reviews the IP packets looking for the destination address.
@@ -1953,6 +1954,8 @@ Local route can never be updated, they're always present and the local route
 always takes priority. This is the exception to the prefix rule.
 
 #### 1.5.5.2. Internet Gateway
+
+![image](https://user-images.githubusercontent.com/52617475/143519604-8998bbbd-f5e8-4dde-be93-421de0722d4f.png)
 
 A managed service that allows gateway traffic between the VPC and the internet
 or AWS Public Zones (S3, SQS, SNS, etc.)
@@ -1966,6 +1969,11 @@ or AWS Public Zones (S3, SQS, SNS, etc.)
 - Runs from within the AWS public zone.
 
 #### 1.5.5.3. Using IGW
+
+![image](https://user-images.githubusercontent.com/52617475/143519889-47e025e9-0ac2-410d-bda1-a15774338360.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/143519926-e5ae5162-d6cb-4e7e-8cd0-833c30527750.png)
 
 In this example, an EC2 instance has:
 
