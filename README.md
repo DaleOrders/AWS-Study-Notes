@@ -2131,7 +2131,7 @@ before another rule with a higher rule number.
 - NACLs are used when adding explicit deny, such as bad IPs or bad actors.
 - SGs is the default almost everywhere because they are stateful.
 - NACLs are associated with a subnet and only filter traffic that crosses
-that boundary. If the resource is in the same subnet, it will not do anything.
+that boundary. It does not direct traffic within the subnet.
 
 ### 1.5.8. Network Address Translation (NAT) Gateway
 
@@ -2293,7 +2293,7 @@ The only difference will generally be their size.
 
 - Long running compute needs. Many other AWS services have run time limits.
 - Server style applications
-- burst or stead-load
+- burst or steady-load
 - monolithic application stack
   - middle ware or specific run time components
 - migrating application workloads or disaster recovery (DR)
@@ -2385,41 +2385,31 @@ size increases.
 - Billed as GB/month.
   - If you provision a 1TB for an entire month, you're billed as such.
   - If you have half of the data, you are billed for half of the month.
-- Four types of volumes, each with a dominant performance attribute.
-  - General purpose SSD (gp2)
-  - Provisioned IOPS SSD (io1)
-    - maximum IOPS such as databases
-  - T-put optimized HDD (st1)
-    - maximum t-put for logs or media storage
-  - Cold HDD (sc1)
 
 #### 1.6.5.1. General Purpose SSD (gp2)
 
-Uses a performance bucket architecture based on the IOPS it can deliver.
-The GP2 starts with 5,400,000 IOPS allocated. It is all available instantly.
+You should be careful to not exceed baseline performance for long periods as you could potentially deplete the credits
 
-You can consume the capacity quickly or slowly over the life of the volume.
-The capacity is filled back based upon the volume size.
-Min of 100 IOPS added back to the bucket per second.
+General default is gp2/3. Gp3 is cheaper than gp2.
 
-Above that, there are 3 IOPS/GiB of volume size. The max is 16,000 IOPS.
-This is the **baseline performance**
+![image](https://user-images.githubusercontent.com/52617475/143730352-873a6634-78c7-4a43-8143-c2703bdbf0e0.png)
 
-Default for boot volumes and should be the default for data volumes.
-Can only be attached to one EC2 instance at a time.
+
+![image](https://user-images.githubusercontent.com/52617475/143730377-8c47389d-ede8-478d-844a-7638e8b5ea40.png)
+
+
 
 #### 1.6.5.2. Provisioned IOPS SSD (io1)
 
-You pay for capacity and the IOPs set on the volume.
-This is good if your volume size is small but need a lot of IOPS.
-
-50:1 IOPS to GiB Ratio
-64,000 is the max IOPS per volume assuming 16 KiB I/O.
+![image](https://user-images.githubusercontent.com/52617475/143729841-3d16d302-4ef7-43c5-87ce-bcc468f09b2e.png)
 
 Good for latency sensitive workloads such as mongoDB.
 Multi-attach allows them to attach to multiple EC2 instances at once.
 
 #### 1.6.5.3. HDD Volume Types
+
+![image](https://user-images.githubusercontent.com/52617475/143729862-84f3b362-d4b7-41ec-8909-1de44641087e.png)
+
 
 - great value
 - great for high throughput vs IOPs
@@ -2433,18 +2423,6 @@ Multi-attach allows them to attach to multiple EC2 instances at once.
 - The access patterns should be sequential
   - Massive inefficiency for small reads and writes
 
-Two types
-
-- st1
-  - Starts at 1 TiB of credit per TiB of volume size.
-  - 40 MB/s baseline per TiB
-  - Burst of 250 MB/s per TiB
-  - Max t-put of 500 MB/s
-- sc1
-  - Designed for less frequently accessed data, it fills slower.
-  - 12 MB/s baseline per TiB
-  - Burst of 80 MB/s per TiB
-  - Max t-put of 250 MB/s
 
 #### 1.6.5.4. EBS Exam Power Up
 
@@ -2492,42 +2470,25 @@ at all.
 
 ### 1.6.7. EBS vs Instance Store
 
-If the read/write can be handled by EBS, that should be default.
+![image](https://user-images.githubusercontent.com/52617475/143730444-83d4e091-c04f-4ca4-9a10-0feea52621cc.png)
 
-When to use EBS
 
-- Highly available and reliable in an AZ. Can self correct against HW issues.
-- Persist independently from EC2 instances.
-  - Can be removed or reattached.
-  - You can terminated instance and keep the data.
-- Multi-attach feature of **io1**
-  - Can create a multi shared volume.
-- Region resilient backups.
-- Require up to 64,000 IOPS and 1,000 MiB/s per volume
-- Require up to 80,000 IOPS and 2,375 MB/s per instance
+![image](https://user-images.githubusercontent.com/52617475/143730600-81fa29df-499e-407c-8859-4ad90f7c3e08.png)
 
-When to use Instance Store
-
-- Great value, they're included in the cost of an instance.
-- More than 80,000 IOPS and 2,375 MB/s
-- If you need temporary storage, or can handle volatility.
-- Stateless services, where the server holds nothing of value.
-- Rigid lifecycle link between storage and the instance.
-  - This ensures the data is erased when the instance goes down.
 
 ### 1.6.8. EBS Snapshots, restore, and fast snapshot restore
 
 - Efficient way to backup EBS volumes to S3.
   - The data becomes region resilient.
-- Can be used to migrate data between hosts.
+- Can be used to migrate data between AZs.
 
 Snapshots are incremental volume copies to S3.
 The first is a **full copy** of `data` on the volume. This can take some time.
 EBS won't be impacted, but will take time in the background.
-Future snaps are incremental, consume less space and are quicker to perform.
+Future snaps are incremental, as they only copy across the changes made the to current snapshot. consume less space and are quicker to perform.
 
 If you delete an incremental snapshot, it moves data to ensure subsequent
-snapshots will work properly.
+snapshots will still work properly.
 
 Volumes can be created (restored) from snapshots.
 Snapshots can be used to move EBS volumes between AZs.
