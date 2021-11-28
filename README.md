@@ -290,6 +290,9 @@ Login to the instance using an SSH key pair.
 Private Key - Stored on local machine to initiate connection.
 Public Key - AWS places this key on the instance.
 
+If the instance has a public IPv4, you can login in the console with 'EC2 Instance Connect' or 'SSH Client'. If your instance
+has a private IPv4, then you can use 'Session Manager'
+
 ### 1.2.6. S3 (Default Storage Service)
 
 Global Storage platform. Runs from all regions and is a public service.
@@ -1667,9 +1670,10 @@ a certain date and time as requested by the IAM admin user.
 #### 1.4.12.1. S3 Presigned URL Exam PowerUp
 
 - You can create a presigned URL for an object you have do not have access to.
-The object will not allow access because your user does not have access.
-- When using the URL the permission that you have access to, match the identity
-that generated it at the moment the item is being accessed.
+The object will not allow access because you do not have access.
+- When using the URL the permission that you have access to, matches the identity
+that generated it at the moment the item is being accessed. If you as the creator lose access, then the user of the presigned url
+immediately loses access as well.
 - If you get an access deny it means the ID never had access, or lost it.
 - Don't generate presigned URLs with an IAM role.
   - The role will likely expire before the URL does.
