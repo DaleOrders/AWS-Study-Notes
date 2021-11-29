@@ -2436,7 +2436,7 @@ Multi-attach allows them to attach to multiple EC2 instances at once.
 - Highly available and resilient in that AZ. The only reason for failure is
 if the whole AZ fails.
 - Generally one volume to one instance, except **io1** with multi-attach
-- Has a GB/m fee regardless of instance state.
+- Has a GB/month fee regardless of instance state.
 - EBS maxes at 80k IOPS per instance and 64k vol (io1)
 - Max 2375 MB/s per instance, 1000 MiB/s (vol) (io1)
 
@@ -2455,10 +2455,12 @@ locked to that specific host. If the instance moves, the data doesn't.
 
 Instances can move between hosts for many reasons:
 
-- If an instance is stopped and started, that migrates hosts.
-- If a host undergoes AWS maintenance, it will be wiped.
-- If you change the type of an instance, these will be lost.
-- If a physical hardware fails, then the data is gone.
+- If an instance is stopped and started.
+- If a host undergoes AWS maintenance.
+- If you change the type of an instance.
+- If a physical hardware fails.
+
+Local Data on the instance store volume is lost in all cases.
 
 The number, size, and performance of instance store volumes vary based on the
 type of instance used. Some instances do not have any instance store volumes
@@ -2468,7 +2470,7 @@ at all.
 
 - Instance store volumes are local to EC2 host.
 - Can only be added at launch time. Cannot be added later.
-- Any data on instance store data is lost if it gets moved, or resized.
+- Any data on instance store data is lost if it gets moved, or resized (type changed).
 - Highest data performance in all of AWS.
 - You pay for it anyway, it's included in the price.
 - TEMPORARY
@@ -2488,15 +2490,18 @@ at all.
 - Can be used to migrate data between AZs.
 
 Snapshots are incremental volume copies to S3.
-The first is a **full copy** of `data` on the volume. This can take some time.
+The first is a **full copy** of `data` on the volume (If you only use 4GB of a 10GB volume, then only 4GB is copied and you are only charged for 4GB). This can take some time.
 EBS won't be impacted, but will take time in the background.
-Future snaps are incremental, as they only copy across the changes made the to current snapshot. consume less space and are quicker to perform.
+Future snaps are incremental, as they only copy across changes made since the last snapshot. consume less space and are quicker to perform.
 
 If you delete an incremental snapshot, it moves data to ensure subsequent
 snapshots will still work properly.
 
+![image](https://user-images.githubusercontent.com/52617475/143807454-2fb7c500-09a2-4bda-9c10-afd2e2bdc3ba.png)
+
+
 Volumes can be created (restored) from snapshots.
-Snapshots can be used to move EBS volumes between AZs.
+Snapshots can be used to move EBS volumes between AZs or regions.
 Snapshots can be used to migrate data between volumes.
 
 #### 1.6.8.1. Snapshot and volume performance
@@ -2508,7 +2513,7 @@ available immediately.
   - If you attempt to read data that hasn't been restored yet, it will
   immediately pull it from S3, but this will achieve lower levels of performance
   than reading from EBS directly.
-  - You can force a read of every block all data immediately using DD.
+  - You can force a read of every block all data immediately using DD through manual configuration.
 
 Fast Snapshot Restore (FSR) allows for immediate restoration.
 You can create 50 of these FSRs per region. When you enable it on
@@ -2524,7 +2529,10 @@ Billed using a GB/month metric.
 
 This is used data, not allocated data. If you have a 40 GB volume but only
 use 10 GB, you will only be charged for the allocated data.
-This is not how EBS itself works.
+This is not how EBS itself works as you pay for the entire volume.
+
+![image](https://user-images.githubusercontent.com/52617475/143810012-0f6ea0ce-3d1c-4eae-9650-f66b04d272c2.png)
+
 
 The data is incrementally stored which means doing a snapshot every 5 minutes
 will not necessarily increase the charge as opposed to doing one every hour.
@@ -2534,7 +2542,7 @@ will not necessarily increase the charge as opposed to doing one every hour.
 Provides at rest encryption for block volumes and snapshots.
 
 When you don't have EBS encryption, the volume is not encrypted.
-The physical hardware itself may be performing at rest encryption, but
+The operating system itself may be performing internally, but
 that is a separate thing.
 
 When you set up an EBS volume initially, EBS uses KMS and a customer master key.
@@ -2546,12 +2554,15 @@ generates an encrypted **data encryption key (DEK)** which is stored with the vo
 on the physical disk. This key can only be decrypted using KMS when a role with
 the proper permissions to decrypt that DEK.
 
+![image](https://user-images.githubusercontent.com/52617475/143820111-2b29a193-a2c4-48db-8d2a-adb4d09e314d.png)
+
+
 When the volume is first used, EBS asks CMS to decrypt the key and stores
-the decrypted key in memory on the EC2 host while it's being used. At all
-other times it's stored on the volume in encrypted form.
+the decrypted key (green) in memory on the EC2 host while it's being used. At all
+other times it's stored on the volume in encrypted form (red).
 
 When the EC2 instance is using the encrypted volume, it can use the
-decrypted data encryption key to move data on and off the volume. It is used
+decrypted data encryption key to read and write data on the volume. It is used
 for all cryptographic operations when data is being used to and from the
 volume.
 
@@ -2560,8 +2571,7 @@ When data is stored at rest, it is stored as ciphertext.
 If the EBS volume is ever moved, the key is discarded.
 
 If a snapshot is made of an encrypted EBS volume, the same data encryption
-key is used for that snapshot. Anything made from this snapshot is also
-encrypted in the same way.
+key is used for that snapshot. Anything made from this snapshot also has the same encryption key.
 
 Every time you create a new EBS volume from scratch, it creates a new
 data encryption key.
@@ -2572,7 +2582,7 @@ data encryption key.
   - It will use the default CMK unless a different one is chosen.
   - Each volume uses 1 unique DEK (data encryption key)
   - Snapshots and future volume use the same DEK
-- Can't change a volume to NOT be encrypted.
+- Can't change a volume from encrypted to unencrypted.
   - You could mount an unencrypted volume and copy things over but you can't
   change the original volume.
 - The OS itself isn't aware of the encryption, there is no performance loss.
@@ -2583,6 +2593,7 @@ data encryption key.
   - If an exam question does not use AES256, or it suggests you need an OS to
 encrypt or hold the keys, then you need to perform full disk encryption
 at the operating system level.
+  - Is free to use
 
 ### 1.6.9. EC2 Network Interfaces, Instance IPs and DNS
 
