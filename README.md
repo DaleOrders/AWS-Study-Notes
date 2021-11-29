@@ -191,6 +191,7 @@ A subnet is smaller such as /20
 The higher the / number is, the smaller the grouping.
 
 Two /17's will fit into a /16, sixteen /20 subnets can fit into one /16.
+
 /17 = 1 subnet
 /18 = 2 subnets
 /19 = 4 subnets
@@ -291,7 +292,7 @@ Private Key - Stored on local machine to initiate connection.
 Public Key - AWS places this key on the instance.
 
 If the instance has a public IPv4, you can login in the console with 'EC2 Instance Connect' or 'SSH Client'. If your instance
-has a private IPv4, then you can use 'Session Manager'
+has a private IPv4, then you can login using 'Session Manager'
 
 ### 1.2.6. S3 (Default Storage Service)
 
@@ -530,7 +531,7 @@ DNS names are read right to left with multiple parts separated by periods.
 `www.netflix.com.`
 
 The last period is assumed to be there in a browser when it's not present.
-The DNS Root is hosted on DNS Root Servers (13). These are hosted
+The DNS Root is hosted on one of 13 DNS Root Servers. These are hosted
 by 12 major companies.
 
 **Root Hints** is a pointer to the DNS Root servers provided by the OS vendor
