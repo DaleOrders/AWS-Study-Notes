@@ -2615,7 +2615,7 @@ Has these properties
     - `10.16.0.10`
   - Given a DNS name that is associated with the address.
     - `ip-10-16-0-10.ec2.internal`
-    - Only resolvable inside the VPC and always points at private IP address
+    - Only for internal communication inside VPC
 - 0 or more secondary private IP addresses
 - 0 or 1 public IPv4 address
   - The instance must manually be set to receive an IPv4 address or spun into a
@@ -2644,20 +2644,20 @@ address will be lost. There is no way to recover the original address.
   - Will impact all IP addresses on that interface.
   - If you need different IP addresses impacted by different security
   groups, then you need to make multiple interfaces and apply different
-  security groups to those interfaces.
+  security groups to those interfaces (SGs are attached to interfaces).
 - Source / destination checks
   - If traffic is on the interface, it will be discarded if it is not
-  from going to or coming from one of the IP addresses
+  from or going to one of the IP addresses
 
 Secondary interfaces function in all the same ways as primary interfaces except
-you can detach interfaces and move them to other EC2 instances.
+you can detach them and move them to other EC2 instances.
 
 #### 1.6.9.2. ENI Exam PowerUp
 
 - Legacy software is licensed using a mac address.
   - If you provision a secondary ENI to a specific license, you can move
 around the license to different EC2 instances.
-- Multi homed (subnets) management and data.
+- Multi homed (subnets) means two interfaces in two subnets (ie one for management and the other for data).
 - Different security groups are attached to different interfaces.
 - The OS doesn't see the IPv4 public address.
 - You always configure the private IPv4 private address on the interface.
@@ -2685,6 +2685,9 @@ Images of EC2 instances that can launch more EC2 instance.
 - Can create an AMI from an existing EC2 instance to capture the current config.
 
 #### 1.6.10.1. AMI Lifecycle
+
+![image](https://user-images.githubusercontent.com/52617475/143898329-5b77cc7a-57ce-4fc3-858a-6a3f98cfddf2.png)
+
 
 1. Launch: EBS volumes are attached to EC2 devices using block IDs.
 
@@ -2721,6 +2724,9 @@ make changes, then make new AMI
 
 #### 1.6.11.1. On-Demand Instances
 
+![image](https://user-images.githubusercontent.com/52617475/143899773-4fc56912-dd67-4654-a372-7ab7425dea66.png)
+
+
 - Hourly rate based on OS, size, options, etc
 - Billed in seconds (60s min) or hourly
   - Depends on the OS
@@ -2731,13 +2737,16 @@ make changes, then make new AMI
 
 #### 1.6.11.2. Spot Instances
 
+![image](https://user-images.githubusercontent.com/52617475/143900660-7467f81f-f5ec-4f17-a1bf-df8c1f925f9b.png)
+
+
 Up to 90% off on-demand, but depends on the spare capacity.
 You can set a maximum hourly rate in a certain AZ in a certain region.
 If the max price you set is above the spot price, you pay only that spot
 price for the duration that you consume that instance.
 As the spot price increases, you pay more.
-Once this price increases past your maximum, it will terminate the instance.
-Great for data analytics when the process can occur later at a lower use time.
+Once this price increases past your maximum, it will terminate your instance.
+Great for data analytics when the process can occur later or withstand interruption.
 
 #### 1.6.11.3. Reserved Instance
 
