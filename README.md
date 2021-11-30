@@ -2023,6 +2023,8 @@ with your on premise identification service.
 
 ### 1.5.6. Network Access Control List (NACL)
 
+![image](https://user-images.githubusercontent.com/52617475/143906249-49d98194-d45b-432f-9e3a-0ac63b291946.png)
+
 Network Access Control Lists (NACLs) are a type of security filter
 (like firewalls) which can filter traffic as it enters or leaves a subnet.
 
@@ -2114,12 +2116,21 @@ before another rule with a higher rule number.
 
 ![image](https://user-images.githubusercontent.com/52617475/143520585-ccd33ab8-1444-48cf-8608-b08c35011d54.png)
 
+![image](https://user-images.githubusercontent.com/52617475/143908278-2a6b2de8-aa7a-467f-bc6c-ef5c593f968a.png)
+
+![image](https://user-images.githubusercontent.com/52617475/143908525-7aeb4fcc-9590-4950-9375-fdbd90155e0f.png)
+
+
+
 - SGs are boundaries which can filter traffic.
 - Attached to a resource and not a subnet.
 - SGs have two sets of rules like NACLs.
 - SGs are stateful.
   - Only one inbound rule is needed.
   - They see traffic and response as the same thing.
+
+![image](https://user-images.githubusercontent.com/52617475/143908872-7e070ee6-35de-40cd-97c5-fa0670e6ed08.png)
+
 - Understand AWS logical resources so they're not limit to IP traffic only.
   - Can have a source and destination referencing the instance and not the IP.
 - Default SG is created in a VPC to allow all traffic.
