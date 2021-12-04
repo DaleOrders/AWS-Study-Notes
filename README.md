@@ -2673,7 +2673,7 @@ around the license to different EC2 instances.
 - The OS doesn't see the IPv4 public address.
 - You always configure the private IPv4 private address on the interface.
 - Never configure an OS with a public IPv4 address.
-- IPv4 Public IPs are Dynamic, starting and stopping will kill it.
+- IPv4 Public IPs are Dynamic, starting and stopping see them update to a new one (instance moves host).
 
 Public DNS for a given instance will resolve to the primary private IP
 address in a VPC. If you have instance to instance communication within
@@ -2727,8 +2727,8 @@ volumes in the AZ of the EC2 instance and contain the same block device mapping.
 - AMI Baking: creating an AMI from a configuration instance.
 - An AMI cannot be edited. If you need to update an AMI, launch an instance,
 make changes, then make new AMI
-- Can be copied between regions
-- Remember permissions by default are your account only
+- Can be copied between regions using snapshots
+- Remember permissions by default are your account only, you can configure others users or make it public
 - Billing is for the storage capacity for the EBS snapshots the AMI references.
 
 ### 1.6.11. EC2 Pricing Models
@@ -2759,7 +2759,9 @@ As the spot price increases, you pay more.
 Once this price increases past your maximum, it will terminate your instance.
 Great for data analytics when the process can occur later or withstand interruption.
 
-#### 1.6.11.3. Reserved Instance
+#### 1.6.11.3. Reserved Instances
+
+**Standard Reserve**
 
 Up to 75% off on-demand.
 The trade off is commitment.
@@ -2773,12 +2775,36 @@ Flexibility on how to pay
 Best discounts are for 3 years all up front.
 Reserved in region, or AZ with capacity reservation.
 Reserved instances takes priority for AZ capacity.
+
+**Scheduled reserve**
 Can perform scheduled reservation when you can commit to specific time windows.
 
-Great if you have a known stead state usage, email usage, domain server.
+![image](https://user-images.githubusercontent.com/52617475/144610686-0d013415-d5ab-4cf8-8ea5-6cc918bf06aa.png)
+
+
+Great if you have a known steady state usage, email usage, domain server.
 Cheapest option with no tolerance for disruption.
 
+**Capacity reserve**
+1.Regional: can be launced in any AZ in the region
+2. Zonal: discounts are provided in that AZ, but instances in other zones are at full price
+3. On demand: You can reserve the capacity, but pay for it whether you use it or not
+
+![image](https://user-images.githubusercontent.com/52617475/144615482-a71d71b0-eca4-40ba-be59-9520b542f73d.png)
+
+Regional and Zonal reservations have 1 or 3 year terms. On demand has no term minimum.
+
+If capacity is stretched, ec2 capacity is proritised by:
+
+1. reserved instances
+2. On demand and capacity reservations
+3. Spot purchase
+
+
 ### 1.6.12. Instance Status Checks and Autorecovery
+
+![image](https://user-images.githubusercontent.com/52617475/144616339-7abfdec8-9c81-4ad5-87e7-d9008c6a8450.png)
+
 
 Every instance has two high level status checks
 
@@ -2788,7 +2814,7 @@ service or the host.
 - Instance Status Checks
   - Specific to the file system or has a corrupted Kernel.
 
-Autorecovery can kick in and help,
+Autorecovery can kick in and help, if there is spare capacity. Only works on instances which solely have ebs volumes attached. Reboots to another instance in the same AZ
 
 - Recover this instance
   - can be a number of steps depending on the failure
@@ -2824,11 +2850,13 @@ servers get equal parts of the load.
 
 - Sessions are everything.
   - When you log into youtube, netflix or your email, the state of your interaction with that application is called a *session*.
-- With horizontal scaling you can shift between instances equally.
+- With horizontal scaling your session can shift between instances.
 - This requires either *application support* or *off-host* sessions.
   - If you use off-host sessions, then your session data is stored in another place, an external database.
-  - This means that the servers are what's called **stateless**, they are just dump instances of your application.
+  - This means that the servers are what's called **stateless**, they are just dumb instances of your application.
   - The application does care which instance you are connected to because your session is externally hosted somewhere else.
+  - With off host sessions and horizontal scaling, there is no disruption when scaling.
+  
 
 #### 1.6.13.3. Benefits of Horizontal Scaling
 
@@ -2848,9 +2876,14 @@ Memorize [instance metadata](http://169.254.169.254/latest/meta-data/) -> `http:
 Meta-data contains information on the:
 
 - environment the instance is in.
-- You can find out about the networking or user-data among other things.
+- You can find out about the networking, authentication or user-data among other things.
 - This is not authenticated or encrypted. Anyone who can gain access to the
-instance can see the meta-data. This can be restricted by local firewall
+instance can see the meta-data. This can be restricted by local firewall.
+
+public IPv4 is never configured or known by the operating system of an instance at any point. The internet gateway translates the private address into public address.
+
+For example curl http://169.254.169.254/latest/meta-data/public-ipv4 will contact the metadata service and retrieve the public ipv4 information.
+
 
 ---
 
@@ -2876,7 +2909,7 @@ Images contain read only layers, images are layer onto images.
 
 ##### 1.7.1.1.1. What are images used for
 
-1. A docker image is actually how we create a docker container. In fact a ocker container is just a running copy of a docker image with one crucial difference: a docker container has an additional *read/write* file system layer. File system layers --  the layers that make up the docker image -- by default are _read_ only; they never change after they are created. And so, the special read/write layer is added which allows containers to run. If you have lots of containers with very similar base structures, they will share the parts that overlap. The other layers are reused between containers.
+1. A docker image is actually how we create a docker container. In fact a docker container is just a running copy of a docker image with one crucial difference: a docker container has an additional *read/write* file system layer. File system layers --  the layers that make up the docker image -- by default are _read_ only; they never change after they are created. And so, the special read/write layer is added which allows containers to run. If you have lots of containers with very similar base structures, they will share the parts that overlap. The other layers are reused between containers.
 
 2. The reuse architecture that is offered by the way containers do their disk images scales really well. Disk space when you have lots of containers is minimized because of this layered architecture. The base layer -- the OS -- they are generally made available by the OS vendors through something called a _container registry_ and a popular one is _docker hub_.
 
@@ -2910,10 +2943,13 @@ ECS runs into two modes: 1. Using EC2; 2. Using Fargate.
 - Container images will be located on a registry.
   - AWS provides a registry called **Elastic Container Registry** (ECR).
   - Dockerhub can be used as well.
-- **Container definition** tell ECS where your container is. It tells ECS which port your container uses (e.g. port 80, which is http). Container definition gives ECS just enough info about a single container.
+- **Container definition** tell ECS where your container image is. It tells ECS which port your container uses (e.g. port 80, which is http). Container definition gives ECS just enough info about a single container.
   - A pointer to which image to use and the ports that will be exposed.
-- **Task definitions** store the resources used by the task.
+- **Task definitions** store the container definitions (resources) used by the task - cpu, memory, networking mode, compatability (ec2 or fargate).
   - It also stores the **task role**, an IAM role that allows the task access to other AWS resources.
+
+![image](https://user-images.githubusercontent.com/52617475/144706302-b0e8e62e-1ed5-4dfa-af23-4a26566f156d.png)
+
 
 > Task roles are the best practice way for giving containers within ECS permissions to access AWS products and services.
 
@@ -2922,7 +2958,10 @@ ECS runs into two modes: 1. Using EC2; 2. Using Fargate.
 See the [AWS documentation on container definition](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html) and [task definition](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_TaskDefinition.html) for more information.
 
 ECS **Service** is configured via Service Definition and represents
-how many copies of a task you want to run for scaling and HA.
+how many copies of a task you want to run for scaling and HA. Adds capacity and resilience. 
+
+![image](https://user-images.githubusercontent.com/52617475/144706427-f723891e-26b6-4259-909a-ac64aeeebbeb.png)
+
 
 ### 1.7.3. ECS Cluster Types
 
