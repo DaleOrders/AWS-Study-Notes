@@ -1839,6 +1839,7 @@ Taking a /16 subnet and splitting it 16 ways will make each a /20.
   - Isolated blast radius. Any problems are limited to that VPC or anything
   connected to it.
 - Flexible configuration
+- Is configured to give a public ipv4 address to any resource deployed into the public subnets.
 - Hybrid networking to allow connection to other cloud or on-prem networking.
 - Default or Dedicated Tenancy. This refers to how the hardware is configured.
   - Default allows on a per resource decision later on.
@@ -2982,7 +2983,10 @@ capacity and availability for your cluster.
 
 The container instances are not delivered as a managed service, they
 are managed as normal EC2 instances.
-You can use spot pricing or prepaid EC2 servers.
+You can use spot pricing or prepaid EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them.
+
+![image](https://user-images.githubusercontent.com/52617475/144707470-2882c841-43e4-479f-8097-3f95fc12ff97.png)
+
 
 #### 1.7.3.2. Fargate mode
 
@@ -2997,14 +3001,17 @@ For ECS tasks, they are injected into the VPC. Each task is given an
 _elastic network interface_ which has an IP address within the VPC. They then
 run like a VPC resource.
 
-You only pay for the container resources you use.
+You only pay for the container resources you use. You don't need to manage host, think about high availabilit, capacity.
+
+![image](https://user-images.githubusercontent.com/52617475/144707567-09d05e62-134e-4df9-8db2-83b5c90e4eea.png)
+
 
 #### 1.7.3.3. EC2 vs ECS(EC2) vs Fargate
 
 If you already are using containers, use **ECS**.
 
 **EC2 mode** is good for a large workload if you are price conscious.
-This allows for spot pricing and prepayment.
+This allows for spot pricing and prepayment discounts, but will probably require more admin overhead.
 
 **Fargate** is great if you:
 
@@ -3032,7 +3039,7 @@ in the same way that meta-data is. It is accessed using the meta-data IP.
 
 <http://169.254.169.254/latest/user-data>
 
-Anything you pass in is executed by the instance OS **only once on launch!** It is for launch time configuration only.
+Anything you pass in is executed by the instance OS **only once on initial launch!** It is for initial launch time configuration only.
 
 EC2 doesn't validate the user data. You can tell EC2 to pass in trash data
 and the data will be injected. The OS needs to understand the user data.
@@ -3054,6 +3061,9 @@ the script, the instance will be in:
 - Bad config but still likely running.
   - The instance will probably still pass its checks.
   - It will not be configured as you expected.
+
+![image](https://user-images.githubusercontent.com/52617475/144712322-046b0083-73dd-4c71-badc-5bf6716d2fdc.png)
+
 
 #### 1.8.1.2. User Data Key Points
 
@@ -3082,6 +3092,9 @@ AMI baking will front load the time needed by configuring as much as possible.
 
 This way you reduce the post-launch time and thus the boot-time-to-service.
 
+![image](https://user-images.githubusercontent.com/52617475/144712623-a67e94fe-5e20-448c-aeaf-730712ec1b56.png)
+
+
 ### 1.8.2. AWS::CloudFormation::Init
 
 **cfn-init** is a helper script installed on EC2 OS.
@@ -3092,7 +3105,9 @@ This is a simple configuration management system.
   - Can specify particular versions of packages. It will ensure things are
   configured to that end state.
   - Can manipulate OS groups and users.
-  - Can download sources and extract them using authentication.
+  - Can download sources and extract onto the local instance them using authentication.
+  - Run commands
+  - control services
 
 This is executed as any other command by being passed into the instance as part
 of the user data and retrieves its directives from the CloudFormation
@@ -3100,6 +3115,8 @@ stack and you define this data in the CloudFormation template called
 `AWS::CloudFormation::Init`.
 
 #### 1.8.2.1. cfn-init explained
+
+![image](https://user-images.githubusercontent.com/52617475/144715670-5b0c036d-3007-4582-8fe6-911bec806fc7.png)
 
 Starts off with a **CloudFormation template**.
 This has a logical resource within it which is to create an EC2 instance.
@@ -3114,13 +3131,16 @@ This can monitor the user data and change things as the EC2 data changes.
 
 If you pass in user data, there is no way for CloudFormation to know
 if the EC2 instance was provisioned properly. It may be marked as complete,
-but the instance could be broken.
+but the bootstrapping inside the instance could have failed.
 
 A **CreationPolicy** is something which is added to a logical resource
 inside a CloudFormation template. You create it and supply a timeout value.
 
+![image](https://user-images.githubusercontent.com/52617475/144715904-8617065d-b867-4375-a286-a12329a5421b.png)
+
+
 This waits for a signal from the resource itself before moving to a create
-complete state.
+complete state. Waits the designated time for a success or error signal, if no signal is recieved assumes it has errored and doesn't let stack create.
 
 ### 1.8.3. EC2 Instance Roles
 
@@ -3141,13 +3161,16 @@ instance **meta-data**.
 
 EC2 and the secure token service ensure the credentials never expire.
 
+![image](https://user-images.githubusercontent.com/52617475/144717004-a1ecc52b-c243-4382-b499-ea730d0ce0aa.png)
+
+
 Key facts
 
 - Credentials are inside meta-data
   - iam/security-credentials/role-name
   - automatically rotated - always valid
   - Resources need to check the meta-data periodically
-- Should always use roles compared to storing long term credentials
+- Should always use roles compared to storing long term credentials in an ec2 or on local system
 - CLI tools use role credentials automatically
 
 ### 1.8.4. AWS System Manager Parameter Store
@@ -3179,6 +3202,9 @@ parameter store.
 
 ### 1.8.5. System and Application Logging on EC2
 
+![image](https://user-images.githubusercontent.com/52617475/144717419-f5ace722-8f20-4d14-8418-e769892d19e2.png)
+
+
 CloudWatch and CloudWatch Logs cannot natively capture data inside an instance.
 
 CloudWatch Agent is required for OS visible data. It sends this data into CW
@@ -3202,6 +3228,9 @@ We can use parameter store to store the configuration for the CW agent.
 ### 1.8.6. EC2 Placement Groups
 
 #### 1.8.6.1. Cluster Placement -> Pack Instances Close Together
+
+![image](https://user-images.githubusercontent.com/52617475/144717588-71f39689-6653-406e-babe-aaeb07460e5c.png)
+
 
 Designed so that instances within the same cluster are physically close together.
 
@@ -3228,11 +3257,14 @@ If the hardware fails, the entire cluster will fail.
 - They can span VPC peers.
 - Requires a supported instance type.
 - Best practice to use the same type of instance (not mandatory).
-- Best practice to launch all instances at once (not mandatory).
+- Best practice to launch all instances at once (not mandatory, but highly recommended).
 - This is the only way to achieve **10Gbps SINGLE stream performance**, other data metrics assume multiple streams.
 - Use cases: Performance, fast transfer speeds, and low consistent latency.
 
 #### 1.8.6.2. Spread Placement -> Keep Instances Separated
+
+![image](https://user-images.githubusercontent.com/52617475/144717723-d8fd3947-ff17-4269-9816-a00b18db68cd.png)
+
 
 Keep instances separated
 
@@ -3253,6 +3285,9 @@ group.
 from each other. Several mirrors of an application; different nodes of an application; etc.
 
 #### 1.8.6.3. Partition Placement -> Groups of Instances Spread Apart
+
+![image](https://user-images.githubusercontent.com/52617475/144717806-f7b84570-b9e4-4e7a-9f60-448e35ba863e.png)
+
 
 Groups of instances spread apart
 
@@ -3275,12 +3310,12 @@ specifically decide.
 ### 1.8.7. EC2 Dedicated Hosts
 
 EC2 host allocated to you in its entirety.
-Pay for the host itself which is designed for a family of instances.
+Pay for the host itself which is designed for a family of instances eg c1, m5, a1.
 There are no instance charges.
 You can pay for a host on-demand or reservation with 1 or 3 year terms.
 
 The host hardware has physical sockets and cores. This dictates how
-many instances can be run on the HW.
+many instances can be run on the Hardware.
 
 Hosts are designed for a specific size and family. If you purchase one host, you configure what type of instances you want to run on it. With the older VM
 system you cannot mix and match. The new Nitro system allows for mixing and
@@ -3300,6 +3335,8 @@ Enhanced networking uses SR-IOV.
 The physical network interface is aware of the virtualization.
 Each instance is given exclusive access to one part of a physical network
 interface card.
+
+![image](https://user-images.githubusercontent.com/52617475/144719623-416706c1-dab0-4f4d-b358-f6e8e41b62eb.png)
 
 There is no charge for this and is available on most EC2 types.
 It allows for higher IO and lower host CPU usage
