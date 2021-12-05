@@ -39,6 +39,9 @@ standard protocols and methods.
 
 ### 1.1.1. Public vs Private vs Multi Cloud
 
+![image](https://user-images.githubusercontent.com/52617475/144755552-9e633cc1-692d-43b8-b20b-317aea1529c8.png)
+
+
 - Public Cloud: using 1 public cloud such as AWS, Azure, Google Cloud.
 - Private Cloud: using on-premises real cloud. Must meet 5 requirements.
 - Multi-Cloud: using more than 1 public cloud in one deployment.
@@ -46,6 +49,9 @@ standard protocols and methods.
   - This is **NOT** using Public Cloud and Legacy on-premises hardware.
 
 ### 1.1.2. Cloud Service Models
+
+![image](https://user-images.githubusercontent.com/52617475/144755696-208e7181-e827-4784-916e-a5378c03937a.png)
+
 
 The *Infrastructure Stack* or *Application Stack* contains multiple components
 that make up the total service. There are parts that **you** manage as well
@@ -81,6 +87,8 @@ There are additional services such as *Function as a Service*,
 - Enterprise (Technical account manager)
 
 ### 1.2.1. Public vs Private Services
+
+![image](https://user-images.githubusercontent.com/52617475/144756201-8886d759-0526-4953-a375-64d6f4b8c841.png)
 
 
 Refers to the networking only, not permissions.
@@ -165,6 +173,8 @@ AZ and the service to keep running because of redundant equipment, but should
 not be relied on.
 
 ### 1.2.4. AWS Default VPC
+
+![image](https://user-images.githubusercontent.com/52617475/144756287-ebb7e34b-3a42-459c-9a27-371974d08b7c.png)
 
 VPC is a virtual network inside of AWS.
 A VPC is within 1 account and 1 region which makes it regionally resilient.
@@ -396,6 +406,9 @@ Resources:
 Once a template is created, AWS will make a stack. This is a living and active
 representation of a template. One template can create infinite amount of stacks.
 
+![image](https://user-images.githubusercontent.com/52617475/144756591-d2f439d7-7d50-4a33-9d03-64b1b62d8b8f.png)
+
+
 For any **Logical Resources** in the stack,
 CF will make a corresponding **Physical Resources** in your AWS account.
 
@@ -445,6 +458,9 @@ Has two states `ok` or `alarm`. A notification could be sent to an SNS topic or 
 Third state can be insufficient data state. Not a problem, just wait.
 
 ### 1.2.10. Shared Responsibility Model
+
+![image](https://user-images.githubusercontent.com/52617475/144756749-b983c7a1-3698-4b02-9740-f95d918ace43.png)
+
 
 AWS: Responsible for security **OF** the cloud
 
@@ -523,6 +539,9 @@ Find the Nameserver which hosts a particular zone file.
 Query that Nameserver for a record that is in that zone file.
 It then passes the information back to the DNS client.
 
+![image](https://user-images.githubusercontent.com/52617475/144756858-35114d69-f188-4f9e-9399-6dea4b0b7be9.png)
+
+
 #### 1.2.12.1. DNS Root
 
 The starting point of DNS.
@@ -546,6 +565,9 @@ of finding the IP address.
 The Root Zone is organized by IANA (Internet Assigned Numbers Authority).
 Their job is to manage the contents of the root zone. IANA is in charge
 of the DNS system because they control the root zone.
+
+![image](https://user-images.githubusercontent.com/52617475/144756939-517e953c-93f8-416c-83b2-03a310ef2225.png)
+
 
 #### 1.2.12.2. DNS Hierarchy
 
@@ -601,7 +623,10 @@ Hosted on four managed name servers
 ### 1.2.14. DNS Record
 
 - Nameserver (NS): Allows delegation to occur in the DNS.
-- A and AAAA Records: Maps the host to a v4 or v6 host type respectively. Most of the time
+- 
+![image](https://user-images.githubusercontent.com/52617475/144757289-02c57aeb-49dd-46ef-8c08-dad268ed72df.png)
+
+- A and AAAA Records: Maps the host to a IPv4(A) or IPv6(AAAA) host type respectively. Most of the time
 you will make both types of record, A and AAAA.
 - CNAME Record Type: Allows DNS shortcuts to reduce admin overhead.
 CNAMES cannot point directly to an IP address, only another name.
@@ -655,6 +680,9 @@ Once authenticated, that identity is known as an **authenticated identity**
 - Resource: similar to action except for format `arn:aws:s3:::catgifs`
 
 #### 1.3.1.2. Priority Level
+
+![image](https://user-images.githubusercontent.com/52617475/144757390-e6828280-b8bb-48db-a6d3-2050d01e96c8.png)
+
 
 - Explicit Deny: Denies access to a particular resource cannot be overruled.
 - Explicit Allow: Allows access so long there is not an explicit deny.
@@ -725,6 +753,9 @@ These two ARNs do not overlap
 
 ### 1.3.3. IAM Groups
 
+![image](https://user-images.githubusercontent.com/52617475/144757465-c71a42f0-07f3-4313-ba38-73673d0ca402.png)
+
+
 Containers for users. **You cannot login to IAM groups** They have no
 credentials of their own. Used solely for management of IAM users.
 
@@ -790,6 +821,9 @@ security credentials (TSC).
 
 ### 1.3.5. When to use IAM Roles
 
+![image](https://user-images.githubusercontent.com/52617475/144757575-bb456e12-669b-45c1-9e72-af86888c9118.png)
+
+
 Lambda Execution Role.
 For a given lambda function, you cannot determine the number of principals
 which suggested a Role might be the ideal identity to use.
@@ -812,6 +846,9 @@ its really needed.
 
 #### 1.3.5.2. Adding AWS into existing corp environment
 
+![image](https://user-images.githubusercontent.com/52617475/144757599-8ef14771-82ce-4ce7-928a-a16b531f3962.png)
+
+
 You may have an existing identity provider you are trying to allow access to.
 This may offer SSO (Single Sign On) or over 5000 identities.
 This is useful to reuse your existing identities for AWS.
@@ -821,6 +858,9 @@ by one of the active directories.
 **ID Federation** allowing an external service the ability to assume a role.
 
 #### 1.3.5.3. Making an app with 1,000,000 users
+
+![image](https://user-images.githubusercontent.com/52617475/144757659-aaddc435-74ce-4385-b682-511dd04aa15d.png)
+
 
 **Web Identity Federation** uses IAM roles to allow broader access.
 These allow you to use an existing web identity such as google, facebook, or
@@ -969,6 +1009,9 @@ Can generate metrics based on logs **metric filter**
 
 #### 1.3.8.1. Architecture of CloudWatch Logs
 
+![image](https://user-images.githubusercontent.com/52617475/144757892-edc41881-49d7-4fd6-bbb9-896a4e5adfd5.png)
+
+
 It is a regional service `us-east-1`
 
 Need logging sources such as external APIs or databases. This sends
@@ -1003,6 +1046,9 @@ Objects being uploaded to S3 or a Lambda function being invoked. This is not
 enabled by default and must be enabled for that trail.
 
 #### 1.3.9.1. CloudTrail Trail
+
+![image](https://user-images.githubusercontent.com/52617475/144758082-f2c6b6b3-aeb1-4f78-aa44-604c2ab1e311.png)
+
 
 Logs events for the AWS region it is created in. It is a regional service.
 
@@ -3159,7 +3205,7 @@ When IAM roles are assumed, you are provided temporary roles based on the
 permission assigned to that role. These credentials are passed through
 instance **meta-data**.
 
-EC2 and the secure token service ensure the credentials never expire.
+EC2 and the secure token service ensure the credentials never expire as long as the instance profile is attached.
 
 ![image](https://user-images.githubusercontent.com/52617475/144717004-a1ecc52b-c243-4382-b499-ea730d0ce0aa.png)
 
@@ -3168,7 +3214,7 @@ Key facts
 
 - Credentials are inside meta-data
   - iam/security-credentials/role-name
-  - automatically rotated - always valid
+  - automatically rotated - always valid as long as still active and attached
   - Resources need to check the meta-data periodically
 - Should always use roles compared to storing long term credentials in an ec2 or on local system
 - CLI tools use role credentials automatically
