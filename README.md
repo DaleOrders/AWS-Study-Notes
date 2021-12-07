@@ -3674,6 +3674,9 @@ Systems to store and manage data.
 - Fixed relationship between tables.
   - This is defined before data is entered into the database.
 
+![image](https://user-images.githubusercontent.com/52617475/145077290-14912d48-e496-46f4-be6d-dcbb0bdf548d.png)
+
+
 Every row in a table must have a value for the **primary key**.
 There must be a value stored for every attribute in the table.
 
@@ -3700,6 +3703,9 @@ So long as every key is unique, there is no real schema or structure needed.
 These are really fast and highly scalable.
 This is also used for **in memory caching**.
 
+![image](https://user-images.githubusercontent.com/52617475/145077684-0c19b84b-62b1-4006-ba56-38d14c6c73b3.png)
+
+
 ##### 1.10.1.2.2. Wide Column Store
 
 DynamoDB is an example of wide column store database.
@@ -3717,6 +3723,9 @@ the same between values.
 The only requirements is that every item inside the table has to use the same
 key structure and it has to have a unique key.
 
+![image](https://user-images.githubusercontent.com/52617475/145078129-f467c5c7-8558-4302-bff1-1c7ff3e20362.png)
+
+
 ##### 1.10.1.2.3. Document
 
 Documents are generally formatted using JSON or XML.
@@ -3727,7 +3736,10 @@ contents are exposed to the database allowing you to interact with it.
 
 Good for order databases, or collections, or contact stale databases.
 
-Great for nested data items within a document structure such as user profiles.
+Great for nested data items within a document structure such as user profiles, catalogues where documents might vary.
+
+![image](https://user-images.githubusercontent.com/52617475/145078508-1f15e62a-b5cc-4f14-ad39-a68e9a7fb90e.png)
+
 
 ##### 1.10.1.2.4. Row Database (MySQL)
 
@@ -3750,6 +3762,9 @@ size, and price are all grouped together.
 This is bad for transactional style processing, but great for reporting or when
 all values for a specific size are required.
 
+![image](https://user-images.githubusercontent.com/52617475/145079010-d64c21ee-cb2d-4f54-98bb-d0b4b067dbd0.png)
+
+
 ##### 1.10.1.2.6. Graph
 
 Relationships between things are formally defined and stored along in the
@@ -3765,7 +3780,18 @@ Relationships themselves can also have attached data, so name value pairs.
 We might want to store the start date of any employment relationship.
 
 Can store massive amounts of complex relationships between data or between
-nodes in a database.
+nodes in a database. Flexible.
+
+![image](https://user-images.githubusercontent.com/52617475/145079517-eaadbfc0-5a67-4a49-91b2-57e62f2cbe5d.png)
+
+
+### 1.10.2. ACID and BASE
+
+![image](https://user-images.githubusercontent.com/52617475/145081120-8d8d5085-cd07-4622-b4a9-fe4c535940c9.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/145081631-4b2326d9-3326-41f8-9965-ebfeb5bb010d.png)
+
 
 ### 1.10.2. Databases on EC2
 
@@ -3774,6 +3800,9 @@ It is always a bad idea to do this.
 - Splitting an instance over different AZs
   - Adds reliability consideration between the AZs
   - Adds a cost to move the data between AZs
+
+![image](https://user-images.githubusercontent.com/52617475/145082267-25a39610-3488-43e3-97ff-dd683de11d50.png)
+
 
 #### 1.10.2.1. Reasons EC2 Database might make sense
 
