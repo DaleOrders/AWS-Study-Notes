@@ -3483,6 +3483,9 @@ Most new instances support this and have this enabled by default for no charge.
 
 ### 1.9.1. Public Hosted Zones
 
+
+![image](https://user-images.githubusercontent.com/52617475/144791990-4ad347a3-759b-4100-9592-411233d414b9.png)
+
 A hosted zone is a DNS database for a given section of global DNS data.
 A public hosted zone is a type of R53 hosted zone which is hosted on
 R53 provided public DNS name servers. When creating a hosted zone, AWS provides
@@ -3510,13 +3513,24 @@ instances within that VPC.
 
 ### 1.9.2. Private Hosted Zones
 
+![image](https://user-images.githubusercontent.com/52617475/144800765-7b5b5a91-5e0d-4978-878b-e5e8c00efa44.png)
+
 Same as public hosted zones except these are not public.
-They are associated with VPCs and are only accesible within those VPCs via the R53 resolver.
+They are associated with VPCs and are only accesible within those VPCs via the R53 resolver. Good for company intranet.
 
 It's possible to use a technique called Split-view for public and internal use with the same
 zone name. A common architecure is to make the public hosted zone a subset of the private hosted zone
 containing only those records that are meant to be accessed from the Internet, while inside VPCs
-associated with the private hosted zone all resource records can be accessed.
+associated with the private hosted zone all resource records can be accessed. Both have the same name (animals4life.org) but different accessible records.
+
+![image](https://user-images.githubusercontent.com/52617475/144801039-11f17ef2-24da-42bf-bf59-1a7480ce4dee.png)
+
+### 1.9.2. CNAME
+
+![image](https://user-images.githubusercontent.com/52617475/144856997-d0dc6696-f6e7-441a-a6d8-608adf63110b.png)
+
+![image](https://user-images.githubusercontent.com/52617475/144873446-a1d244c9-cbd0-4000-863e-734603b19b9e.png)
+
 
 ### 1.9.2. Route 53 Health Checks
 
@@ -3526,11 +3540,14 @@ If one of the servers has a bug, this will be removed from the list.
 If the bug gets fixed, the health check will pass and the server will be
 added back into a healthy state.
 
-Health checks are separate from, but are used by records inside R53.
+Health checks are separate from, but are used by, records inside R53.
 You don't create health checks inside records themselves.
 
 These are performed by a fleet of global health checkers. If you think
 they are bots and block them, this could cause alarms.
+
+![image](https://user-images.githubusercontent.com/52617475/144879750-8960d810-9b7d-4d4d-a168-6aeb3ef65c87.png)
+
 
 Checks occur every 30 seconds by default. This can be increased to 10 seconds
 for additional costs. These checks are per health checker. Since there are many
@@ -3541,7 +3558,7 @@ There could be one of three checks
 
 - TCP checks: R53 tries to establish TCP with end point within 10 (fast) or 30 seconds (standard).
 - HTTP/HTTPS: Same as TCP but within 4 seconds. The end point must respond
-with a 200 or 300 status code within 3 seconds of checking.
+with a 200 or 300 status code within 2 seconds after connecting.
 - HTTP/HTTPS String matching: Same as above, the body must have a string within the first
 5120 bytes. This is chosen by the user.
 
@@ -3551,7 +3568,10 @@ There are three types of checks.
 
 - Endpoint checks
 - CloudWatch alarms
-- Checks of checks (calculated)
+- Checks of checks (calculated)- application as a whole and individual application components
+
+
+
 
 ### 1.9.3. Route 53 Routing Policies Examples
 
@@ -3560,6 +3580,8 @@ which has one record. It will respond with 3 values and these get forwarded
 back to the client. The client then picks one of the three at random.
 This is a single record only. No health checks.
 
+![image](https://user-images.githubusercontent.com/52617475/144873907-a7472d0a-b03b-44db-acf8-e311e6d246d8.png)
+
 - **Failover**: Create two records of the same name and the same type. One
 is set to be the primary and the other is the secondary. This is the same
 as the simple policy except for the response. Route 53 knows the health of
@@ -3567,26 +3589,37 @@ both instances. As long as the primary is healthy, it will respond with
 this one. If the health check with the primary fails, the backup will be
 returned instead. This is set to implement active - passive failover.
 
+![image](https://user-images.githubusercontent.com/52617475/144880140-2b9b141a-2b23-4e02-ac46-5cb1bf80ae31.png)
+
 - **Weighted**: Create multiple records of the same name within the hosted zone.
 For each of those records, you provide a weighted value. The total weight
 is the same as the weight of all the records of the same name. If all of the
 parts of the same name are healthy, it will distribute the load based
 on the weight. If one of them fails its health check, it will be skipped over
 and over again until a good one gets hit. This can be used for migration
-to separate servers.
+to separate servers or if you want to control distribution of queries.
+
+![image](https://user-images.githubusercontent.com/52617475/144964337-44187912-028b-45d5-af50-1be34aa49c20.png)
+
 
 - **Latency-based**: Multiple records in a hosted zone can be created with
 the same name and same type. When a client request arrives, it knows which
 region the request comes from. It knows the lowest latency and will respond
-with the lowest latency.
+with the lowest latency. In this example, the client is in Australia. The database is not updated in real time, but is better than nothing.
+
+![image](https://user-images.githubusercontent.com/52617475/144966107-7eee7996-ff12-4d3c-a1bf-5f6d13fd8fa6.png)
+
 
 - **Geolocation**: Focused to delivering results matching the query of your
-customers. The record will first be matched based on the country if possible.
-If this does not happen, the record will be checked based on the continent.
+customers. The record will first be matched based on the US state if possible.
+If this does not happen, the record will be checked based on the country, then based oncontinent.
 Finally, if nothing matches again it will respond with the default response.
 This can be used for licensing rights. If overlapping regions occur,
 the priority will always go to the most specific or smallest region. The US
-will be chosen over the North America record.
+will be chosen over the North America record. Not about the closest record, but that one that is applicable (ie if you are in the UK you will not get a Canadian record returned.
+
+![image](https://user-images.githubusercontent.com/52617475/145044486-5d8fad0e-35ea-4c18-a6b0-2e0ffde4ea02.png)
+
 
 - **Multi-value**: Simple records use one name and multiple values in this record.
 These will be health checked and the unhealthy responses will automatically
@@ -3599,6 +3632,28 @@ through to your customers. Great alternative to simple routing when
 you need to improve the reliability, and it's an alternative to failover
 when you have more than two records to respond with, but don't want
 the complexity or the overhead of weighted routing.
+
+![image](https://user-images.githubusercontent.com/52617475/144963539-0912b360-8cb1-43b0-a7b0-592e60e9478d.png)
+
+- **Geo-proximity**:
+Bias can be added or subtracted to manipulate the routing zone. In this example, the AU region is given a plus bias so Saudi Arabia routes towards it and not the UK.
+
+![image](https://user-images.githubusercontent.com/52617475/145062641-e3bf0edb-bdec-48f1-916f-e6cf0546d879.png)
+
+- **Interoperability**:
+- 
+![image](https://user-images.githubusercontent.com/52617475/145067767-326ce873-57bb-46cb-bb45-2a1391397269.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/145068819-251aedde-1f69-4b43-8b5e-dace17b74cd0.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/145069216-2053060b-60be-4a37-83b2-664b5e87eb66.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/145069596-ee796b15-60bd-413f-a7b6-ff7ca8257b63.png)
+
+
 
 ---
 
