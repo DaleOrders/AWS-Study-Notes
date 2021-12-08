@@ -3838,10 +3838,10 @@ Amazon Aurora. This is so different from normal RDS, it is a separate product.
 
 Runs one of a few types of database engines and can contain multiple
 user created databases. Create one when you provision the instance, but
-multiple ones can be created after.
+multiple ones can be created thereafter.
 
 When you create a database instance, the way you access it is using a database
-host-name, a CNAME, and this resolves to the database instance itself.
+host-name, a CNAME, and this resolves to the database instance itself. Can not use IP address.
 
 RDS uses standard database engines so you can access an RDS instance using the
 same tooling as if you were accessing a self-managed database.
@@ -3867,6 +3867,9 @@ magnetic - compatibility mostly for long term historic uses
 Billing is per instance and hourly rate for that compute. You are billed
 for storage allocated.
 
+![image](https://user-images.githubusercontent.com/52617475/145256350-c93b3747-8f0b-4374-bb97-10fe835e34e5.png)
+
+
 ### 1.10.4. RDS Multi AZ (High-Availability)
 
 This is an option that you can enable on RDS instances.
@@ -3882,6 +3885,9 @@ instance. You cannot access the standby replica for any reason via RDS.
 
 The standby replica cannot be used for extra capacity.
 
+![image](https://user-images.githubusercontent.com/52617475/145257125-c6d00d11-1dfa-433e-b1df-6cb473d268dd.png)
+
+
 **Synchronous Replication** means:
 
 1. Database writes happen.
@@ -3891,6 +3897,9 @@ The standby replica cannot be used for extra capacity.
 
 If any error occurs with the primary database, AWS detects this and will
 failover within 60 to 120 seconds to change to the new database.
+
+![image](https://user-images.githubusercontent.com/52617475/145257287-4e5eba34-fff0-4343-9503-db5a85c461d5.png)
+
 
 This does not provide fault tolerance as there will be some impact during change.
 
@@ -3924,6 +3933,9 @@ RTO - Recovery Time Objective
 
 - Time between the disaster recovery event and full recovery.
 - Influenced by process, staff, tech and documentation.
+
+![image](https://user-images.githubusercontent.com/52617475/145293233-51bcfceb-dcc6-42e6-86bc-a1988f915108.png)
+
 
 RDS Backups
 
