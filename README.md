@@ -3945,18 +3945,18 @@ the snapshots are incremental and only store the change in data.
 When any snapshot occurs, there's a brief interruption to the flow of data
 between the compute resource and the storage. If you are using single AZ, this
 can impact your application. If you are using Multi-AZ, the snapshot occurs
-on the standby replica.
+on the standby replica. A snapshot is a backup of all the databases on the instance (not just one).
 
-**Manual snapshots don't expire**, you have to clean them yourself.
-Automatic Snapshots can be configured to make things easier.
+**Manual snapshots don't expire**, you have to clean them yourself. Manual snapshots will remain in your account even if you have already deleted the RDS instance.
+
 
 In addition to automated backup, every 5 minutes database transaction logs are
 saved to S3. Transaction logs store the actual data which changes inside a
-database so the actual operations that are executed. This allows a database
+database so the actual operations that are executed on that database. This allows a database
 to be restored to a point in time often with 5 minute granularity.
 
 Automatic cleanups can be anywhere from *0 to 35* days.
-This means you can restore to any point in that time frame.
+This means you can restore to any point in over that time frame.
 This will use both the snapshots and the translation logs.
 
 When you delete the database, they can be retained but they will expire
@@ -3964,6 +3964,9 @@ based on their retention period.
 
 The only way to maintain backups is to create a final snapshot which will not
 expire automatically.
+
+![image](https://user-images.githubusercontent.com/52617475/145319889-056611a1-8763-4107-b381-2451cf479f4b.png)
+
 
 #### 1.10.5.1. RDS Backup Exam PowerUp
 
@@ -3979,12 +3982,17 @@ desired point in time.
 
 Kept in sync using **asynchronous replication**
 
+RDS Read-Replicas are read only replicas of an RDS instance.
+
 It is written fully to the primary and standby instance first.
 Once its stored on disk, it is then pushed to the replica.
 This means there could be a small lag.
 These can be created in the same region or a different region.
 This is known as **cross region replication**. AWS handles all of the
 encryption, configuration, and networking without intervention.
+
+![image](https://user-images.githubusercontent.com/52617475/145320825-8842e8b1-3400-4f87-9554-22638ad39377.png)
+
 
 #### 1.10.6.1. Why do these matter
 
@@ -4010,6 +4018,14 @@ encryption, configuration, and networking without intervention.
 - Promotion cannot be reversed.
 - RRs are for reads only until promoted.
 - Offers global availability improvements and global resilience.
+
+### 1.10.7. Amazon RDS security
+
+![image](https://user-images.githubusercontent.com/52617475/145321926-99efedf1-c03d-4155-9c26-82e94ca80dad.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/145322234-2965a4a4-5ca4-463f-88fe-6402bf63452a.png)
+
 
 ### 1.10.7. Enhanced Monitoring
 
@@ -4045,7 +4061,10 @@ happens at the storage level. No extra resources are consumed during
 replication.
 
 By default the primary instance is the only one who can write. The replicas
-will have read access.
+will only have read access.
+
+![image](https://user-images.githubusercontent.com/52617475/145457952-a75a4031-1ef2-41cb-a821-bea692c6e515.png)
+
 
 Aurora automatically detect hardware failures on the shared storage. If there
 is a failure, it immediately repairs that area of disk and
@@ -4082,6 +4101,9 @@ Minimum endpoints
   - Will load balance across all available replicas for read operations.
   - Additional replicas which are used for reads will be load balanced
   automatically.
+  
+  ![image](https://user-images.githubusercontent.com/52617475/145459844-3a7ba5b8-b1b0-4944-99fc-755dc47f2ed8.png)
+
 
 #### 1.10.8.2. Costs
 
@@ -4089,7 +4111,7 @@ Minimum endpoints
 - Aurora doesn't support micro instances
 - Beyond RDS singleAZ (micro) Aurora provides best value.
 - Compute is billed per second with a 10 minute minimum.
-- Storage is billed using the high watermark for the lifetime using GB-Month.
+- Storage is billed using the high watermark (max amount of storage used for cluster) for the lifetime using GB-Month.
   - Additional IO cost per request made to the cluster shared storage.
 - 100% DB size in backups are included for free.
   - 100 GB cluster will have 100 GB of storage for backups.
@@ -4132,6 +4154,9 @@ they are actually communicating with the proxy fleet. The proxy fleet
 brokers an application with the ACU and ensures you can scale in and out
 without worrying about usage. This is managed by AWS on your behalf.
 
+![image](https://user-images.githubusercontent.com/52617475/145495610-9096dd80-6118-49aa-875f-9f8b6c628fcd.png)
+
+
 #### 1.10.9.1. Aurora Serverless - Use Cases
 
 - Infrequently used applications.
@@ -4140,7 +4165,7 @@ without worrying about usage. This is managed by AWS on your behalf.
 - New applications with unpredictable workloads.
 - Great for variable workloads such as sales cycles.
 It can scale in and out based on demand
-- Good for development and test databases, can scale back when not needed.
+- Good for development and test databases, can scale back when not needed. When not in use, you only pay for storage.
 - Great for multi-tenant applications.
   - Billing a user a set dollar amount per month per license.
   - If your incoming load is directly tied to more revenue this makes sense.
