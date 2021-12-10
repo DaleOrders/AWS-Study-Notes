@@ -56,7 +56,7 @@ standard protocols and methods.
 The *Infrastructure Stack* or *Application Stack* contains multiple components
 that make up the total service. There are parts that **you** manage as well
 as portions the **vendor** manages. The portions the vendor manages and you
-are charged for is the **unit of consumption**
+are charged for is the **unit of consumption** which are represented in green.
 
 1. On-Premises: The individual manages all components from data to facilities.
 Provides the most flexibility, but also most IT intensive.
@@ -69,7 +69,7 @@ used to the vendor. Lose some flexibility, but big risk reductions.
 unit of consumption is the runtime environment. You manage the application
 and the data, but the vendor manges all else.
 5. Software as a Service (SaaS): You consume the software as a service. This
-can be Outlook or Netflix. There are almost no risks or additional costs, but
+can be Gmail or Netflix. There are almost no risks or additional costs, but
 very little control.
 
 There are additional services such as *Function as a Service*,
@@ -88,7 +88,8 @@ There are additional services such as *Function as a Service*,
 
 ### 1.2.1. Public vs Private Services
 
-![image](https://user-images.githubusercontent.com/52617475/144756201-8886d759-0526-4953-a375-64d6f4b8c841.png)
+![image](https://user-images.githubusercontent.com/52617475/145607482-a00c050c-dc52-4f92-b18e-b3a945267f72.png)
+
 
 
 Refers to the networking only, not permissions.
@@ -153,6 +154,8 @@ Some services are global such as IAM
 
 ### 1.2.3. Regions and AZs
 
+![image](https://user-images.githubusercontent.com/52617475/145607901-91db6552-a94b-46bd-9109-141f95f8e41a.png)
+
 Region Name: Asia Pacific (Sydney)
 Region Code: ap-southeast-2
 
@@ -164,6 +167,9 @@ AZs are connected to each other with high speed redundant networks.
 
 #### 1.2.3.1. Service Resilience
 
+![image](https://user-images.githubusercontent.com/52617475/145608022-ca673d74-971c-4286-a560-a950136ac4e0.png)
+
+
 1. Globally Resilient: IAM or Route 53. No way for them to go down. Data is
 replicated throughout multiple regions.
 2. Region Resilient: Operate as separate services in each region. Generally
@@ -174,8 +180,6 @@ not be relied on.
 
 ### 1.2.4. AWS Default VPC
 
-![image](https://user-images.githubusercontent.com/52617475/144756287-ebb7e34b-3a42-459c-9a27-371974d08b7c.png)
-
 VPC is a virtual network inside of AWS.
 A VPC is within 1 account and 1 region which makes it regionally resilient.
 A VPC is private and isolated until decided otherwise.
@@ -185,6 +189,8 @@ Can have many custom VPCs which are all private
 by default.
 
 #### 1.2.4.1. Default VPC Facts
+
+![image](https://user-images.githubusercontent.com/52617475/145608106-da89b953-5861-43f6-b76c-088e00e836b8.png)
 
 VPC CIDR - defines start and end ranges of the VPC.
 IP CIDR of a default VPC is always: **172.31.0.0/16**
@@ -240,7 +246,10 @@ Pricing based on the four categories:
 
 Extra cost for any commercial software the instance deploys with.
 
+
 #### 1.2.5.2. Running State
+
+![image](https://user-images.githubusercontent.com/52617475/145608746-2e22040a-59c0-4b7e-8edc-298177592da6.png)
 
 Charged for all four categories.
 
@@ -297,6 +306,9 @@ AMI Types:
 - Windows using RDP (Remote Desktop Protocol), Port 3389
 - Linux SSH protocol, Port 22
 
+![image](https://user-images.githubusercontent.com/52617475/145609057-58a1eee8-5fa4-4e2c-9075-e06536d075bb.png)
+
+
 Login to the instance using an SSH key pair.
 Private Key - Stored on local machine to initiate connection.
 Public Key - AWS places this key on the instance.
@@ -316,6 +328,9 @@ You can't mount an S3 Bucket.
 
 #### 1.2.6.1. Objects
 
+![image](https://user-images.githubusercontent.com/52617475/145609389-79816565-c613-427c-b1fc-37a5a14d0854.png)
+
+
 Can be thought of a file. Two main components:
 
 - Object Key: File name in a bucket
@@ -330,6 +345,8 @@ Other components:
 - Sub resources
 
 #### 1.2.6.2. Buckets
+
+![image](https://user-images.githubusercontent.com/52617475/145609291-0b83fbc2-3f4b-4633-b48f-0dc912bc43f1.png)
 
 - Created in a specific AWS Region.
 - Data has a primary home region. Will not leave this region unless told.
@@ -346,6 +363,9 @@ present this as a folder. In actuality this is not true, there are no folders. E
 CloudFormation templates can be used to create, update, modify, and delete infrastructure.
 
 They can be written in YAML or JSON. An example is provided below.
+
+![image](https://user-images.githubusercontent.com/52617475/145609527-1d79abca-56a6-4820-880a-1d94289047d8.png)
+
 
 ```YAML
 ## This is not mandatory unless a description is added
@@ -406,7 +426,7 @@ Resources:
 Once a template is created, AWS will make a stack. This is a living and active
 representation of a template. One template can create infinite amount of stacks.
 
-![image](https://user-images.githubusercontent.com/52617475/144756591-d2f439d7-7d50-4a33-9d03-64b1b62d8b8f.png)
+![image](https://user-images.githubusercontent.com/52617475/145609770-be4fd1bd-8481-47f1-8540-3e4a647a1825.png)
 
 
 For any **Logical Resources** in the stack,
@@ -416,9 +436,15 @@ It is cloud formations job to keep the logical and physical resources in sync.
 
 A template can be updated and then used to update the same stack.
 
+![image](https://user-images.githubusercontent.com/52617475/145609874-3dfcc704-af60-4608-9e42-f3d61d8e0899.png)
+
+
 ### 1.2.9. CloudWatch Basics
 
 Collects and manages operational data on your behalf.
+
+![image](https://user-images.githubusercontent.com/52617475/145610179-10a86cb0-2d58-44a3-b1f2-187eb76a6e8f.png)
+
 
 Three products in one
 
@@ -449,8 +475,14 @@ Anytime CPU Utilization is reported, the **datapoint** will report:
 - Timestamp = 2019-12-03
 - Value = 98.3
 
+![image](https://user-images.githubusercontent.com/52617475/145610508-169e7a51-08f5-4f3a-a540-cea076ab3273.png)
+
+
 **Dimensions** could be used to get metrics for a specific instance or type of instance, among others. They separate data points for different **things** or
 **perspectives** within the same metric.
+
+![image](https://user-images.githubusercontent.com/52617475/145610354-1b0eb91c-0d01-431c-9699-25141a26d204.png)
+
 
 #### 1.2.9.3. Alarms
 
@@ -459,7 +491,7 @@ Third state can be insufficient data state. Not a problem, just wait.
 
 ### 1.2.10. Shared Responsibility Model
 
-![image](https://user-images.githubusercontent.com/52617475/144756749-b983c7a1-3698-4b02-9740-f95d918ace43.png)
+![image](https://user-images.githubusercontent.com/52617475/145610633-b3eaad31-aa62-4605-9afa-ad64a932107d.png)
 
 
 AWS: Responsible for security **OF** the cloud
@@ -539,7 +571,8 @@ Find the Nameserver which hosts a particular zone file.
 Query that Nameserver for a record that is in that zone file.
 It then passes the information back to the DNS client.
 
-![image](https://user-images.githubusercontent.com/52617475/144756858-35114d69-f188-4f9e-9399-6dea4b0b7be9.png)
+![image](https://user-images.githubusercontent.com/52617475/145611553-dc6de9bb-6534-45cc-b76e-df33b9c49f41.png)
+
 
 
 #### 1.2.12.1. DNS Root
@@ -566,7 +599,7 @@ The Root Zone is organized by IANA (Internet Assigned Numbers Authority).
 Their job is to manage the contents of the root zone. IANA is in charge
 of the DNS system because they control the root zone.
 
-![image](https://user-images.githubusercontent.com/52617475/144756939-517e953c-93f8-416c-83b2-03a310ef2225.png)
+![image](https://user-images.githubusercontent.com/52617475/145611927-bfa6ec66-db12-47f0-89e8-cfe57a07117b.png)
 
 
 #### 1.2.12.2. DNS Hierarchy
@@ -600,6 +633,8 @@ allowing domain registration
   - Can operate with failure in one or more regions
 
 #### 1.2.13.1. Register Domains
+
+![image](https://user-images.githubusercontent.com/52617475/145612545-bc72bc84-52ab-45eb-86ee-6d9d81d303a9.png)
 
 Has relationships with all major registries (registrar)
 
