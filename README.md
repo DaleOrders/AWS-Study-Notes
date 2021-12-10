@@ -1350,6 +1350,9 @@ The key is handed from one entity to another before the data.
 This is difficult because the key needs to be transferred securely.
 If the data is time sensitive, the key needs to be arranged beforehand.
 
+![image](https://user-images.githubusercontent.com/52617475/145620781-91192378-c797-4fff-a37b-f25a747e4ba7.png)
+
+
 #### 1.4.5.5. Asymmetric Encryption
 
 - public key: cannot decrypt data but can generate ciphertext
@@ -1359,16 +1362,14 @@ The public key is uploaded to cloud storage.
 The data is encrypted and sent back to the original entity.
 The private key can decrypt the data.
 
-![image](https://user-images.githubusercontent.com/52617475/144759350-7045e3f7-b58f-4da8-bc5b-3d475022bdbf.png)
-
+![image](https://user-images.githubusercontent.com/52617475/145620837-78cda46a-57cd-45e6-8e88-b6177ab446f6.png)
 
 This is secure because stolen public keys can only encrypt data.
 Private keys must be handled securely.
 
 #### 1.4.5.6. Signing
 
-![image](https://user-images.githubusercontent.com/52617475/144759413-9a490983-41e0-41ae-b9bc-3c921028b6fb.png)
-
+![image](https://user-images.githubusercontent.com/52617475/145621005-0f18f13d-9e21-4119-9391-df193853c46e.png)
 
 Encryption by itself does not prove who encrypted the data.
 
@@ -1388,7 +1389,7 @@ One party would take another party's public key and encrypt some data to create
 ciphertext. That ciphertext can be hidden in another file so long as both
 parties know how the data will be hidden.
 
-![image](https://user-images.githubusercontent.com/52617475/144759461-074f50c5-1826-4b6e-87d9-d1a2010635a4.png)
+![image](https://user-images.githubusercontent.com/52617475/145621212-2ef94b1a-d263-4a29-a926-ff6f9989a39f.png)
 
 
 ### 1.4.6. Key Management Service (KMS)
@@ -1404,9 +1405,6 @@ parties know how the data will be hidden.
 - Keys use **Federal Information Processing Standard (FIPS) 140-2 (L2)** security standard.
   - Some features are compliant with Level 3.
   - All features are compliant with Level 2.
-
-![image](https://user-images.githubusercontent.com/52617475/144759579-0f04055c-611f-4387-96e9-1b9fe6027ab2.png)
-
 
 
 #### 1.4.6.1. CMKs - Customer Master Keys
@@ -1425,6 +1423,8 @@ It is logical and contains
 - Key Policy: a type of resource policy
 - Description
 - State of the Key: active or not
+
+![image](https://user-images.githubusercontent.com/52617475/145621359-f3e4d7c3-d106-4c53-9c21-913fe0677d20.png)
 
 #### 1.4.6.2. Data Encryption Key (DEK)
 
@@ -1526,6 +1526,9 @@ Two main methods of encryption S3 is capable of supporting.
 Both types are encryption at rest. Data sent from a user to S3 is automatically
 encrypted in transit outside of these methods.
 
+![image](https://user-images.githubusercontent.com/52617475/145621622-8f458611-3a49-442e-b4e3-df9282cf8cce.png)
+
+
 Client-Side encryption
 
 - Objects being encrypted by the client before they leave.
@@ -1541,7 +1544,6 @@ Server-Side encryption
 - After S3 sees the data, it is then encrypted.
 - AWS will handle some or all of these processes.
 
-![image](https://user-images.githubusercontent.com/52617475/144759689-044f3cc0-a327-4232-bcfc-754c3bad7958.png)
 
 #### 1.4.8.1. SSE-C (Server-side encryption with customer provided keys)
 
@@ -1637,8 +1639,7 @@ Objects in S3 are stored in a specific region.
 
 #### 1.4.9.1. S3 Standard
 
-![image](https://user-images.githubusercontent.com/52617475/144760086-f8856414-db68-494a-8158-5a696efeb679.png)
-
+![image](https://user-images.githubusercontent.com/52617475/145622102-898ebc31-5aaf-4889-88e8-fc680f72bfd2.png)
 
 - Default AWS storage class that's used in S3, should be user default as well.
 - S3 Standard is region resilient, and can tolerate the failure of an AZ.
@@ -1653,7 +1654,7 @@ All of the other storage classes trade some of these compromises for another.
 
 #### 1.4.9.2. S3 Standard-IA
 
-![image](https://user-images.githubusercontent.com/52617475/144760111-e06a6e9b-60e7-4bc6-a92e-077d9d85f987.png)
+![image](https://user-images.githubusercontent.com/52617475/145622324-d14c7a41-ea78-40a9-b0af-f8cb88184a3a.png)
 
 
 - Designed for less frequent rapid access when it is needed.
@@ -1671,7 +1672,7 @@ disaster recovery files. The requirement for data to be safe is most important.
 
 #### 1.4.9.3. One Zone-IA
 
-![image](https://user-images.githubusercontent.com/52617475/144760129-dc6544f7-eed6-4205-9b01-09b23a374167.png)
+![image](https://user-images.githubusercontent.com/52617475/145622393-98ca22c1-4724-47fd-95c0-31a963c32652.png)
 
 - Designed for data that is accessed less frequently but needed quickly.
 - 80% of the base cost of Standard-IA.
@@ -1686,7 +1687,7 @@ place to store the output from another data set.
 
 #### 1.4.9.4. S3 Glacier
 
-![image](https://user-images.githubusercontent.com/52617475/144760184-5d504107-1122-453e-aadb-f2ba0ceec9ca.png)
+![image](https://user-images.githubusercontent.com/52617475/145622529-c06b1af6-a3e9-48f1-9bb1-031c68ef94d3.png)
 
 - No immediate access to objects, retrieval in minutes or hours.
 - Make a request to access objects then after a duration, you get access.
@@ -1707,7 +1708,7 @@ Retrieval methods:
 
 #### 1.4.9.5. S3 Glacier Deep Archive
 
-![image](https://user-images.githubusercontent.com/52617475/144760202-3506b581-ae12-4857-a1fe-11b9fe656341.png)
+![image](https://user-images.githubusercontent.com/52617475/145622645-978a68a3-f5af-40eb-af6b-554d98005638.png)
 
 - Designed for long term backups and as a tape-drive replacement.
 - 4.3% of the base cost of S3 standard
@@ -1717,7 +1718,7 @@ Retrieval methods:
 
 #### 1.4.9.6. S3 Intelligent-Tiering
 
-![image](https://user-images.githubusercontent.com/52617475/144760216-bb4a96ce-7a97-4bd2-904f-f4394b1c6d5c.png)
+![image](https://user-images.githubusercontent.com/52617475/145622779-9d2de898-446c-4363-92d7-03f44fa0c5f0.png)
 
 - Combination of standard and standard IA.
 - Uses automation to remove overhead of moving objects.
