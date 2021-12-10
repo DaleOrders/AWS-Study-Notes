@@ -676,6 +676,8 @@ One common usage is to prove domain ownership.
 
 #### 1.2.14.1. TTL - Time To Live
 
+![image](https://user-images.githubusercontent.com/52617475/145614448-8c871e3f-81fa-4f40-b2f2-75347650c522.png)
+
 This is a numeric setting on DNS records in seconds.
 Allows the admin to specify how long the query can be stored
 at the resolver server.
@@ -703,6 +705,9 @@ Once authenticated, that identity is known as an **authenticated identity**
 
 #### 1.3.1.1. Statement Components
 
+![image](https://user-images.githubusercontent.com/52617475/145615509-092269c5-a74f-43d3-a48b-220b9cb93f11.png)
+
+
 - Statement ID (SID): Optional field that should help describe
   - The resource you're interacting
   - The actions you're trying to perform
@@ -716,7 +721,8 @@ Once authenticated, that identity is known as an **authenticated identity**
 
 #### 1.3.1.2. Priority Level
 
-![image](https://user-images.githubusercontent.com/52617475/144757390-e6828280-b8bb-48db-a6d3-2050d01e96c8.png)
+![image](https://user-images.githubusercontent.com/52617475/145614623-43637e44-225e-462b-8b71-755131cad8e7.png)
+
 
 
 - Explicit Deny: Denies access to a particular resource cannot be overruled.
@@ -727,6 +733,9 @@ Once authenticated, that identity is known as an **authenticated identity**
 
 - Inline Policy: grants access and assigned on each accounts individually.
 - Managed Policy (best practice): one policy is applied to all users at once.
+
+![image](https://user-images.githubusercontent.com/52617475/145615605-9d1c5f8a-06d3-4905-b13c-9069c4f50047.png)
+
 
 ### 1.3.2. IAM Users
 
@@ -748,6 +757,9 @@ There are two ways to authenticate:
 - 0, 1 or at most 2 Access Keys (CLI)
 
 Once the **Principal** has authenticated, it becomes an **authenticated identity**
+
+![image](https://user-images.githubusercontent.com/52617475/145615744-0a9f1207-0e17-4d8f-89ac-956b706c08b9.png)
+
 
 #### 1.3.2.1. Amazon Resource Name (ARN)
 
@@ -788,7 +800,7 @@ These two ARNs do not overlap
 
 ### 1.3.3. IAM Groups
 
-![image](https://user-images.githubusercontent.com/52617475/144757465-c71a42f0-07f3-4313-ba38-73673d0ca402.png)
+![image](https://user-images.githubusercontent.com/52617475/145615992-886dfa51-426d-4acd-8708-9a85aadcb15b.png)
 
 
 Containers for users. **You cannot login to IAM groups** They have no
@@ -821,6 +833,8 @@ Groups are used to allow permissions to be assigned to IAM users.
 
 ### 1.3.4. IAM Roles
 
+![image](https://user-images.githubusercontent.com/52617475/145616150-01222378-3deb-4044-bda4-d882cd8cb904.png)
+
 A single thing that uses an identity is an IAM User. It can be a person, application or service, but it must just be one thing.
 
 IAM Roles are also identities that are used by large groups of individuals.
@@ -849,6 +863,9 @@ Every time the **Temporary Security Credentials** are used, the access
 is checked against the **Permissions Policy**. If you change the policy, the
 permissions of the temp credentials also change.
 
+![image](https://user-images.githubusercontent.com/52617475/145616305-a20cca97-a9b1-454f-8e4d-1f1fa10b2ca4.png)
+
+
 Roles are real identities and can be referenced within resource policies.
 
 Secure Token Service (sts:AssumeRole) this is what generates the temporary
@@ -856,8 +873,7 @@ security credentials (TSC).
 
 ### 1.3.5. When to use IAM Roles
 
-![image](https://user-images.githubusercontent.com/52617475/144757575-bb456e12-669b-45c1-9e72-af86888c9118.png)
-
+![image](https://user-images.githubusercontent.com/52617475/145616435-808075b8-81b1-4586-b7a2-4c0ef7ac4944.png)
 
 Lambda Execution Role.
 For a given lambda function, you cannot determine the number of principals
@@ -881,7 +897,7 @@ its really needed.
 
 #### 1.3.5.2. Adding AWS into existing corp environment
 
-![image](https://user-images.githubusercontent.com/52617475/144757599-8ef14771-82ce-4ce7-928a-a16b531f3962.png)
+![image](https://user-images.githubusercontent.com/52617475/145616572-5f8e48db-4bd5-4f4e-ad2a-cbd32cffbe02.png)
 
 
 You may have an existing identity provider you are trying to allow access to.
@@ -894,7 +910,7 @@ by one of the active directories.
 
 #### 1.3.5.3. Making an app with 1,000,000 users
 
-![image](https://user-images.githubusercontent.com/52617475/144757659-aaddc435-74ce-4385-b682-511dd04aa15d.png)
+![image](https://user-images.githubusercontent.com/52617475/145616679-2e7147ab-7498-4066-8db1-73437fab62f9.png)
 
 
 **Web Identity Federation** uses IAM roles to allow broader access.
@@ -917,14 +933,17 @@ as well as individual payment methods.
 If you have more than 5 to 10 accounts, you would want to use an org.
 
 Take a single AWS account **standard AWS account** and create an org.
-The standard AWS account then becomes the **master account**.
+The standard AWS account then becomes the **management account**.
 The master account can invite other existing standard AWS accounts. They will
 need to approve their joining to the org.
 
 When standard AWS accounts become part of the org, they
 become **member accounts**.
-Organizations can only have one **master account** and zero or more
-**member accounts**
+Organizations can only have one **management account** and zero or more
+**member accounts**. Good practice is to consolidate billing of all the accounts under the management account, but otherwise not use it. Log into one account and role switch into the other accounts.
+
+![image](https://user-images.githubusercontent.com/52617475/145617277-228fd627-4aa7-4240-8d90-6e35a08e56a9.png)
+
 
 #### 1.3.6.1. Organization Root
 
@@ -966,7 +985,11 @@ The master account cannot be restricted by SCPs which means this
 should not be used because it is a security risk.
 
 SCPs limit what the account, **including root user** can do inside that account.
-They don't grant permissions themselves, just act as a barrier.
+They don't grant permissions themselves, just act as a barrier. For access to a service both IAM and SCP must permit use.
+
+![image](https://user-images.githubusercontent.com/52617475/145617993-e0568aa7-6625-4e91-93ad-b8528de21382.png)
+
+
 
 #### 1.3.7.1. Allow List vs Deny List
 
@@ -988,7 +1011,7 @@ by themselves.
 ```
 
 SCPs by themselves don't grant permissions. When SCPs are enabled,
-there is an implicit deny.
+there is an implicit allow.
 
 You must then add any services you want to Deny such as `DenyS3`
 
@@ -1044,8 +1067,7 @@ Can generate metrics based on logs **metric filter**
 
 #### 1.3.8.1. Architecture of CloudWatch Logs
 
-![image](https://user-images.githubusercontent.com/52617475/144757892-edc41881-49d7-4fd6-bbb9-896a4e5adfd5.png)
-
+![image](https://user-images.githubusercontent.com/52617475/145618084-ba433aa7-44f4-4331-a74b-583e2dc6a0ae.png)
 
 It is a regional service `us-east-1`
 
@@ -1082,7 +1104,7 @@ enabled by default and must be enabled for that trail.
 
 #### 1.3.9.1. CloudTrail Trail
 
-![image](https://user-images.githubusercontent.com/52617475/144758082-f2c6b6b3-aeb1-4f78-aa44-604c2ab1e311.png)
+![image](https://user-images.githubusercontent.com/52617475/145618962-65f45101-d8da-4e3c-8192-44a475e716ec.png)
 
 
 Logs events for the AWS region it is created in. It is a regional service.
@@ -1253,7 +1275,7 @@ the item.
 To delete an object, you must delete all the versions of that object
 using their version marker.
 
-![image](https://user-images.githubusercontent.com/52617475/144759165-cd471912-cdc1-416a-a272-476cf39a8a81.png)
+![image](https://user-images.githubusercontent.com/52617475/145619519-cf619176-bb01-45df-b982-503910adb67c.png)
 
 
 #### 1.4.3.1. MFA Delete
@@ -1296,7 +1318,7 @@ S3 Accelerated Transfer
 
 ### 1.4.5. Encryption 101
 
-![image](https://user-images.githubusercontent.com/52617475/144759212-b5da0e05-73ba-48e9-a7e8-30950492189d.png)
+![image](https://user-images.githubusercontent.com/52617475/145619807-45409e09-3140-48bf-98f2-6472d9f268b6.png)
 
 
 #### 1.4.5.1. Encryption at Rest
@@ -1319,7 +1341,7 @@ find and access the base storage device, they can't do anything with it.
 - key: a password
 - ciphertext: encrypted data generated by an algorithm from plaintext and a key
 
-![image](https://user-images.githubusercontent.com/52617475/144759242-64a45afb-3ad5-4e20-9975-92b96477b567.png)
+![image](https://user-images.githubusercontent.com/52617475/145619962-46ce8814-4b10-4e03-848b-ed653646f584.png)
 
 
 #### 1.4.5.4. Symmetric Encryption
