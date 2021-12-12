@@ -502,6 +502,8 @@ Customer: Responsible for security **IN** the cloud
 
 #### 1.2.11.1. High Availability (HA)
 
+![image](https://user-images.githubusercontent.com/52617475/145710246-67b9d2a0-712c-48a6-b43d-5412c9c75bd8.png)
+
 - Aims to **ensure** an agreed level of operational **performance**, usually
 **uptime**, for a **higher than normal period**
 - Instead of diagnosing the issue, if you have a process ready to replace it, it can be fixed quickly and probably in an automated way.
@@ -513,6 +515,8 @@ Customer: Responsible for security **IN** the cloud
   - 99.999 (Five 9's) = 5.26 minutes downtime per year.
 
 #### 1.2.11.2. Fault-Tolerance (FT)
+
+![image](https://user-images.githubusercontent.com/52617475/145710256-ef0271a1-fb37-4425-9ada-49bc527333c7.png)
 
 - System can **continue operating properly**
 in the event of the **failure of some** (one or more faults within) of its
@@ -530,6 +534,8 @@ This type of system cannot only be highly available, even a movement of
 interruption is deadly.
 
 #### 1.2.11.3. Disaster Recovery (DR)
+
+![image](https://user-images.githubusercontent.com/52617475/145710299-42ba7699-3a4b-4fa4-be52-9610026351ae.png)
 
 - Set of policies, tools and procedures to **enable the recovery** or
 **continuation** of **vital** technology infrastructure and systems
@@ -763,6 +769,9 @@ Once the **Principal** has authenticated, it becomes an **authenticated identity
 
 #### 1.3.2.1. Amazon Resource Name (ARN)
 
+![image](https://user-images.githubusercontent.com/52617475/145710494-308531a3-9fa2-4eee-b3ed-fc096d18de90.png)
+
+
 Uniquely identify resources within any AWS accounts.
 
 This allows you to refer to a single or group of resources.
@@ -922,6 +931,9 @@ No AWS Credentials are stored on the application.
 Can scale quickly and beyond.
 
 #### 1.3.5.4. Cross Account Access
+
+![image](https://user-images.githubusercontent.com/52617475/145710538-e1895c76-6572-40c2-8673-634563af2685.png)
+
 
 You can use a role in the partner account and use that to upload objects
 to AWS resources.
@@ -1292,11 +1304,15 @@ it generates. These are concatenated and passed with any API calls.
 
 Single PUT Upload
 
+![image](https://user-images.githubusercontent.com/52617475/145710674-cf5e2e6c-ba11-4fa4-abc2-3cb7a5890ff5.png)
+
 - Objects uploaded to S3 are sent as a single stream by default.
 - If the stream fails, the upload fails and requires a restart of the transfer.
 - Single PUT upload up to 5GB
 
 Multipart Upload
+
+![image](https://user-images.githubusercontent.com/52617475/145710665-8cc567f0-d4d9-4e42-bd10-b500667f0798.png)
 
 - Data is broken up into smaller parts.
 - The minimum data size is 100 MB.
@@ -1308,6 +1324,12 @@ Multipart Upload
 - Improves transfer rate to be the speed of all parts.
 
 S3 Accelerated Transfer
+
+![image](https://user-images.githubusercontent.com/52617475/145710621-59cff8bf-15c8-46ae-8f13-301a056a1cd0.png)
+
+
+![image](https://user-images.githubusercontent.com/52617475/145710636-75006734-e7b6-4afe-bd5b-c10745a8b927.png)
+
 
 - Off by default.
 - Uses the network of AWS edge locations to speed up transfer.
@@ -1718,7 +1740,7 @@ Retrieval methods:
 
 #### 1.4.9.6. S3 Intelligent-Tiering
 
-![image](https://user-images.githubusercontent.com/52617475/145622779-9d2de898-446c-4363-92d7-03f44fa0c5f0.png)
+<img width="1438" alt="S3StorageClasses-S3-IntelligentTiering" src="https://user-images.githubusercontent.com/52617475/145711123-3199fc0e-5ac6-43f4-8c62-819fd7e3d3ed.png">
 
 - Combination of standard and standard IA.
 - Uses automation to remove overhead of moving objects.
@@ -1742,7 +1764,7 @@ Change the storage class over time such as:
 
 Objects must flow downwards, they can't flow in the reverse direction.
 
-![image](https://user-images.githubusercontent.com/52617475/144760354-22089f84-f862-4d8a-b771-43655382cd68.png)
+<img width="1439" alt="S3StorageClasses-Lifecycle Configuration" src="https://user-images.githubusercontent.com/52617475/145711137-752e0357-19ae-4c43-b968-534e9e063a4c.png">
 
 
 #### 1.4.10.2. Expiration Actions
@@ -1764,7 +1786,7 @@ bucket in the **same** AWS region.
 Architecture for both is similar, only difference is if both buckets are
 in the same account or different accounts.
 
-![image](https://user-images.githubusercontent.com/52617475/144761749-f8b76d32-2080-4ba3-b0e6-432f3eb1c38f.png)
+![image](https://user-images.githubusercontent.com/52617475/145711174-3c57e40e-7c5d-4978-bb69-eb15e26bdccc.png)
 
 
 The replication configuration is applied to the source bucket and configures
@@ -1821,7 +1843,7 @@ CRR - Latency reduction
 
 ### 1.4.12. S3 Presigned URL
 
-![image](https://user-images.githubusercontent.com/52617475/144761815-1f519184-790d-4e5d-a38a-5d262f05431f.png)
+![image](https://user-images.githubusercontent.com/52617475/145711239-23b0e8dd-52fe-4176-9c4d-1c47a0b529ab.png)
 
 A way to give another person or application access to a object inside an S3
 bucket using your credentials in a safe way.
@@ -1839,6 +1861,9 @@ it the details that IAM admin provided. It will be configured to expire at
 a certain date and time as requested by the IAM admin user.
 
 #### 1.4.12.1. S3 Presigned URL Exam PowerUp
+
+![image](https://user-images.githubusercontent.com/52617475/145711282-fad45aea-f0c3-41d7-ad39-67ae52c12cd7.png)
+
 
 - You can create a presigned URL for an object you have do not have access to.
 The object will not allow access because you do not have access.
@@ -1860,7 +1885,8 @@ S3 and Glacier select lets you use SQL-like statements to select part of the
 object which is returned in a filtered way.
 The filtering happens at the S3 service itself saving time and data.
 
-![image](https://user-images.githubusercontent.com/52617475/144762311-149bc41a-4f49-4355-b1db-025c3a68ee78.png)
+![image](https://user-images.githubusercontent.com/52617475/145711315-f7201687-cd4f-47cf-91bd-ac2e94fbb857.png)
+
 
 
 ---
