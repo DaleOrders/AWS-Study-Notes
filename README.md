@@ -4217,6 +4217,9 @@ in the clone or changed in the original after you make the clone.
 
 ### 1.10.9. Aurora Serverless
 
+![image](https://user-images.githubusercontent.com/52617475/146083492-6100f7f4-b18b-4e78-8f09-19d5d469c5c8.png)
+
+
 Provides a version of Aurora database product without managing the resources.
 You still create a cluster, but it uses ACUs or Aurora Capacity Units.
 
@@ -4237,8 +4240,6 @@ There is a shared proxy fleet. When a customer interacts with the data
 they are actually communicating with the proxy fleet. The proxy fleet
 brokers an application with the ACU and ensures you can scale in and out
 without worrying about usage. This is managed by AWS on your behalf.
-
-![image](https://user-images.githubusercontent.com/52617475/145495610-9096dd80-6118-49aa-875f-9f8b6c628fcd.png)
 
 
 #### 1.10.9.1. Aurora Serverless - Use Cases
