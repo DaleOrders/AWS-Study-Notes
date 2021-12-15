@@ -4546,6 +4546,8 @@ towards. Targets represents Lambda functions, EC2 instances, ECS containers.
 
 ### 1.12.3. Launch Configuration and Templates
 
+![image](https://user-images.githubusercontent.com/52617475/146274265-88e5abf6-42e0-4170-8758-dd8e014eed8d.png)
+
 They are documents which allow you to define the configuration of an EC2 instance in advance.
 
 They allow you to configure:
@@ -4564,10 +4566,12 @@ LTs can be used to save time when provisioning EC2 instances from the console UI
 
 ### 1.12.4. Autoscaling Groups
 
+![image](https://user-images.githubusercontent.com/52617475/146274711-04660ebc-1ca5-4125-afcf-25e10e45ef09.png)
+
 - Automatic scaling and self-healing for EC2
 - They make use of LCs or LTs to know what to provision.
-- Autoscaling group uses one LC or one version of a LT which it's linked with.
-- Three values to control
+- Autoscaling group uses one LC or one version of a LT which it's linked with (only one at a time).
+- Three values to control (often referred to in the format 1:2:4 which is min:cap:max)
   - minimum size
   - desired capacity
   - maximum size
@@ -4576,6 +4580,9 @@ Provision or terminate instances to keep at the desired level
 Scaling Policies can trigger this based on metrics.
 
 Autoscaling Groups will distribute EC2 instances to try and keep the AZs equal.
+
+![image](https://user-images.githubusercontent.com/52617475/146274808-aee88c15-b36f-4038-ac47-a378754478e9.png)
+
 
 #### 1.12.4.1. Scaling Policies
 
@@ -4586,7 +4593,7 @@ There are three types of scaling policies:
 2. Scheduled Scaling - useful for known periods of high or low usage. They are time based adjustments e.g. Sales Periods.
 3. Dynamic Scaling:
 
-- Simple: If CPU is above 50%, add one to capacity
+- Simple: If CPU is above 50%, add one to capacity, below 50% remove one.
 - Stepped: If CPU usage is above 50%, add one, if above 80% add three
 - Target: Desired aggregate CPU = 40%, ASG will achieve this
 
@@ -4594,9 +4601,13 @@ There are three types of scaling policies:
 scaling again. There is a minimum billable duration for an EC2 instance.
 Currently this is 300 seconds.
 
+![image](https://user-images.githubusercontent.com/52617475/146275515-16202a9e-9e8e-4f3a-be62-77ed93205b37.png)
+
 Self healing occurs when an instance has failed and AWS provisions a new
 instance in its place. This will fix most problems that are isolated to one
 instance.
+
+![image](https://user-images.githubusercontent.com/52617475/146276166-265d3ff9-db09-4b3f-9854-12856da044a7.png)
 
 AGS can use the load balancer health checks rather than EC2.
 ALB status checks can be much richer than EC2 checks because they can monitor
@@ -4607,6 +4618,9 @@ the status of HTTP and HTTPS requests. This makes them more application aware.
 - Think about implementing more and smaller instances to allow granularity.
 - Generally, for anything client-facing you should always use Auto Scaling Groups (ASG) with Application Load Balancers (ALB) with autoscaling because they allow you to provide elasticity by abstracting the user away from individual servers. Since, the customers will be connecting through an ALB, they don't have any visibility of individual servers.
 - ASG defines WHEN and WHERE; Launch Templates defines WHAT.
+
+![image](https://user-images.githubusercontent.com/52617475/146276375-dfd676d2-c8a0-479e-958a-a97f02f2c935.png)
+
 
 ### 1.12.5. Network Load Balancer (NLB)
 
