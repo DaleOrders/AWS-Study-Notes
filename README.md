@@ -4274,34 +4274,45 @@ layer and typically occurs within one second.
 
 ### 1.10.11. Aurora Multi-Master Writes
 
+![image](https://user-images.githubusercontent.com/52617475/146088868-69e6d537-3ac5-4445-b5f2-bff5f508deda.png)
+
 Allows an aurora cluster to have multiple instances capable of reads and writes.
 
 Single-master Mode
 
+![image](https://user-images.githubusercontent.com/52617475/146089081-11d17c87-ab75-4991-9f8a-2a079cd975fe.png)
+
 - one R/W and zero or more read only replicas
 - Cluster endpoint is normally used to write
-- Read endpoint is used for load balancing
+- Read endpoint is used for load balancing reads
+- if the primary cluster goes down, there is a slight interruption as the cluster endpoint moves to the read only replica.
+- Failover is quicker than RDS as each cluster shares storage.
 
 Aurora Multi-master has no endpoint or load balancing. An application
-can connect with one or both of the instances inside a multi-master
+can connect with one or all of the instances inside a multi-master
 cluster.
 
 When one of the R/W nodes receives a write request from the application, it
-immediately proposes that data be committed to all of the storage notes in that
+immediately proposes that data be committed to all of the storage nodes in that
 cluster. At this point, each node that makes up a cluster either confirms
 or rejects the proposed change. It will reject if this conflicts with something
 already in flight.
 
-The writing instance is looking for a bunch of nodes to agree. If the group
+The writing instance is looking for a bunch of nodes to agree (a quorum of nodes). If the group
 rejects it, it cancels the write in error. If it commits, it will replicate
 on all storage nodes in the cluster.
 
-This also ensures storage is updated on in-memory cache's of other nodes.
+This also ensures storage is updated on in-memory cache's of other instances.
 
 If a writer goes down in a multi-master cluster, the application will shift
 all future load over to a new writer with little if any disruption.
 
+![image](https://user-images.githubusercontent.com/52617475/146089381-e61900a9-1b99-4920-ba7a-21d87d6fce73.png)
+
+
 ### 1.10.12. Database Migration Service (DMS)
+
+![image](https://user-images.githubusercontent.com/52617475/146092291-90d84d26-7993-45f1-a5f6-9b073b7403d9.png)
 
 A managed database migration service.
 Starts with a replication instance which runs on top of an EC2 instance.
@@ -4319,12 +4330,22 @@ take several days.
 
 Instead Full Load + CDC allows for a full load transfer to occur and it
 monitors any changes that happens during this time. Any of the captured
-changes can be applied to the target.
+changes can be applied to the target after full load migration. After transfer has occured, you can point your application at the new target database.
 
 CDC only migration is good if you have a vendor solution that works quickly
 and only changes need to be captured.
 
-Schema Conversion Tool or SCT can perform conversions between database types.
+Schema Conversion Tool or SCT can perform conversions between database types. It is not used for databases of the same type (On-premises MySQL to RDS MySQL).
+
+DMS can us snowball for large database migrations (multi-TB)
+- Step 1: Use SCT to extract data locally and move to a snowball device.
+- Step 2: Ship the device back to AWS. They load onto an S3 bucket.
+- Step 3: DMS migrates from S3 into the target store.
+- Step 4: Change Data Capture (CDC) can capture changes, and via S3 intermediary they are also written to the target database. 
+
+This process uses SCT because you are converting the data engine into a generic file when you store it on a snowball device. 
+
+DMS is the default service used to migrate databases.
 
 ---
 
@@ -4381,8 +4402,54 @@ You can use hybrid networking to connect to the same mount targets.
 
 ## 1.12. HA-and-Scaling
 
+### 1.12.1. Regional and Global AWS Architecture
+
+![image](https://user-images.githubusercontent.com/52617475/146117800-687c7e0b-bb60-4fd9-8726-1e0a691d6e11.png)
+
+Example: A user in Australia requests data stored in the US. Route53 provides DNS services, and cloudfront provides the CDN infrastructure. This is global instructure.
+
+Global Considerations
+  - Global Service Location and Service Discovery
+  - Content Delievery and Optimisation
+  - Global Health Checks and Failover
+
+
+![image](https://user-images.githubusercontent.com/52617475/146118104-95a5041c-eb48-4e25-8121-4dd538f672f3.png)
+
+Once the request enters the US, it relates to regional architecture and design.
+
+Regional Considerations
+  - Regional Entry point
+  - Scaling and Resilence
+  - Application services and components,
+
+The request enters via VPC or using public space AWS services. The request will generally enter the web tier, through an application load balancer or API Gateway. This acts as an entry point for regionally based applications.
+Compute tier includes EC2, Lambda and Container services which provide application functionality.
+The storage tier includes EBS, EFS and S3 (stores data which can be chached by cloudfront)
+DB tiers includes RDS, Aurora, DynamoDB and Redshift 
+Caching tiers includes Elastic-Cache and DAX. To improve performance, applications access the DB tier through the Caching layer. 
+App services include kinesis, step functions, SNS and SQS. 
+
+
 ### 1.12.1. Load Balancing Fundamentals
 
+![image](https://user-images.githubusercontent.com/52617475/146122542-40cc20e3-3857-43ac-8b1b-b66517c4722d.png)
+
+3 Types of load balancers (ELB) available in AWS.
+Split between v1(avoid/migrate) and v2(preferred)
+Application Load Balancer (ALB) -v2- HTTP/S, Websocket
+Network Load Balancer (NLB)- v2- TCP, TLS, UDP
+V2- faster, cheaper, supports target groups and rules.
+
+When you provision an ELB, you have to decide if you want to configure
+  -ipv4 or dual stack (ipv4 and ipv6)
+  - Availability zones the load balancer will use (1, and 1 only, subnet in 2 or more availability zones)
+  - Whether the Load Balancer should be internet facing or internal
+ 
+ 
+ Nodes are placed in the subnet, and DNS used to route to the node. Node can scale up or down, additional nodes can be provisioned in the event of failure.
+ 
+  
 Using one server is risky because that server can have performance issues
 or be completely unavailable, thus bringing down an application.
 
