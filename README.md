@@ -4593,9 +4593,14 @@ There are three types of scaling policies:
 2. Scheduled Scaling - useful for known periods of high or low usage. They are time based adjustments e.g. Sales Periods.
 3. Dynamic Scaling:
 
+![image](https://user-images.githubusercontent.com/52617475/146294932-7204e5a6-24da-41c5-a04b-6512907fd5a9.png)
+
 - Simple: If CPU is above 50%, add one to capacity, below 50% remove one.
-- Stepped: If CPU usage is above 50%, add one, if above 80% add three
-- Target: Desired aggregate CPU = 40%, ASG will achieve this
+
+![image](https://user-images.githubusercontent.com/52617475/146295359-a9dc9f82-f554-4ed5-b724-4cbaa95fed98.png)
+
+- Stepped: If CPU usage is above 50%, add one, if above 80% add three (recommended by AWS)
+- Target: Desired aggregate CPU = 40%, ASG will achieve this. Can also scale based on SQS (number of messages recieved)
 
 **Cooldown Period** is how long to wait at the end of a scaling action before
 scaling again. There is a minimum billable duration for an EC2 instance.
@@ -4621,6 +4626,19 @@ the status of HTTP and HTTPS requests. This makes them more application aware.
 
 ![image](https://user-images.githubusercontent.com/52617475/146276375-dfd676d2-c8a0-479e-958a-a97f02f2c935.png)
 
+### 1.12.5. ASG Lifecycle Hooks
+
+![image](https://user-images.githubusercontent.com/52617475/146311167-bd94836d-7500-4abf-bb31-e6d65925f782.png)
+
+Provides a waiting period in which custom actions can be performed before instance is provisioned (or terminated).
+
+### 1.12.5. ASG Health Check
+-EC2(default), ELB(can be enabled) & custom
+-EC2-Stopped, stopping, terminated, shutting down or impaired (not 2/2 status checks passed)=unhealthy
+-ELB- Healthy and passing ELB Health Checks
+Custom- instances marked healthy and unhealty by an external system.
+-Health check grace period (default 300s)- delay before health checks starts
+-If an ASG is provisioning and terminating instances in a continuous cycle it may be because the health check grace period is tpp short (application hasn't had enough time to launch bootstrap and be configured beofre the health check takes place).
 
 ### 1.12.5. Network Load Balancer (NLB)
 
@@ -4646,12 +4664,15 @@ that aren't HTTP or HTTPS.
 
 #### 1.12.6.1. Bridging - Default mode
 
+![image](https://user-images.githubusercontent.com/52617475/146314975-7aa8abca-369e-4227-914b-00a435e0b533.png)
+
+
 One or more clients makes one or more connections to a load balancer.
 The load balancer is configured so its **listener** uses HTTPS, SSL connections
 occur between the client and the load balancer.
 
 The load balancer then needs an SSL certificate that matches the domain name
-that the application uses. AWS has access to this certificate.
+that the application uses. AWS have some level of access to this certificate.
 If you need to be careful of where your certificates are stored, you may
 have a problem with this system.
 
@@ -4697,6 +4718,8 @@ required on the load balancer, this is not needed on the LB.
 Data is in plaintext form across AWS's network. Not a problem for most.
 
 #### 1.12.6.4. Connection Stickiness
+
+![image](https://user-images.githubusercontent.com/52617475/146315018-14b2f249-aa03-4871-b9c4-518013e9901f.png)
 
 If there is no stickiness, each time the customer logs on they will have
 a stateless experience. If the state is stored on a particular server,
