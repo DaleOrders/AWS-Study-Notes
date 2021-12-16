@@ -4448,15 +4448,17 @@ When you provision an ELB, you have to decide if you want to configure
   - Whether the Load Balancer should be internet facing or internal
  
  Nodes are placed in the subnet, and DNS used to route to the node. Node can scale up or down, additional nodes can be provisioned in the event of failure.
- 
+
+
+ Architectually the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled).
  ![image](https://user-images.githubusercontent.com/52617475/146166437-8ffd6799-9be0-4cf9-974a-5950bbaaf84b.png)
 
-Architectually the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled).
+
  
- 
+ - ELB(v2) on the right is must better as it can scale using the one load balancer (the v1 to the left would require additional Load balancers to scale).
  ![image](https://user-images.githubusercontent.com/52617475/146171451-1ffe3a8a-18c1-4162-9119-2badb7656c9b.png)
  
-- ELB(v2) on the right is must better as it can scale using the one load balancer (the v1 to the left would require additional Load balancers to scale).
+
   
 Using one server is risky because that server can have performance issues
 or be completely unavailable, thus bringing down an application.
@@ -4625,6 +4627,7 @@ Custom- instances marked healthy and unhealty by an external system.
   - minimum size
   - desired capacity
   - maximum size
+
 
 Provision or terminate instances to keep at the desired level
 Scaling Policies can trigger this based on metrics.
