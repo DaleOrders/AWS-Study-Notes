@@ -2823,6 +2823,8 @@ network interface and not the instance.
 
 #### 1.6.9.1. Elastic Network Interface (ENI)
 
+![image](https://user-images.githubusercontent.com/52617475/146155040-45dab9ff-7527-423a-8555-c77f74eb8599.png)
+
 Has these properties
 
 - MAC address
@@ -3106,12 +3108,12 @@ resources. This allows applications to run in their own isolated environments.
 
 #### 1.7.1.1. Image Anatomy
 
+![Anatomy of a docker image](Learning-Aids/09-Containers-and-ECS/ImageAnatomy.png)
+
 A Docker image is composed of multiple independent layers. Docker images are stacks of these layers and not a single, monolithic disk image. Docker images are created initially using a _docker file_.
 Each line in a docker file is processed one by one and each line creates a new filesystem layer inside the docker image it creates.
 Images are created from scratch or a base image.
 Images contain read only layers, images are layer onto images.
-
-![Anatomy of a docker image](Learning-Aids/09-Containers-and-ECS/ImageAnatomy.png)
 
 ![image](https://user-images.githubusercontent.com/52617475/144763546-b787e828-421b-4f64-9ee2-89eebfc92332.png)
 
@@ -3198,6 +3200,8 @@ You can use spot pricing or prepaid EC2 servers. You pay for them while they are
 
 #### 1.7.3.2. Fargate mode
 
+![image](https://user-images.githubusercontent.com/52617475/144707567-09d05e62-134e-4df9-8db2-83b5c90e4eea.png)
+
 Removes more of the management overhead from ECS, no need to manage EC2.
 
 **Fargate shared infrastructure** allows all customers
@@ -3210,8 +3214,6 @@ _elastic network interface_ which has an IP address within the VPC. They then
 run like a VPC resource.
 
 You only pay for the container resources you use. You don't need to manage host, think about high availabilit, capacity.
-
-![image](https://user-images.githubusercontent.com/52617475/144707567-09d05e62-134e-4df9-8db2-83b5c90e4eea.png)
 
 
 #### 1.7.3.3. EC2 vs ECS(EC2) vs Fargate
@@ -3438,7 +3440,6 @@ We can use parameter store to store the configuration for the CW agent.
 #### 1.8.6.1. Cluster Placement -> Pack Instances Close Together
 
 ![image](https://user-images.githubusercontent.com/52617475/144717588-71f39689-6653-406e-babe-aaeb07460e5c.png)
-
 
 Designed so that instances within the same cluster are physically close together.
 
@@ -4006,6 +4007,8 @@ This does not provide fault tolerance as there will be some impact during change
 
 ### 1.10.5. RDS Backup and Restores
 
+![image](https://user-images.githubusercontent.com/52617475/145293233-51bcfceb-dcc6-42e6-86bc-a1988f915108.png)
+
 RPO - Recovery Point Objective
 
 - Time between the last backup and when the failure occurred.
@@ -4017,8 +4020,6 @@ RTO - Recovery Time Objective
 
 - Time between the disaster recovery event and full recovery.
 - Influenced by process, staff, tech and documentation.
-
-![image](https://user-images.githubusercontent.com/52617475/145293233-51bcfceb-dcc6-42e6-86bc-a1988f915108.png)
 
 
 RDS Backups
@@ -4446,9 +4447,16 @@ When you provision an ELB, you have to decide if you want to configure
   - Availability zones the load balancer will use (1, and 1 only, subnet in 2 or more availability zones)
   - Whether the Load Balancer should be internet facing or internal
  
- 
  Nodes are placed in the subnet, and DNS used to route to the node. Node can scale up or down, additional nodes can be provisioned in the event of failure.
  
+ ![image](https://user-images.githubusercontent.com/52617475/146166437-8ffd6799-9be0-4cf9-974a-5950bbaaf84b.png)
+
+Architectually the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled).
+ 
+ 
+ ![image](https://user-images.githubusercontent.com/52617475/146171451-1ffe3a8a-18c1-4162-9119-2badb7656c9b.png)
+ 
+- ELB(v2) on the right is must better as it can scale using the one load balancer (the v1 to the left would require additional Load balancers to scale).
   
 Using one server is risky because that server can have performance issues
 or be completely unavailable, thus bringing down an application.
@@ -4494,14 +4502,25 @@ Clients shouldn't see errors that occur with one server.
 
 ### 1.12.2. Application Load Balancer (ALB)
 
-ALB is a layer 7 or Application Layer Load Balancer. It is capable of inspecting data that passes through it. It can understand the application layer `http` and `https` and
-take actions based on things in those protocols like paths, headers, and hosts.
+![image](https://user-images.githubusercontent.com/52617475/146179448-97905cbc-4470-4e62-8814-a8839fcb7136.png)
+
+
+ALB is a layer 7 or Application Layer Load Balancer. It is capable of inspecting data that passes through it. It can only understand the application layer `http` and `https` protocols and take actions based on things in those protocols like paths, headers, and hosts. No TCP/UDP/TLS Listeners. L7 content including cookies, custom headers, user location and app behaviour.
 
 ![OSI Model](/Learning-Aids/14-HA-and-Scaling/OSINetworkModel.png)
 
-All AWS load balancers are scalable and highly available. Capacity that you have as part of an ALB increases automatically based on the load which passes through that ALB. This is made of multiple ALB nodes each running in different AZs. This makes them scalable and highly available.
+HTTP/HTTPS (which is just HTTP but transiting using SSL/TLS) always terminates on the ALB, this means that it is not possible to have an unbroken SSL connection. A new connection is made from the balancer to the application. Can't do end-toend ubroken SSL encryption. ALBS must have SSL certs if HTTPS used.
 
-Load balancing can be internet facing or internal. The difference is whether the nodes of the LB, the things which run in the AZs have public IP addresses or not.
+ALBs are slower than NLB as there are additional layers of the network stack to process. Health checks evaluate application health on layer 7.
+
+-Rules direct connections which arrive at a listener
+-Processed in priority order
+-Default rule=catchall
+-Rule Conditions: host-header, http-header, hppt-request-method, path-pattern, query string & scource-ip.
+-Actions: forward, redirect, fixed-response, authenticate-oicd & authenticate-cognito
+
+
+All AWS load balancers are scalable and highly available. Capacity that you have as part of an ALB increases automatically based on the load which passes through that ALB. This is made of multiple ALB nodes each running in different AZs. This makes them scalable and highly available.
 
 Internet facing LB is designed to be connected to, from public internet based clients, and load balance them across targets.
 
@@ -4516,10 +4535,29 @@ LB billed based on two things:
 
 #### 1.12.2.1. Cross zone load balancing
 
-Each node that is part of the load balancer is able to distribute load
+![image](https://user-images.githubusercontent.com/52617475/146167873-44352a4c-6f2b-46f7-abb8-1c5f69e72efe.png)
+
+The problem above? Unequal distribution of load due to there being more loads in the left subnet.
+
+
+![image](https://user-images.githubusercontent.com/52617475/146168055-c658a03f-2432-49d3-b3da-97f044ad1bb9.png)
+
+The solution? Cross-zone balancer.
+
+It means that node that is part of the load balancer is able to distribute load
 across all instances across all AZ that are registered with that LB,
 even if its not in the same AZ. It is the reason we can achieve a balanced
-distribution of connections behind a load balancer.
+distribution of connections behind a load balancer. Comes enabled as standard.
+
+#### 1.12.2.2. ELB Exam PowerUp
+
+- ELB is a DNS A Record pointing at 1+ nodes per AZ
+- Nodes (in one subnet per AZ) can scale
+- Internet-facing means nodes have public IPv4 IPs
+- Internal is private only IPs
+- Ec2 doesn't need to be public IP to work with an internet facing LB
+- Listener Congiguration controls what the LB does
+- 8+ free IP addresses per subnet, which requires a /27 subnet mask
 
 It can also provide health checks on the target servers.
 If all instances are shown as healthy, it can distribute evenly.
@@ -4546,8 +4584,6 @@ towards. Targets represents Lambda functions, EC2 instances, ECS containers.
 
 ### 1.12.3. Launch Configuration and Templates
 
-![image](https://user-images.githubusercontent.com/52617475/146274265-88e5abf6-42e0-4170-8758-dd8e014eed8d.png)
-
 They are documents which allow you to define the configuration of an EC2 instance in advance.
 
 They allow you to configure:
@@ -4566,12 +4602,10 @@ LTs can be used to save time when provisioning EC2 instances from the console UI
 
 ### 1.12.4. Autoscaling Groups
 
-![image](https://user-images.githubusercontent.com/52617475/146274711-04660ebc-1ca5-4125-afcf-25e10e45ef09.png)
-
 - Automatic scaling and self-healing for EC2
 - They make use of LCs or LTs to know what to provision.
-- Autoscaling group uses one LC or one version of a LT which it's linked with (only one at a time).
-- Three values to control (often referred to in the format 1:2:4 which is min:cap:max)
+- Autoscaling group uses one LC or one version of a LT which it's linked with.
+- Three values to control
   - minimum size
   - desired capacity
   - maximum size
@@ -4580,9 +4614,6 @@ Provision or terminate instances to keep at the desired level
 Scaling Policies can trigger this based on metrics.
 
 Autoscaling Groups will distribute EC2 instances to try and keep the AZs equal.
-
-![image](https://user-images.githubusercontent.com/52617475/146274808-aee88c15-b36f-4038-ac47-a378754478e9.png)
-
 
 #### 1.12.4.1. Scaling Policies
 
@@ -4593,26 +4624,17 @@ There are three types of scaling policies:
 2. Scheduled Scaling - useful for known periods of high or low usage. They are time based adjustments e.g. Sales Periods.
 3. Dynamic Scaling:
 
-![image](https://user-images.githubusercontent.com/52617475/146294932-7204e5a6-24da-41c5-a04b-6512907fd5a9.png)
-
-- Simple: If CPU is above 50%, add one to capacity, below 50% remove one.
-
-![image](https://user-images.githubusercontent.com/52617475/146295359-a9dc9f82-f554-4ed5-b724-4cbaa95fed98.png)
-
-- Stepped: If CPU usage is above 50%, add one, if above 80% add three (recommended by AWS)
-- Target: Desired aggregate CPU = 40%, ASG will achieve this. Can also scale based on SQS (number of messages recieved)
+- Simple: If CPU is above 50%, add one to capacity
+- Stepped: If CPU usage is above 50%, add one, if above 80% add three
+- Target: Desired aggregate CPU = 40%, ASG will achieve this
 
 **Cooldown Period** is how long to wait at the end of a scaling action before
 scaling again. There is a minimum billable duration for an EC2 instance.
 Currently this is 300 seconds.
 
-![image](https://user-images.githubusercontent.com/52617475/146275515-16202a9e-9e8e-4f3a-be62-77ed93205b37.png)
-
 Self healing occurs when an instance has failed and AWS provisions a new
 instance in its place. This will fix most problems that are isolated to one
 instance.
-
-![image](https://user-images.githubusercontent.com/52617475/146276166-265d3ff9-db09-4b3f-9854-12856da044a7.png)
 
 AGS can use the load balancer health checks rather than EC2.
 ALB status checks can be much richer than EC2 checks because they can monitor
@@ -4624,27 +4646,11 @@ the status of HTTP and HTTPS requests. This makes them more application aware.
 - Generally, for anything client-facing you should always use Auto Scaling Groups (ASG) with Application Load Balancers (ALB) with autoscaling because they allow you to provide elasticity by abstracting the user away from individual servers. Since, the customers will be connecting through an ALB, they don't have any visibility of individual servers.
 - ASG defines WHEN and WHERE; Launch Templates defines WHAT.
 
-![image](https://user-images.githubusercontent.com/52617475/146276375-dfd676d2-c8a0-479e-958a-a97f02f2c935.png)
-
-### 1.12.5. ASG Lifecycle Hooks
-
-![image](https://user-images.githubusercontent.com/52617475/146311167-bd94836d-7500-4abf-bb31-e6d65925f782.png)
-
-Provides a waiting period in which custom actions can be performed before instance is provisioned (or terminated).
-
-### 1.12.5. ASG Health Check
--EC2(default), ELB(can be enabled) & custom
--EC2-Stopped, stopping, terminated, shutting down or impaired (not 2/2 status checks passed)=unhealthy
--ELB- Healthy and passing ELB Health Checks
-Custom- instances marked healthy and unhealty by an external system.
--Health check grace period (default 300s)- delay before health checks starts
--If an ASG is provisioning and terminating instances in a continuous cycle it may be because the health check grace period is tpp short (application hasn't had enough time to launch bootstrap and be configured beofre the health check takes place).
-
 ### 1.12.5. Network Load Balancer (NLB)
 
-Part of AWS Version 2 series of load balancers.
 
-1. NLBs are Layer 4, only understand TCP and UDP.
+
+1. NLBs are Layer 4, only understand TCP, TLS, UDP, TCP_UDP. No headers, no cookies, no session stickiness. SMTP, SSH, game servers, Financial Apps(not HTTP/s). Can't do detailed health check like ALB.
 
 2. Can't interpret HTTP or HTTPs, but this makes it much faster in latency.
 [**EXAM HINT]** => If you see anything about latency and HTTP and HTTPS are not involved, this should default to a NLB.
@@ -4654,25 +4660,28 @@ Part of AWS Version 2 series of load balancers.
 4. Only member of the load balancing family that can be provided a static IP.
 There is 1 interface per AZ. Can also use Elastic IPs (whitelisting on firewalls) and should be used for this purpose.
 
-5. Can perform SSL pass through.
+5. Can perform SSL pass through. Unbroken SSL. Connection is not terminated on the load balancer.
 
 6. NLB can load balance non-HTTP/S applications, doesn't care about anything
 above TCP/UDP. This means it can handle load balancing for FTP or things
 that aren't HTTP or HTTPS.
 
+7. Can forward TCP to instances.
+
+9. Used with private link to provide services to other VPCs.
+
+![image](https://user-images.githubusercontent.com/52617475/146183353-caab7d90-d959-4c88-9a91-eccecf7b123b.png)
+
 ### 1.12.6. SSL Offload and Session Stickiness
 
 #### 1.12.6.1. Bridging - Default mode
-
-![image](https://user-images.githubusercontent.com/52617475/146314975-7aa8abca-369e-4227-914b-00a435e0b533.png)
-
 
 One or more clients makes one or more connections to a load balancer.
 The load balancer is configured so its **listener** uses HTTPS, SSL connections
 occur between the client and the load balancer.
 
 The load balancer then needs an SSL certificate that matches the domain name
-that the application uses. AWS have some level of access to this certificate.
+that the application uses. AWS has access to this certificate.
 If you need to be careful of where your certificates are stored, you may
 have a problem with this system.
 
@@ -4718,8 +4727,6 @@ required on the load balancer, this is not needed on the LB.
 Data is in plaintext form across AWS's network. Not a problem for most.
 
 #### 1.12.6.4. Connection Stickiness
-
-![image](https://user-images.githubusercontent.com/52617475/146315018-14b2f249-aa03-4871-b9c4-518013e9901f.png)
 
 If there is no stickiness, each time the customer logs on they will have
 a stateless experience. If the state is stored on a particular server,
