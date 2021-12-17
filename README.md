@@ -4384,7 +4384,7 @@ You can use hybrid networking to connect to the same mount targets.
 
 #### 1.11.1.2. EFS Exam PowerUp
 
-- EFS is Linux Only instances
+- EFS is for use with Linux Only instances
 - Two performance modes:
   - **General purpose** is good for _latency sensitive_ use cases.
     - General purpose should be default for 99.9% of uses.
@@ -4405,19 +4405,20 @@ You can use hybrid networking to connect to the same mount targets.
 
 ### 1.12.1. Regional and Global AWS Architecture
 
+Example: A user in Australia requests data stored in the US. Route53 provides DNS services, and cloudfront provides the CDN infrastructure. This is global instructure.
+
 ![image](https://user-images.githubusercontent.com/52617475/146117800-687c7e0b-bb60-4fd9-8726-1e0a691d6e11.png)
 
-Example: A user in Australia requests data stored in the US. Route53 provides DNS services, and cloudfront provides the CDN infrastructure. This is global instructure.
 
 Global Considerations
   - Global Service Location and Service Discovery
   - Content Delievery and Optimisation
   - Global Health Checks and Failover
 
+Once the request enters the US, it relates to regional architecture and design.
 
 ![image](https://user-images.githubusercontent.com/52617475/146118104-95a5041c-eb48-4e25-8121-4dd538f672f3.png)
 
-Once the request enters the US, it relates to regional architecture and design.
 
 Regional Considerations
   - Regional Entry point
@@ -4436,7 +4437,7 @@ App services include kinesis, step functions, SNS and SQS.
 
 ![image](https://user-images.githubusercontent.com/52617475/146122542-40cc20e3-3857-43ac-8b1b-b66517c4722d.png)
 
-3 Types of load balancers (ELB) available in AWS.
+There are three types of load balancers (ELB) available in AWS.
 Split between v1(avoid/migrate) and v2(preferred)
 Application Load Balancer (ALB) -v2- HTTP/S, Websocket
 Network Load Balancer (NLB)- v2- TCP, TLS, UDP
@@ -4450,12 +4451,12 @@ When you provision an ELB, you have to decide if you want to configure
  Nodes are placed in the subnet, and DNS used to route to the node. Node can scale up or down, additional nodes can be provisioned in the event of failure.
 
 
- Architectually the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled).
+ Architectually, the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled).
  ![image](https://user-images.githubusercontent.com/52617475/146166437-8ffd6799-9be0-4cf9-974a-5950bbaaf84b.png)
 
 
  
- - ELB(v2) on the right is must better as it can scale using the one load balancer (the v1 to the left would require additional Load balancers to scale).
+  ELB(v2) on the right is must better as it can scale using the one load balancer (the v1 to the left would require additional Load balancers to scale).
  ![image](https://user-images.githubusercontent.com/52617475/146171451-1ffe3a8a-18c1-4162-9119-2badb7656c9b.png)
  
 
@@ -4472,6 +4473,7 @@ Without load balancing, this could bring additional problems.
   - Due to TTL values, a user can be directed toward a dead server.
 
 #### 1.12.1.1. Load Balancers Architecture
+
 
 The user connects to a load balancer that is set to listens on port 80 and 443.
 
@@ -4606,11 +4608,14 @@ LTs can be used to save time when provisioning EC2 instances from the console UI
 
 ### 1.12.5. ASG Lifecycle Hooks
 
-![image](https://user-images.githubusercontent.com/52617475/146311167-bd94836d-7500-4abf-bb31-e6d65925f782.png)
-
 Provides a waiting period in which custom actions can be performed before instance is provisioned (or terminated).
 
+![image](https://user-images.githubusercontent.com/52617475/146311167-bd94836d-7500-4abf-bb31-e6d65925f782.png)
+
 ### 1.12.5. ASG Health Check
+
+![picture 3](../images/f97297d8913440cb5b68a738380ecc75212c184b5ac6d7d04bde892d4ae4f32f.png)  
+
 -EC2(default), ELB(can be enabled) & custom
 -EC2-Stopped, stopping, terminated, shutting down or impaired (not 2/2 status checks passed)=unhealthy
 -ELB- Healthy and passing ELB Health Checks
@@ -4620,7 +4625,11 @@ Custom- instances marked healthy and unhealty by an external system.
 
 ### 1.12.4. Autoscaling Groups
 
-- Automatic scaling and self-healing for EC2
+Automatic scaling and self-healing for EC2
+
+![picture 1](../images/496eab05f7d05be5f2c829b874eeb55d1e8bc720229468ca385dbaa2d4148d4e.png)  
+
+
 - They make use of LCs or LTs to know what to provision.
 - Autoscaling group uses one LC or one version of a LT which it's linked with.
 - Three values to control
@@ -4634,6 +4643,9 @@ Scaling Policies can trigger this based on metrics.
 
 Autoscaling Groups will distribute EC2 instances to try and keep the AZs equal.
 
+![picture 2](../images/1cc3d5673b76686a7c632ecca0ca40ec462dae5b04f3448fa94e76bd9388cf0f.png)  
+
+
 #### 1.12.4.1. Scaling Policies
 
 Scaling policies are rules that you can use to define autoscaling of instances.
@@ -4643,13 +4655,16 @@ There are three types of scaling policies:
 2. Scheduled Scaling - useful for known periods of high or low usage. They are time based adjustments e.g. Sales Periods.
 3. Dynamic Scaling:
 
+Simple: If CPU is above 50%, add one to capacity
+
 ![image](https://user-images.githubusercontent.com/52617475/146294932-7204e5a6-24da-41c5-a04b-6512907fd5a9.png)
-- Simple: If CPU is above 50%, add one to capacity
+
+Stepped: If CPU usage is above 50%, add one, if above 80% add three
 
 ![image](https://user-images.githubusercontent.com/52617475/146295359-a9dc9f82-f554-4ed5-b724-4cbaa95fed98.png)
-- Stepped: If CPU usage is above 50%, add one, if above 80% add three
 
-- Target: Desired aggregate CPU = 40%, ASG will achieve this
+
+Target: Desired aggregate CPU = 40%, ASG will achieve this
 
 **Cooldown Period** is how long to wait at the end of a scaling action before
 scaling again. There is a minimum billable duration for an EC2 instance.
@@ -4694,10 +4709,9 @@ that aren't HTTP or HTTPS.
 ![image](https://user-images.githubusercontent.com/52617475/146183353-caab7d90-d959-4c88-9a91-eccecf7b123b.png)
 
 ### 1.12.6. SSL Offload and Session Stickiness
-
+![image](https://user-images.githubusercontent.com/52617475/146314975-7aa8abca-369e-4227-914b-00a435e0b533.png)
 #### 1.12.6.1. Bridging - Default mode
 
-![image](https://user-images.githubusercontent.com/52617475/146314975-7aa8abca-369e-4227-914b-00a435e0b533.png)
 
 One or more clients makes one or more connections to a load balancer.
 The load balancer is configured so its **listener** uses HTTPS, SSL connections
@@ -4719,7 +4733,7 @@ end EC2 instances. The EC2 instance will need matching SSL certificates.
 Needs the compute for the cryptographic operations. Every EC2 instance must
 perform these cryptographic operations. This overhead can be significant.
 
-The main benefit is the elastic load balancer gets to see the unencrypted
+The main benefit is the elastic load balancer removes the SSL wrapper and gets to see the unencrypted
 HTTP and can take actions based on what's contained in this plain text
 protocol.
 
@@ -4733,7 +4747,7 @@ but the load balancer does not. Specifically it's a network load balancer
 which is able to perform this style of connection.
 
 The load balancer is configured for TCP, it can see the source or destinations,
-but it never touches the encrypted connection. The certificate never
+but it never touches the encrypted connection (client to instance). The certificate never
 needs to be seen by AWS.
 
 Negative is you don't get any load balancing based on the HTTP part
@@ -4742,10 +4756,10 @@ still need the compute cryptographic overhead.
 
 #### 1.12.6.3. Offload
 
-Clients connect to the load balancer using HTTPS and are terminated on the
+Clients connect to the load balancer using HTTPS with connection terminated on the
 load balancer. The LB needs an SSL certificate to decrypt the data, but
 on the backend the data is sent via HTTP. While there is a certificate
-required on the load balancer, this is not needed on the LB.
+required on the load balancer, this is not needed on the LB. It is sent ELB to instance as plaintext (unecrypted)
 
 Data is in plaintext form across AWS's network. Not a problem for most.
 
@@ -4760,7 +4774,8 @@ sessions can't be load balanced across multiple servers.
 There is an option available within elastic load balancers called Session
 Stickiness.
 
-![Session Stickiness](Learning-Aids/14-HA-and-Scaling/SessionStickiness.png)
+![picture 5](../images/360c72a9496c9075e0b9bde600d21bf9276c527ba9bf3353f06f42679e90330c.png)  
+
 
 And within an application load balancer this is enabled on a
 target group. If enabled, the first time a user makes a request, the load
