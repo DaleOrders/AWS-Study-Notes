@@ -4774,7 +4774,6 @@ sessions can't be load balanced across multiple servers.
 There is an option available within elastic load balancers called Session
 Stickiness.
 
-![picture 5](../images/360c72a9496c9075e0b9bde600d21bf9276c527ba9bf3353f06f42679e90330c.png)  
 
 
 And within an application load balancer this is enabled on a
@@ -4791,6 +4790,30 @@ This could cause backend unevenness because one user will always be forced
 to the same server no matter what the distributed load is. Applications
 should be designed to hold session stickiness somewhere other than EC2. You can hold session state in, for instance, DynamoDB. If store session state data externally, this means EC2 instances will be completely stateless.
 
+#### 1.12.6.5. Gateway Load Balancer
+
+Some applications use a third party security device checking traffic into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
+
+![picture 6](../images/a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png)  
+
+A Gateway Load Balancer:
+
+- helps you run and scale third party applications (things like firewalls, intrusion detection and prevention systems).
+
+- Inbound and outbound traffic (transparent inspection and protection)
+
+- GWLB endpoings... traffic enters/leaves via endpoints.
+
+- ... the GWLB balances across multiple backend appliances.
+- Traffic and metadata is tunnelled usinf Geneve protocol.
+
+![picture 8](../images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
+
+Traffic enters VPC and goes through GLBE and the GLB. It is encapsulated and directed to one of the instances before going back through the GLB and to the App server. It allows for abstraction as you can use multiple applications. Designed to assist horizontal scaling of theird party secruity devices.
+
+![picture 9](../images/da70060e950dc0bfd425953a5c77a64c57120d3cb132228ac60306fd7ea2fba5.png)  
+
+
 ---
 
 ## 1.13. Serverless-and-App-Services
@@ -4801,9 +4824,12 @@ should be designed to hold session stickiness somewhere other than EC2. You can 
 
 Think of this as a single black box with all of the components of the architecture within it.
 
+![picture 10](../images/0995639e77d9a9537455bb49d707ae5260a5f08a90e6382e108ee0c54d1548ed.png)  
+
+
 - Fails together as an entity.
   - One error will bring the whole system down.
-- Scales together. Systems are highly coupled.
+- Scales together. Systems are highly coupled. Usually scales vertically.
   - Everything expects to be running on the same compute hardware
 - Bills together.
   - All components are always running and always incurring charges.
@@ -4812,21 +4838,26 @@ This is the least cost effective way to architect systems.
 
 #### 1.13.1.2. Tiered
 
+![picture 11](../images/905247923e0850225fde46b2f95ce2a24696997042609f343b75dcabb7d82b91.png)  
+
 - Different components can be on the same server or different servers.
 - Components are coupled together because the endpoints connect together.
 - Can adjust the size of the server that is running each application tier.
-- Utilizes load balancers in between tiers to add capacity.
-- Tiers are still tightly coupled.
+- Utilizes load balancers in between tiers to add capacity. You can now scale each tier independently. More Highly Available.
+- Tiers are still coupled however.
   - Tiers expect a response from each other. If one tier fails, subsequent
   tiers will also fail because they will not receive the proper response.
   - Back loads in one tier will impact the other tiers and customer experience.
 - Tiers must be operational and send responses even if they are not processing
-anything of value otherwise the system fails.
+anything of value otherwise the system fails. Can not scale to 0.
 
 #### 1.13.1.3. Evolving with Queues
 
-- Data no longer moves between tiers to be processed and instead uses a queue.
-  - Often are **FIFO** (first in, first out)
+Data no longer moves between tiers to be processed and instead uses a queue.
+
+![picture 12](../images/65197105cf8ebd733b5d4807cc132d0e87466752a7c069e046d6836eb0e2e4a4.png)  
+
+  - Often **FIFO** (first in, first out)
 - Data moves into a S3 bucket.
 - Detailed information is put into the next slot in the queue.
   - Tiers no longer expect an answer.
@@ -4836,20 +4867,29 @@ anything of value otherwise the system fails.
 - The autoscaling group will only bring up servers as they are needed.
 - The queue has the location of the S3 bucket and passes this onto the
 processing tier.
+- decoupled which means instances can be terminated if there is nothing in the queue.
 
 #### 1.13.1.4. Microservices Architecture
 
-A collection of microservices. Microservices are tiny, self sufficient application. It has its own logic; its own store of data; and its own input/output components. Microservices do individual things very well. In this example you have the upload microservice, process microservice, and the store and manage microservice. The upload process is a **producer**; the processing process is a **consumer**; and the store and manage process does both. Logically, producers produce data or messages; consumers consume data or messages; and then there are microservices that can do both things. Now the things that services produce or consume architecturally are events. Queues can be used to communicate events.
+A collection of microservices. Microservices are tiny, self sufficient applications. 
+
+![picture 13](../images/f5c6bbfbfbdb3a1d680d0684c738d42a24956aeedcb5cf15ae87c63c5f2765ac.png)  
+
+
+It has its own logic; its own store of data; and its own input/output components. Microservices do individual things very well. In this example you have the upload microservice, process microservice, and the store and manage microservice. The upload process is a **producer**; the processing process is a **consumer**; and the store and manage process does both. Logically, producers produce data or messages; consumers consume data or messages; and then there are microservices that can do both things. Now the things that services produce or consume architecturally are events. Queues can be used to communicate events.
 
 #### 1.13.1.5. Event Driven Architecture
 
-Event-driven architecture are just collection of event producers which might be components of your application which directly interacts with customers. Or, they might be part of your infrastructure such as EC2; or they might be system-monitoring components. They are pieces of software which generate or produce events in reaction to something. If a customer click submit, that might be an event. If an error occurs while packing a customer order, that is another event.
+Event-driven architecture are just collection of event producers which might be components of your application which directly interacts with customers. Or, they might be part of your infrastructure such as EC2; or they might be system-monitoring components. They are pieces of software which generate or produce events in reaction to something. If a customer clicks submit, that might be an event. If an error occurs while packing a customer order, that is another event.
 
 Event consumers are pieces of software which are ready and waiting for events to occur. If they see an event they care about they will do something to that event. They will take an action. It might displaying something for a customer or despatching a human to resolve an order-packing issue or it might be to retry an upload.
 
-Components within an architecture can be producers and consumers. Sometimes a component can generate an event, for example, a failed upload and then consume events to force a retry of that upload.
+Components within an architecture can be both producers and consumers. Sometimes a component can generate an event, for example, a failed upload and then consume events to force a retry of that upload.
 
 Best practice event architecture have **event routers**: an highly available, central exchange point for events. The event router has an **event bus**: a constant flow of information. When events are generated by producers they are added to the event bus and the router can deliver this to event consumers.
+
+![picture 14](../images/e25b0d7edfc2c0fae57abe3d2c9394d94ef98ef9ace20b61e6087a2c3919dfb9.png)  
+
 
 With event driven architectures:
 
@@ -4879,10 +4919,11 @@ an event bus.
   - Service accepts functions.
 - Event driven invocation (execution) based on an event occurring.
 - **Lambda function** is piece of code in one language.
-- Lambda functions use a **runtime** (e.g. Python 3.6)
+- Lambda functions use a **runtime** (e.g. Python 3.8)
 - Runs in a **runtime environment**.
   - Virtual environment that is ready to go to run code in that language. Think of it as a _container_.
   - You are billed only for the duration a function runs.
+  - Direct memory allocation.
   - There is no charge for having lambda functions waiting and ready to go.
 
 #### 1.13.2.1. Lambda Architecture
@@ -4890,10 +4931,13 @@ an event bus.
 Best practice is to make it very small and very specialized.
 Lambda function code, when executed is known as being **invoked**.
 When invoked, it runs inside a runtime environment that matches the language the
-script is written in.
+script is written in. Can be written in various languages, but is generally not compatible with Docker.
 The runtime environment is allocated a certain amount of memory and an
 appropriate amount of CPU. The more memory you allocate, the more CPU it gets,
 and the more the function costs to invoke per second.
+
+![picture 15](../images/0cf4b7fb498a37ab6811c21afec95047a32a09cfefab29d93fd0df7253f4f5b3.png)  
+
 
 Lambda functions can be given an IAM role or **execution role**.
 The execution role is passed into the runtime environment.
@@ -4902,7 +4946,7 @@ permissions the role's permission policy provides.
 
 Lambda can be invoked in an **event-driven** or **manual** way.
 Each time you invoke a lambda function, the environment provided is new.
-Never store anything inside the runtime environment, it is ephemeral.
+Never store anything inside the runtime environment, it is ephemeral. They are _stateless_, which means no data is left over from the previuos invocation.
 
 Lambda functions by default are public services and can access any websites.
 By default they cannot access private VPC resources, but can be configured
@@ -4925,6 +4969,27 @@ Lambda functions can run up to 15 minutes. That is the max limit.
 - Always load data from other services from public APIs or S3.
 - Store data to other services (e.g. S3).
 - 1M free requests and 400,000 GB-seconds of compute per month.
+
+#### Common uses 
+- Serverless Applications(S3, API Gateway, Lambda)
+- File processing (S3, S3 Events, Lambda)
+- Database Triggers (DynamoDB, Streams, Lambda)
+- Serverless CRON (EventBridge/CWEvents+Lambda)
+- Realtime Stream Data Processing (Kinesis+Lambda)
+
+#### Public Lambda
+By default, Lambda has access to AWS public services and public internet, but not access to a VPC (unless given a public IP address and configured with secruity access)
+
+![picture 17](../images/6fd74c77f696784d4a282dbad2a53da96a7f1378b93301bd85946f21820d3281.png)  
+
+#### Private Lambda
+
+Situated in a private subnet. Can access resources within the VPC assuming proper NACL and Security group configuration. Will need to take the usual path to access resources outside the VPC (interface endpoint or internet gateway) 
+
+![picture 18](../images/385b27c4cd81879d68107943fcd1238e1698bc6afb7dc8be4519c07bdd2a4270.png)  
+
+
+If you have multiple Lambda functions, you still only have one ENI within the VPC. One ENI per subnet/security group. If you have 4 subnets using 1 security group, you would have 1 ENI per subnet. If you all using the same subnet with the same SG, then you would only need 1 ENI in total. Makes it possible to scale Lambda functions without additional ENI.
 
 ### 1.13.3. CloudWatch Events and EventBridge
 
