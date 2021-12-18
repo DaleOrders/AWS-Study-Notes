@@ -1,6 +1,6 @@
 # 1. SAA-C02 Notes
 
-![Screenshot](images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png)
+![Screenshot](C:\Users\daleo\OneDrive\Documents\images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png)
 
 
 > These are my personal notes from Adrian Cantrill's (SAA-C02) course.Learning Aids from [aws-sa-associate-saac02](https://github.com/acantril/aws-sa-associate-saac02). There may be errors, so please purchase his course to get the original content and show support https://learn.cantrill.io
