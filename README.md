@@ -1,7 +1,7 @@
 # 1. SAA-C02 Notes
 
 <p>
-    <img src="C:\Users\daleo\OneDrive\Documents\images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png" />
+    <img src="images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png" />
 </p>
 
 
