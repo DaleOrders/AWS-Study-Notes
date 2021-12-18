@@ -4794,7 +4794,7 @@ should be designed to hold session stickiness somewhere other than EC2. You can 
 
 Some applications use a third party security device checking traffic into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
 
-![picture 6](../images/a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png)  
+![image](https://user-images.githubusercontent.com/52617475/146642261-55c47f1c-7d47-4416-ae36-9b87af714ce4.png)
 
 A Gateway Load Balancer:
 
