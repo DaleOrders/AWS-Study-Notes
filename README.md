@@ -1,5 +1,10 @@
 # 1. SAA-C02 Notes
 
+<p>
+    <img src="images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png" />
+</p>
+
+
 > These are my personal notes from Adrian Cantrill's (SAA-C02) course.Learning Aids from [aws-sa-associate-saac02](https://github.com/acantril/aws-sa-associate-saac02). There may be errors, so please purchase his course to get the original content and show support https://learn.cantrill.io
 
 **Table of Contents**
@@ -4794,7 +4799,6 @@ should be designed to hold session stickiness somewhere other than EC2. You can 
 
 Some applications use a third party security device checking traffic into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
 
-![picture 6](../images/a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png)  
 
 A Gateway Load Balancer:
 
