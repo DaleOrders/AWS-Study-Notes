@@ -5107,6 +5107,11 @@ API stands for Application Programming Interface. It's a way that you can take a
   - additional performance features such as caching
 - Serve as an entry point for serverless architecture.
 - They come in handy during architecture evolution. For instance, if you have on premises legacy services that use APIs, this can be integrated.
+- HA, Scalable Managed service. Handles authorisation, throttling, caching, CORS, transformation, OpenAPI spec, direct integration and more.
+- HTTP APIs, Rest APIs, Websocket APIs
+
+![picture 30](images/f1cf888f15aa94df1e483e4485d066338626a40079ac84a8bf4495596f766bf9.png)  
+
 
 Great during an architecture evolution because the endpoints don't change.
 
@@ -5114,6 +5119,44 @@ Great during an architecture evolution because the endpoints don't change.
 2. Using API gateway allows the business to evolve along the way slowly.
 This might move some of the data to fargate and aurora architecture.
 3. Move to a full serverless architecture with DynamoDB.
+
+
+### API Gateway Authorisation
+
+Can be performed via cognito (red) or Lambda Authorizer (yellow)before invoking a lambda function.
+
+![picture 31](images/5d1e631a5b84eb77483e7d11e803f4c591be735cfccdb6829b51c572596b0d6f.png)  
+
+### API Gateway Endpoint types
+- Edge-optimized.
+- Routed to the nearest Cloudfront POP (Point of Presence).
+- Regional- usually for clients in the same region.
+- Private - Endpoint accessible only within a VPC via interface endpoint.
+
+### API Gateway Stages
+
+Stages can be used to configure a more tailored solution.
+
+![picture 32](images/172f3dbf4e36d25dc910f8de2bdf5a5de1629c8430979956d4fe73e9fbe3f21b.png)  
+
+In this example, customers and developers deploy on different stages however you can enable the use of a canary to deploy one version (v2) onto the customer canary.
+
+### API Gateway Errors- REMEMBER
+
+- 4XX- Client Error- Invalid Request on **client** side
+- 5XX- Server Error- Valid request, backend issue
+- 400 - Bad request- Generic
+- 403- Access denied.. WAF filtered
+- 429 - API can throttle-  this means that you have exceed that amount
+- 502 - Bad Gateway Exception- bad output returned by Lambda
+- 503 - Serivce unavailable- backing endpoint offline? Major service issues
+- 504 - Integration Failure/Timeout -29s limit
+
+### API Gateway Caching
+Reduces load and cost. Calls to backend integration services will only be made if the cache does not meet the required request.
+
+![picture 34](images/dd46e325037d0949b0c4a97cb7910a3f9acacb3edc2946c6d14fd0456e11b6d4.png)  
+
 
 ### 1.13.5. Serverless
 
@@ -5123,13 +5166,15 @@ These functions are stateless and run in ephemeral environments. Every time they
 
 Serverless architecture should use function-as-a-service (FaaS) products such as Lambda for any general processing need. Lambda as a service is billed based on execution duration and functions only run when there a form of execution is happening. Because serverless is event-driven, it means while not being used a serverless architecture should be very close to zero cost until something in that environment generates an event. Serverless architectures generally have no persistent usage of compute within that system.
 
-Serverless environments should use, where possible, managed services. It shouldn't re-invent the wheel. Examples include using S3 for any persistent object storage or dynamoDB for any persistent data storage and third party identity providers such as Google, Twitter, Facebook, or even corporate identities such as LDAP & Active Directory instead of building your own. Other services that AWS provides such as Elastic Transcoder can be used to convert media files or manipulate these files in other ways.
+Serverless environments should use, where possible, managed services. It shouldn't re-invent the wheel. Examples include using S3 for any persistent object storage or dynamoDB for any persistent data storage and third party identity providers such as Google, Twitter, Facebook, or even corporate identities such as LDAP & Active Directory instead of building your own. Other services that AWS provides such as Elastic Transcoder can be used to convert media files or manipulate these files in other ways such as into different video sizes. 
 
 Your aim should be to use as-a-Service offerings as much as you can; code as little as possible and use function-as-a-service (FaaS) for any general compute needs. You all of those building blocks together to create your application.
 
 #### 1.13.5.1. Example of Serverless
 
 A user wants to upload videos to a website for transcoding.
+
+![picture 27](images/f683eca7a4271ff68f8c3cc11553ad6395244a8c208a8b3ac3875757b639214f.png) 
 
 1. User browses to a static website that is running the uploader. The JS runs
 directly from the web browser.
@@ -5149,12 +5194,16 @@ transcode bucket using the DynamoDB entry.
 ### 1.13.6. Simple Notification Service (SNS)
 
 - HA, Durable, PUB/SUB messaging service.
+
+
 - Public AWS service meaning to access it, you need network connectivity
 with the Public AWS endpoints. The benefit of this is that it becomes accessible from anywhere that has that network connectivity.
 - Coordinates sending and delivering of messages: payloads that are up to 256KB in size.
   - Messages are not designed for large binary files.
 - SNS topics are the base entity of SNS.
   - Permissions are controlled and configuration for SNS is defined.
+
+![picture 28](images/e9934664e805e4e75beb8652e6c3222d24dab5c9103160f9a1233fbb31779ea2.png)  
 - Publisher sends messages to a **topic**.
   - Topics have subscribers which receive messages.
 - Subscribers receive all of the messages sent to the Topic.
@@ -5168,9 +5217,9 @@ with the Public AWS endpoints. The benefit of this is that it becomes accessible
 
 Offers:
 
-- Delivery Status including HTTP/s, Lambda, SQS
+- Delivery Status including HTTP/s endpoints, Lambda, SQS
 - Delivery retries which ensure reliable delivery
-- HA and Scalable (Regional)
+- HA and Scalable (Regional service)
 - SSE (server side encryption)
 - Topics can be used cross-account via Topic Policy
 
@@ -5182,7 +5231,7 @@ There are some crucial lambdas limitations:
 - Lambda functions can, theoretically, be chained together but, this can get messy at scale
 - Runtime environments are _stateless_. Each environment is isolated; cleaned each time and any data needs to be transferred between environments if you want to maintain any form of state. This is why you cannot hold a state through different Lambda function invocations.
 
-Step funtions allow you to create state machines. A state machine is a workflow. It has a *start point*, *end point*, and in between there are *states*. States are things inside a State Machine which can do things. States can do things, and take in data, modify data, and output data.
+Step funtions allow you to create state machines. A state machine is a workflow. It has a *start point*, *end point*, and in between there are *states*. States are things inside a State Machine which can do things. States can do things, decide things, and take in data, modify data, and output data.
 
 State machine is designed to perform an activity or workflow with lots of individual components and maintain the idea of data between those states.
 
@@ -5195,7 +5244,7 @@ Two types of workflow
   - 1 year workflow exeution limit
 
 - Express
-  - Designed for IOT or other high transaction uses
+  - Designed for IOT, streaming data, mobile application backend or other high transaction uses
   - 5 minute workflow
   - Provides better processing guarantees
 
@@ -5227,6 +5276,12 @@ are available.
   - represents a single unit of work performed by a State Machine.
   - it allows the state machine to actually do things.
   - can be integrated with many different services such as Lambda, AWS batch, dynamoDB, ECS, SNS, SQS, Glue, SageMaker, EMR, and lots of others.
+
+
+  ![picture 29](images/bd35ebeeaa2861b5a9f26c02367cf2c54fbe31e15aa4c403bf807ff7a406934e.png)  
+
+  Bob goes to a html website hosted on S3, clicks the page which invokes a Lambda function which triggers a Step function to present a choice to Bob about how he would like to be notified when Whiskers wants a cuddle.
+
 
 ### 1.13.8. Simple Queue Service (SQS)
 
