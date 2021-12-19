@@ -4993,7 +4993,59 @@ Situated in a private subnet. Can access resources within the VPC assuming prope
 ![picture 18](images/385b27c4cd81879d68107943fcd1238e1698bc6afb7dc8be4519c07bdd2a4270.png)  
 
 
-If you have multiple Lambda functions, you still only have one ENI within the VPC. One ENI per subnet/security group. If you have 4 subnets using 1 security group, you would have 1 ENI per subnet. If you all using the same subnet with the same SG, then you would only need 1 ENI in total. Makes it possible to scale Lambda functions without additional ENI.
+ One ENI per subnet/security group. If you have 4 subnets using 1 security group, you would have 1 ENI per subnet. If  all functions are using the same subnet with the same SG, then you would only need 1 ENI in total. Makes it possible to scale Lambda functions without adding additional ENI infrastructure.
+
+#### Lambda Security
+
+Lambda can have both role and resource policies attached. The role specifies what services Lambda can interact with whilst the resource dictates how a principal can access Lambda (similar to an S# bucket policy). Resources policies can only be configured through CLI or API (at this point in time).
+
+![picture 19](images/fb80a5007eb9cff9097f47a5b6e9269a21c85b892321c5e5e5a4fbf8ba105afe.png) 
+ 
+#### Lambda Logging
+
+- Lambda uses Cloudwatch, Cloudwatch logs and X-ray
+- Logs from Lambda executions (erros, duration, message)- CloudWatch Logs
+- Metrics- invocation sucess/failure, retries, latency stored in CloudWatch.
+- Lambda can be intergrated with X-ray for distributed tracing.
+- CloudWatch Logs requires permissions via execution role. 
+
+#### Lambda Invocation
+
+There are three ways you can invoke Lambda function
+- Synchronous invocation
+- Asynchronous invocation
+- Event source Mapping
+
+Synchronous invocation using involves human client who has to wait for the response from Lambda. Client will need to retry the function again if there is a failure.
+
+![picture 21](images/c08c64ad01e82caf28303b1b41eb3e070dee3f9ff3b246095633194515a1156d.png)  
+
+Asynchronous invocation involves no waiting, usually done by an AWS service triggered by an event (putting an image in S3 for example). It is idempotent operation (you can rerun it again and again and the result will still be as you intended.) The Lambda function is configured to achieve a _desired state_
+
+![picture 22](images/73a6366eca1dd6c94857210ef74b018940503d255fe075973cb74102614a6ade.png)  
+
+Event Source Mapping recieves batch source and then breaks it up into event batchs. Processed as a batch. No partial success or failure. As it is actually reading data from kinesis, lambda will need kinesis permissions to enable event source mapping to read the seam on its behalf (different to the previuos two invoations which don't require that lambda have permission as they are event, not data, triggered).
+
+Is used with kinesis streams, dynamodb streams, SQS, Amazon streaming for apache kafka.
+
+![picture 23](images/ba49252519e4ab792144344953f4f99f7eeb5b8ec36392d0e70962c0da7c06be.png)  
+
+#### Lambda Versions
+- Lambda functions have versions- v1, v2, v3...
+- A version is the code+ the configuration of the lambda function
+- It's immutable- it never changes once published and has its own ARN
+- $Latest points at the latest version
+- Aliases(Dev, Stage, Prod) point at a version- can be changed
+
+#### Lambda Cold and Warm starts
+
+Lambda takes a while to start when invoked as it has to configure the runtime and download any necessary packages. This is called a cold start. If another invocation is made soon after, it will generally take less time to invoke. This is called a warm start. If there is a gap between invocations, the next time you invoke it will be cold again.
+
+![picture 25](images/a601a3c9932060a514609a2d0664b738b90da1c74efed989becab2a252d6cc6e.png) 
+
+Possible solutions?
+- use provisioned currency to secure a warm start
+- use /tmp to pre-download resources 
 
 ### 1.13.3. CloudWatch Events and EventBridge
 
@@ -5007,20 +5059,22 @@ underlying architecture. AWS is now encouraging a migration to EB.
 They can observe if X happens at Y time(s), do Z.
 
 - X is a supported service which is a producer of an event.
-- Y can be a certain time or time period.
+- Y can be a certain time or time period (in CRON format).
 - Z is a supported target service to deliver the event to.
 
 EventBridge is basically CloudWatch Events V2 that uses the same underlying
 APIs and has the same architecture, but with additional features.
-Things created in one can be visible in the other for now.
+Things created in one can be visible in the other for now. Eventsbridge should be your default.
 
 Both systems have a default Event bus for a single AWS account.
 A bus is a stream of events which occur for any supported service inside an
 AWS account.
-In CW Events, there is only one bus (implicit), this is not exposed.
+In CloudWatch Events, there is only one bus (implicit), this is not exposed as visible in the UI.
 EventBridge can have additional event buses for your applications or third party
 applications and services.
 These can be interacted with in the same way as the default bus.
+
+![picture 26](images/3d5c565f42e3ab1177654d83009b65ed43d1cf805f7e428fce9c5650438bd03b.png)  
 
 In both services, you create rules and these rules pattern match events which
 occur on the buses and when they see an event which matches, they deliver
