@@ -1,8 +1,5 @@
 # 1. SAA-C02 Notes
 
-<p>
-    <img src="images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png" />
-</p>
 
 
 > These are my personal notes from Adrian Cantrill's (SAA-C02) course.Learning Aids from [aws-sa-associate-saac02](https://github.com/acantril/aws-sa-associate-saac02). There may be errors, so please purchase his course to get the original content and show support https://learn.cantrill.io
@@ -2275,7 +2272,6 @@ This cannot be edited and is defaulted on each rule list.
 If no other rules match the traffic being evaluated, it will be denied.
 
 #### 1.5.6.1. NACLs example below
-![image](https://user-images.githubusercontent.com/52617475/143162545-c3257095-d00e-451d-8412-8773666e5820.png)
 
 
 - Bob wants to view a blog using https(tcp/443)
@@ -4619,7 +4615,7 @@ Provides a waiting period in which custom actions can be performed before instan
 
 ### 1.12.5. ASG Health Check
 
-![picture 3](../images/f97297d8913440cb5b68a738380ecc75212c184b5ac6d7d04bde892d4ae4f32f.png)  
+![picture 3](images/f97297d8913440cb5b68a738380ecc75212c184b5ac6d7d04bde892d4ae4f32f.png)  
 
 -EC2(default), ELB(can be enabled) & custom
 -EC2-Stopped, stopping, terminated, shutting down or impaired (not 2/2 status checks passed)=unhealthy
@@ -4632,7 +4628,7 @@ Custom- instances marked healthy and unhealty by an external system.
 
 Automatic scaling and self-healing for EC2
 
-![picture 1](../images/496eab05f7d05be5f2c829b874eeb55d1e8bc720229468ca385dbaa2d4148d4e.png)  
+![picture 1](images/496eab05f7d05be5f2c829b874eeb55d1e8bc720229468ca385dbaa2d4148d4e.png)  
 
 
 - They make use of LCs or LTs to know what to provision.
@@ -4648,7 +4644,7 @@ Scaling Policies can trigger this based on metrics.
 
 Autoscaling Groups will distribute EC2 instances to try and keep the AZs equal.
 
-![picture 2](../images/1cc3d5673b76686a7c632ecca0ca40ec462dae5b04f3448fa94e76bd9388cf0f.png)  
+![picture 2](images/1cc3d5673b76686a7c632ecca0ca40ec462dae5b04f3448fa94e76bd9388cf0f.png)  
 
 
 #### 1.12.4.1. Scaling Policies
@@ -4660,16 +4656,16 @@ There are three types of scaling policies:
 2. Scheduled Scaling - useful for known periods of high or low usage. They are time based adjustments e.g. Sales Periods.
 3. Dynamic Scaling:
 
-Simple: If CPU is above 50%, add one to capacity
+**Simple**: If CPU is above 50%, add one to capacity
 
 ![image](https://user-images.githubusercontent.com/52617475/146294932-7204e5a6-24da-41c5-a04b-6512907fd5a9.png)
 
-Stepped: If CPU usage is above 50%, add one, if above 80% add three
+**Stepped**: If CPU usage is above 50%, add one, if above 80% add three
 
 ![image](https://user-images.githubusercontent.com/52617475/146295359-a9dc9f82-f554-4ed5-b724-4cbaa95fed98.png)
 
 
-Target: Desired aggregate CPU = 40%, ASG will achieve this
+**Target**: Desired aggregate CPU = 40%, ASG will achieve this
 
 **Cooldown Period** is how long to wait at the end of a scaling action before
 scaling again. There is a minimum billable duration for an EC2 instance.
@@ -4711,7 +4707,14 @@ that aren't HTTP or HTTPS.
 
 9. Used with private link to provide services to other VPCs.
 
-![image](https://user-images.githubusercontent.com/52617475/146183353-caab7d90-d959-4c88-9a91-eccecf7b123b.png)
+### ALB vs NLB
+
+- Unbroken encryption... NLB
+- Static IP for whitelisting...NLB
+- The fastest performance... NLB (millions rps)
+- Protocols not HTTP or HTTPS... NLB
+- Privatelink... NLB
+- Otherwise... ALB
 
 ### 1.12.6. SSL Offload and Session Stickiness
 ![image](https://user-images.githubusercontent.com/52617475/146314975-7aa8abca-369e-4227-914b-00a435e0b533.png)
@@ -4798,6 +4801,10 @@ should be designed to hold session stickiness somewhere other than EC2. You can 
 #### 1.12.6.5. Gateway Load Balancer
 
 Some applications use a third party security device checking traffic into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
+
+<p>
+    <img src="images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png" />
+</p>
 
 
 A Gateway Load Balancer:
