@@ -3727,9 +3727,15 @@ Bias can be added or subtracted to manipulate the routing zone. In this example,
 ![image](https://user-images.githubusercontent.com/52617475/145062641-e3bf0edb-bdec-48f1-916f-e6cf0546d879.png)
 
 - **Interoperability**:
-- 
-![image](https://user-images.githubusercontent.com/52617475/145067767-326ce873-57bb-46cb-bb45-2a1391397269.png)
 
+
+  - R53 normally has 2 jobs- Domain registrar and Domain Hosting
+  - R53 can do BOTH, or either Domain Registrar or Domain Hosting
+  - R53 Accepts your money (domain registration fee)
+  - R53 allocates 4 Name Servers (NS)(domain hosting)
+  - R53 Creates a zone file (domain hosting) on the above NS
+  - R53 communicates with the registry of the TLD (Domain Registrar)
+  -... sets the NS records for the domain to point at the 4 NS above
 
 ![image](https://user-images.githubusercontent.com/52617475/145068819-251aedde-1f69-4b43-8b5e-dace17b74cd0.png)
 
@@ -3845,10 +3851,11 @@ The data is the same, but it's grouped together on disk, based on
 column so every order value is stored together, every product item, color,
 size, and price are all grouped together.
 
+![image](https://user-images.githubusercontent.com/52617475/145079010-d64c21ee-cb2d-4f54-98bb-d0b4b067dbd0.png)
+
 This is bad for transactional style processing, but great for reporting or when
 all values for a specific size are required.
 
-![image](https://user-images.githubusercontent.com/52617475/145079010-d64c21ee-cb2d-4f54-98bb-d0b4b067dbd0.png)
 
 
 ##### 1.10.1.2.6. Graph
@@ -3857,6 +3864,8 @@ Relationships between things are formally defined and stored along in the
 database itself with the data.
 They are not calculated each and every time you run a query.
 These are great for relationship driven data.
+
+![image](https://user-images.githubusercontent.com/52617475/145079517-eaadbfc0-5a67-4a49-91b2-57e62f2cbe5d.png)
 
 Nodes are objects inside a graph database. They can have properties.
 
@@ -3868,13 +3877,17 @@ We might want to store the start date of any employment relationship.
 Can store massive amounts of complex relationships between data or between
 nodes in a database. Flexible.
 
-![image](https://user-images.githubusercontent.com/52617475/145079517-eaadbfc0-5a67-4a49-91b2-57e62f2cbe5d.png)
 
 
 ### 1.10.2. ACID and BASE
 
+Particular database frameworks: ACID and BASE
+
+**ACID**
+
 ![image](https://user-images.githubusercontent.com/52617475/145081120-8d8d5085-cd07-4622-b4a9-fe4c535940c9.png)
 
+**BASE**
 
 ![image](https://user-images.githubusercontent.com/52617475/145081631-4b2326d9-3326-41f8-9965-ebfeb5bb010d.png)
 
@@ -3950,10 +3963,10 @@ io1 - lots of IOPS and consistent low latency
 gp2 - same burst pool architecture as it does on EC2, used by default
 magnetic - compatibility mostly for long term historic uses
 
+![image](https://user-images.githubusercontent.com/52617475/145256350-c93b3747-8f0b-4374-bb97-10fe835e34e5.png)
+
 Billing is per instance and hourly rate for that compute. You are billed
 for storage allocated.
-
-![image](https://user-images.githubusercontent.com/52617475/145256350-c93b3747-8f0b-4374-bb97-10fe835e34e5.png)
 
 
 ### 1.10.4. RDS Multi AZ (High-Availability)
@@ -3966,12 +3979,12 @@ its own storage in the same AZ as it's located.
 RDS enables synchronous replication from the primary instance to the
 standby replica.
 
+![image](https://user-images.githubusercontent.com/52617475/145257125-c6d00d11-1dfa-433e-b1df-6cb473d268dd.png)
+
 RDS Access ONLY via database CNAME. The CNAME will point at the primary
 instance. You cannot access the standby replica for any reason via RDS.
 
 The standby replica cannot be used for extra capacity.
-
-![image](https://user-images.githubusercontent.com/52617475/145257125-c6d00d11-1dfa-433e-b1df-6cb473d268dd.png)
 
 
 **Synchronous Replication** means:
@@ -4008,8 +4021,6 @@ This does not provide fault tolerance as there will be some impact during change
 
 ### 1.10.5. RDS Backup and Restores
 
-![image](https://user-images.githubusercontent.com/52617475/145293233-51bcfceb-dcc6-42e6-86bc-a1988f915108.png)
-
 RPO - Recovery Point Objective
 
 - Time between the last backup and when the failure occurred.
@@ -4021,6 +4032,8 @@ RTO - Recovery Time Objective
 
 - Time between the disaster recovery event and full recovery.
 - Influenced by process, staff, tech and documentation.
+
+![image](https://user-images.githubusercontent.com/52617475/145293233-51bcfceb-dcc6-42e6-86bc-a1988f915108.png)
 
 
 RDS Backups
@@ -4034,6 +4047,8 @@ can impact your application. If you are using Multi-AZ, the snapshot occurs
 on the standby replica. A snapshot is a backup of all the databases on the instance (not just one).
 
 **Manual snapshots don't expire**, you have to clean them yourself. Manual snapshots will remain in your account even if you have already deleted the RDS instance.
+
+![image](https://user-images.githubusercontent.com/52617475/145319889-056611a1-8763-4107-b381-2451cf479f4b.png)
 
 
 In addition to automated backup, every 5 minutes database transaction logs are
@@ -4050,8 +4065,6 @@ based on their retention period.
 
 The only way to maintain backups is to create a final snapshot which will not
 expire automatically.
-
-![image](https://user-images.githubusercontent.com/52617475/145319889-056611a1-8763-4107-b381-2451cf479f4b.png)
 
 
 #### 1.10.5.1. RDS Backup Exam PowerUp
@@ -4070,15 +4083,14 @@ Kept in sync using **asynchronous replication**
 
 RDS Read-Replicas are read only replicas of an RDS instance.
 
+![image](https://user-images.githubusercontent.com/52617475/145320825-8842e8b1-3400-4f87-9554-22638ad39377.png)
+
 It is written fully to the primary and standby instance first.
 Once its stored on disk, it is then pushed to the replica.
 This means there could be a small lag.
 These can be created in the same region or a different region.
 This is known as **cross region replication**. AWS handles all of the
 encryption, configuration, and networking without intervention.
-
-![image](https://user-images.githubusercontent.com/52617475/145320825-8842e8b1-3400-4f87-9554-22638ad39377.png)
-
 
 #### 1.10.6.1. Why do these matter
 
@@ -4219,9 +4231,6 @@ in the clone or changed in the original after you make the clone.
 
 ### 1.10.9. Aurora Serverless
 
-![image](https://user-images.githubusercontent.com/52617475/146083492-6100f7f4-b18b-4e78-8f09-19d5d469c5c8.png)
-
-
 Provides a version of Aurora database product without managing the resources.
 You still create a cluster, but it uses ACUs or Aurora Capacity Units.
 
@@ -4237,6 +4246,8 @@ ACUs are stateless and shared across many AWS customers and have no local
 storage. They can be allocated to your Aurora Serverless cluster rapidly
 when required. Once ACUs are allocated to a cluster, they have access to cluster
 storage in the same way as an Aurora Provisioned cluster.
+
+![image](https://user-images.githubusercontent.com/52617475/146083492-6100f7f4-b18b-4e78-8f09-19d5d469c5c8.png)
 
 There is a shared proxy fleet. When a customer interacts with the data
 they are actually communicating with the proxy fleet. The proxy fleet
@@ -4276,11 +4287,9 @@ layer and typically occurs within one second.
 
 ### 1.10.11. Aurora Multi-Master Writes
 
-![image](https://user-images.githubusercontent.com/52617475/146088868-69e6d537-3ac5-4445-b5f2-bff5f508deda.png)
-
 Allows an aurora cluster to have multiple instances capable of reads and writes.
 
-Single-master Mode
+**Single-Master Mode**
 
 ![image](https://user-images.githubusercontent.com/52617475/146089081-11d17c87-ab75-4991-9f8a-2a079cd975fe.png)
 
@@ -4290,9 +4299,13 @@ Single-master Mode
 - if the primary cluster goes down, there is a slight interruption as the cluster endpoint moves to the read only replica.
 - Failover is quicker than RDS as each cluster shares storage.
 
+**Multi-Master Mode**
+
 Aurora Multi-master has no endpoint or load balancing. An application
 can connect with one or all of the instances inside a multi-master
 cluster.
+
+![image](https://user-images.githubusercontent.com/52617475/146088868-69e6d537-3ac5-4445-b5f2-bff5f508deda.png)
 
 When one of the R/W nodes receives a write request from the application, it
 immediately proposes that data be committed to all of the storage nodes in that
@@ -4314,13 +4327,14 @@ all future load over to a new writer with little if any disruption.
 
 ### 1.10.12. Database Migration Service (DMS)
 
-![image](https://user-images.githubusercontent.com/52617475/146092291-90d84d26-7993-45f1-a5f6-9b073b7403d9.png)
-
 A managed database migration service.
 Starts with a replication instance which runs on top of an EC2 instance.
 This replication instance runs one or more replication tasks.
 This is where the configuration is defined for the migration of databases.
 This runs using a replication instance.
+
+![image](https://user-images.githubusercontent.com/52617475/146092291-90d84d26-7993-45f1-a5f6-9b073b7403d9.png)
+
 
 Need to define the source and destination endpoints.
 These point at the physical source and target databases.
@@ -4355,9 +4369,10 @@ DMS is the default service used to migrate databases.
 
 ### 1.11.1. EFS Architecture
 
+EFS moves the instances closer to being stateless.
+
 ![image](https://user-images.githubusercontent.com/52617475/145744516-7fe2a490-139a-471e-936a-b41f7b9363a6.png)
 
-EFS moves the instances closer to being stateless.
 
 - EFS is an implementation of NFSv4
 - EFS file systems are created and mounted in Linux instances.
@@ -4820,7 +4835,7 @@ A Gateway Load Balancer:
 
 ![picture 8](images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
 
-Traffic enters VPC and goes through GLBE and the GLB. It is encapsulated and directed to one of the instances before going back through the GLB and to the App server. It allows for abstraction as you can use multiple applications. Designed to assist horizontal scaling of theird party secruity devices.
+Traffic enters the VPC and goes through GLBE and the GLB. It is encapsulated and directed to one of the instances before going back through the GLB and to the App server. It allows for abstraction as you can use multiple applications. Designed to assist horizontal scaling of third party security devices.
 
 ![picture 9](images/da70060e950dc0bfd425953a5c77a64c57120d3cb132228ac60306fd7ea2fba5.png)  
 
@@ -5302,33 +5317,46 @@ Public service that provides fully managed highly available message queues.
 - Polling is checking for any messages on the queue.
 - **Visibility timeout**
   - The amount of time a client has to process a message in some way
-  - When a client polls and receives messages, they aren't deleted from the
-  queue and are hidden for the length of this timeout.
-  - This is the amount of time that a client can wait to work on the messages.
+  - When a client polls and receives messages, the messages aren't immediately deleted from the
+  queue but are instead hidden for the length of the timeout.
+  - This is the amount of time that a client can wait before the message becomes visible after which they can explicity delete the message if they so choose.
   - If the client does not delete the message by the end, it will reappear in
   the queue.
 - **Dead-letter queue**
   - if a message is received multiple times but is unable to be finished, this
   puts it into a different workload to try and fix the corruption.
 - ASG can scale and lambdas can be invoked based on queue length.
+
+
+**Simple Architecture**
+![picture 35](images/235abd32494919b67eeecfb07fb2f00fd02435daccf585d8af13c601724cce4e.png)  
+
+Simplied architecture, Bob uploads a video to S3. A message, which contains a link to the video, is sent to the queue. The worker ASG will scale in and out depending on the length of the queue. Once all messages are processed, the work pool ASG will scale to 0. Decoupled system.
+
+**Production Architecture**
+![picture 36](images/eb04385632cb59241e5e675ae6401585e9b22bca4fc2ead44841de4e070c6409.png)  
+
+In this case the message is sent to an SNS topic, which is configured with fanout queue (3 separate queues), each designed to process a video of a different size (480p, 720p 1080p). A message is processed independently at each size. Each size has its own independent SQS queue and ASG. The videos are returned to the user as before. Suited for processing multiple jobs. Means 1 event can spawn multiple jobs. 
+
+
+
+
+
 - Standard queue
   - multi-lane highway. 
-  - guarantee the order and at least once delivery.
+  - doesn't guarantee the order
+  - at least once delivery (could recieve the same message twice)
+  - better for scaling (just add more lanes)
 - FIFO queue
   - single lane road with no way to overtake
-  - guarantee the order and at exactly once delivery
+  - guarantee the order and exactly once delivery
   - 3,000 messages p/s with batching or up to 300 messages p/s without
 
-    Standard Queue| FIFO Queue |
-    ---------|----------|---------
-    Multi lane highway | Single lane road with no way to overtake | 
-    guarantee the order and at least one delivery | guarantee the order and at exactly one delivery | 
-    empty| 3000 messages p/s with batching or up to 300 messages p/s without | 
 
 Billed on **requests** not messages. A request is a single request to SQS.
-One request can return 0 - 10 messages up to 64KB data in total.
+One request can return 0 - 10 messages up to 256KB data in total.
 Since requests can return 0 messages, frequently polling a SQS Queue, makes it
-less effective.
+less cost effective.
 
 Two ways to poll
 
@@ -5337,7 +5365,7 @@ queue is empty, it will return 0 and try again. This hurts queues that stay
 short
 
 - long (waitTimeSeconds) : it will wait for up to 20 seconds for messages
-to arrive on the queue. It will sit and wait if none currently exist.
+to arrive on the queue. It will sit and wait if none currently exist. More cost effective than short polling.
 
 Messages can live on SQS Queue for up to 15 days. They offer KMS encryption
 at rest. Server side encryption. Data is encrypted in transit with SQS and any
@@ -5354,7 +5382,6 @@ lots of devices or lots of applications.
 - The stream can scale from low to near infinite data rates.
 - Highly available public service by design.
 - Streams store a 24-hour moving window of data.
-  - Can be increased to 7 days.
   - Data 24 hours + 1s is replaced by new data entering the stream.
 - Kinesis includes the storage costs within it for the amount of data
 that can be ingested during a 24 hour period. However much you ingest during
@@ -5365,10 +5392,43 @@ that can be ingested during a 24 hour period. However much you ingest during
 - Kinesis stream starts with 1 shard and expands as needed.
   - Each shard can have 1MB/s for ingestion and 2MB/s consumption.
 
+![picture 37](images/c5fda8d7fd7bdcf276fcaeb95e1ce8f7d046bdfe9d4139445b2f666e1db72b08.png)  
+
+
+
 **Kinesis data records (1MB)** are stored across shards and are the blocks
 of data for a stream.
 
-**Kinesis Data Firehose** connects to a Kinesis stream. It can move the data from a stream onto S3 or another service. Kinesis Firehose allows for the long term persistence of storage of kinesis data into services like S3. 
+**Kinesis Data Firehose** connects to a Kinesis stream. It can move the data from a stream onto S3 or another service. Kinesis Firehose allows for the long term persistence of storage of kinesis data into services like S3. Automatic scaling, serverless, resilent. 
+
+Near real time delievery (60s). Kinesis is real time, but kinesis firehose is not. Supports transformation of data on the fly (lambda). You are billed on data volume passed through the service.
+
+![picture 38](images/53bb053ed8123c70e04b845bade16471b3cd8328f8b623d33d179f787f62cd92.png)  
+
+### Kinesis Data Analytics
+
+
+- Real time processing of data
+- ... using SQL
+- Ingests from Kinesis Data Streams or Firehose
+- Destinations include ...
+- Firehose(S3, Redshift, ElasticSearch, Splunk)
+- AWS Lambda
+- Kinesis Data Streams
+- Costly service
+- Can be sent to consumers or destinations
+- Remains real time unless you send it to kinesis firehose (then becomes near real time)
+
+![picture 40](images/61f066c23d2ee4421231775a60d68335bcca845be5a7e0f7563188ed6cd99c47.png)  
+
+Use cases:
+- Real time streaming data processing
+- Time series Analysis... elections/e-sports
+- Real-time dashboards-leaderboards for games
+- Real-time metrics- Security and response teams
+
+
+
 
 ### 1.13.10. SQS vs Kinesis
 
@@ -5382,9 +5442,12 @@ Kinesis
 SQS
 
 - 1 thing sending messages to the queue
+- Generally 1 production group, 1 consumption group
+- Decoupling applications
 - One consumption group from that tier
 - Allow for async communications
 - Once the message is processed, it is deleted
+- No peristence of message, no window
 
   Kinesis | SQS |
   ---------|----------|
@@ -5392,6 +5455,36 @@ SQS
   Huge scale ingestion with multiple consumers| One consumption group from that tier| C2
   Rolling window for multiple consumers | Allow for async communications | C3
   Designed for data ingestion, analytics, monitoring, and app clicks | Once the message is processed, it is deleted | C3
+
+### 1.13.10. Cognito
+
+
+Cognito provides:
+
+- **Authentication** of user identity.
+  - Verify user credientials.
+
+- **Authorization** of user access.
+  - Manage access to services.
+
+- **User management** of user identity.
+  - Creates and manages serverless user database.
+
+- User Pools- Sign-in and get JSON Web Token (JWT)
+  - User directory management and profiles, sign-up and sign-in (customisable web UI), mfa and other security features.
+  - Sign in from built in users and other proviers (google, facebook, amazon, saml etc)
+  - Does not grant access to AWS services (with the exception of API Gateway)
+
+![picture 42](images/449ee64e521a6dd67dff40fd24f16d8d3a8da70b86e3308ff1e8f222c5f3ed4e.png)  
+
+
+
+- Identify Pools- exchange external identity token for temporary AWS credentials to access AWS resources.
+    - Google, facebook, Saml, User Pool identity.
+    - Credentials are not stored in this procees
+
+    Example with google token where user assumes authenticated role:
+![picture 43](images/99cc9232051cdc1c26b39591d4a10ffa8e4df1783880f5edf5f92ba9c71cef2e.png)  
 
 ---
 
