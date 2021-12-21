@@ -4274,6 +4274,9 @@ Introduces the idea of secondary regions with up to 16 read only replicas.
 Replication from primary region to secondary regions happens at the storage
 layer and typically occurs within one second.
 
+![picture 61](images/b7443e1ea346086721b9e6aa35e99700210366087e5ff621837b0eea89a7805b.png)  
+
+
 - Great for *cross region disaster recovery and business continuity*.
 - Global read scaling
   - Low latency performance improvements for international customers.
@@ -4686,7 +4689,7 @@ There are three types of scaling policies:
 scaling again. There is a minimum billable duration for an EC2 instance.
 Currently this is 300 seconds.
 
-Self healing occurs when an instance has failed and AWS provisions a new
+**Self healing** occurs when an instance has failed and AWS provisions a new
 instance in its place. This will fix most problems that are isolated to one
 instance.
 
@@ -4986,7 +4989,7 @@ and output. Something like DynamoDB or S3. If a Lambda is invoked by an event,
 it gets details of the event given to it at startup.
 
 Lambda functions can run up to 15 minutes. That is the max limit.
-![picture 49](../images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
+![picture 49](images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
 
 #### 1.13.2.2. Key Considerations
 
@@ -5301,7 +5304,8 @@ are available.
   - can be integrated with many different services such as Lambda, AWS batch, dynamoDB, ECS, SNS, SQS, Glue, SageMaker, EMR, and lots of others.
 
 
-  ![picture 29](images/bd35ebeeaa2861b5a9f26c02367cf2c54fbe31e15aa4c403bf807ff7a406934e.png)  
+ ![picture 62](images/a9f1d13ea2759e355ac8685fe3a1e55869e7413270c63786a722b6ec3a90ebfe.png)  
+
 
   Bob goes to a html website hosted on S3, clicks the page which invokes a Lambda function which triggers a Step function to present a choice to Bob about how he would like to be notified when Whiskers wants a cuddle.
 
@@ -5553,7 +5557,8 @@ To address this, objects in the edge location can be programmed to expire (TTL) 
 
 - Cache Invalidation... performed on a distribution.
  - Expires any object regardless of TTL based on your invalidation pattern.
-![picture 55](../images/34b7a277d80b44721c1885f6dc1b3e132f3d19266b5938096111117f835234db.png)  
+
+
 - ... applies to all edge locations... takes time
 - Cost for performing cache invalidation is the same regardless of number of objects matched by the path pattern.
 - /images/whiskers1/jpg
@@ -5610,7 +5615,11 @@ website then uses that certificate to prove its authenticity.
 - If you are trying to use a global service like cloudfront, then your certificate needs to be in us-east-1
 - HTTP or HTTPS, HTTP=> HTTPS, HTTPS Only
 - Two SSL Connections: Viewer=> CloudFront and CloudFront=> Origin
-- ... Both need valid public certificates (and intermediate certs). No self-signed certificates.
+- ... Both need valid public certificates (and intermediate certs). No self-signed certificates. Do not need to configure certificate for S3 as it is handled natively.
+
+ ![picture 59](images/3a9d126a465e4a93f7b0cff0a0a5dcfa771daf76d609570372c2add933fcf18e.png)  
+
+
 
 - Historically every SSL-enabled site needed its own IP
 - Encryption starts at the TCP layer...
@@ -5622,11 +5631,18 @@ website then uses that certificate to prove its authenticity.
 
 ### 1.14.3. Origin Access Identity (OAI)
 
+Terms:
+S3 Origin: An S3 bucket serving as an origin source on the cloudfront network. Not using the static website hosting feature of S3. OAI applies to S3 origin sources.
+
+
 1. Identity can be associated with a CloudFront distribution.
-2. The edge locations gain this identity.
-3. Create or adjust the bucket policy on the S3 origin. Add an explicit allow
-for the OAI. Can remove any other explicit allows on the OAI. This leaves
-the implicit deny.
+2. CloudFront 'becomes' that OAI
+3. That OAI can be used in s3 bucket policies
+4. Deny all but the one or more OAIs you grant access to in the resource policy
+
+![picture 60](images/1b0bdf1d17be8da32f22df44ff2047dbfe84853f547c41df860b789f31b9ca99.png)  
+
+
 
 As long as accesses are coming from the edge locations, it will know they
 are from the OAI and allow them. Any direct attempts will not use the OAI and
@@ -5635,19 +5651,31 @@ will only get the implicit deny.
 Best practice is to create one OAI per CloudFront distribution to manage
 permissions.
 
+### Secure Custom Origins
+
+Two ways:
+- Transfer Custom Header from cloudfront to custom origin
+- Create firewall around custom origin and configure access using cloudfront IP ranges
+
+![picture 63](images/bf88c690353fde1ce6831cdcc589bb7d41c090a47cb2bf7a7a3f9d13ddc1386e.png)  
+
+
 ### 1.14.3.(1/2) Lambda@Edge
 
-- Permits to run lightweight Labda functions at Edge Locations
+- Permits to run lightweight Lambda functions at Edge Locations
  - Adjust data between Viewer & Origin
  - Only Node.JS and Python are supported
  - Only AWS Public Space is supported ( NO VPC )
  - No layers supported
  - Different Limits vs Normal Lambda
 
+ ![picture 64](images/a33aa63cd50eb1cb1c6685211d5240c5f394959b444e991700d3ddffca76dcff.png)  
+
+
  **Lambda@Edge Use Cases**
 
- - A/B Testing - Viewer Request
- - Migration Between S3 Origins - Origin Request
+ - A/B Testing - Viewer Request function
+ - Migration Between two S3 Origins - Origin Request
  - Different objects based on Device - Origin Request
  - Content By Country - Origin Request
 
@@ -5659,15 +5687,23 @@ permissions.
 - While CloudFront caches your application at Edge Locations, Global Accelerator moves the AWS infrastructure closer to your customers. 
 - Generally customers who are further away from your infrastructure go through
 more internet based hops and this means a lower quality connection.
+
+![picture 65](images/742e451177783b3ccadd4d246cce2b98d5f198e3a2e4a5b0c16e23dbbc6e3eb3.png)  
+
+
 - Normal IP addresses are unicast IP addresses. These refer to one thing.
 - Global Accelerator starts with 2 **anycast** IP address
   - Special IP address
   - Anycast IPs allow a single IP to be in multiple locations.
   - Traffic initially uses public internet and enters Global Accelerator at
   the closest edge location.
-  - Traffic then flows globally across the AWS global backbone network.
-- Global accelerator is a network product, and it uses non HTTP/S (TCP/UDP) protocols.
+  - Traffic then flows globally across the AWS global backbone network. Less hops, better performance.
+  - connections enter at edge using anycast IPs.
+- Global accelerator is a network product, and it uses non HTTP/S (TCP/UDP) protocols (**different from cloudfront**). CloudFront only caches HTTP/S content.
 - If you see questions that mention _caching_ that will most likely be CloudFront but, if you see questions that mention TCP or UDP and the requirement for _global performance optimization_ then possibly it's going to be global accelerator which is the right answer.
+
+![picture 66](images/7cfb531b5bfb7f748949557022c345fa752cf1e9810265742cbfb13ed6920196.png)  
+
 
 ---
 
