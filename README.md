@@ -4986,6 +4986,7 @@ and output. Something like DynamoDB or S3. If a Lambda is invoked by an event,
 it gets details of the event given to it at startup.
 
 Lambda functions can run up to 15 minutes. That is the max limit.
+![picture 49](../images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
 
 #### 1.13.2.2. Key Considerations
 
@@ -5422,7 +5423,7 @@ Near real time delievery (60s). Kinesis is real time, but kinesis firehose is no
 ![picture 40](images/61f066c23d2ee4421231775a60d68335bcca845be5a7e0f7563188ed6cd99c47.png)  
 
 Use cases:
-- Real time streaming data processing
+- Real-time streaming data processing
 - Time series Analysis... elections/e-sports
 - Real-time dashboards-leaderboards for games
 - Real-time metrics- Security and response teams
@@ -5470,7 +5471,7 @@ Cognito provides:
 - **User management** of user identity.
   - Creates and manages serverless user database.
 
-- User Pools- Sign-in and get JSON Web Token (JWT)
+- **User Pools**- Sign-in and get JSON Web Token (JWT)
   - User directory management and profiles, sign-up and sign-in (customisable web UI), mfa and other security features.
   - Sign in from built in users and other proviers (google, facebook, amazon, saml etc)
   - Does not grant access to AWS services (with the exception of API Gateway)
@@ -5479,12 +5480,17 @@ Cognito provides:
 
 
 
-- Identify Pools- exchange external identity token for temporary AWS credentials to access AWS resources.
-    - Google, facebook, Saml, User Pool identity.
-    - Credentials are not stored in this procees
+- **Identify Pools**- exchange external identity token for temporary AWS credentials to access AWS resources.
+    - Includes identites such as Google, facebook, Saml, User Pool.
+    - Credentials are not stored in this procees.
 
     Example with google token where user assumes authenticated role:
 ![picture 43](images/99cc9232051cdc1c26b39591d4a10ffa8e4df1783880f5edf5f92ba9c71cef2e.png)  
+
+**User and Identity pools**
+- Allows you to use a standardise token (JWT) to simplify the authentication and authorization process.
+
+![picture 44](images/2bbb7be885298d55fff732607be3d35fc501e811958d8b679b790d730ad829b1.png)  
 
 ---
 
@@ -5493,23 +5499,73 @@ Cognito provides:
 ### 1.14.1. Architecture Basics
 
 - CloudFront is a global object cache (CDN)
-- Download caching only
+- Download caching only, no write caching.
 - Content is cached in locations close to customers.
 - If the content is not available on the local cache when requested, CloudFront
 will fetch the item and cache it and deliver it locally.
 - This provides lower latency (more responsiveness) and higher throughput (faster page loads) for customers.
 - Can handle static and dynamic content.
-- **Origin** the original location of your content, can be an S3 bucket or ALB. In theory it can be anywhere on the internet accessible by CloudFront.
-- **Distribution** the configuration unit of CloudFront.
+- **Origin** the original location of your content, can be an S3 bucket or custom origin (anything that runs a web server and has a publically routable IPv4 address). In theory it can be anywhere on the internet accessible by CloudFront.
+- **Distribution** the configuration unit of CloudFront. 
 - **Edge locations** global infrastructure which hosts a cache of your data.
   - There are over 200 edge locations.
   - They are generally one or more racks in a 3rd party data center.
   - Normally 90% storage with some small compute.
+  - Doesn't deploy EC2 instances.
 - **Regional Edge Cache**
   - Larger version of an edge location.
   - Support a number of local edge locations.
   - Designed to hold more data to cache things which are accessed less often.
   - Provides another layer of caching.
+
+![picture 45](images/f82afc4b7836a97b0a27cb3df783a37ad2f899b82d84f14af5d4eeaf19b4c1aa.png)
+
+**Example**
+
+Julie and Moss are both in Europle. Julie goes to access Whiskers.jpg first and the object is neither cached in the local or regional edge location. NB: Regionional Edge Cache is only checked for custom origins, not an S3 bucket. Image is illustrative only.
+  
+
+**Cloudfront Behaviours**
+
+Distributions contain behaviours which are individual configurations or rules which dictate how edge locations interact with the origin source. There is also a preconfigured behaviour with all access (*) provided.
+
+![picture 46](images/877de49136fa9a04854477cecfdeac05a1dce273f6761eac5c6d89d424b56d0f.png)  
+
+**TTL and Invalidations**
+
+Caching can present a problem if an outdated (or older version) content is cached at an edge location and is unaware that the content at the origin has been modified. For example, there may be a picture of a crying whiskers cached at the edge location whilst a newer version (smiling whiskers) has been updated in ht eS3 bucket. 
+
+To address this, objects in the edge location can be programmed to expire (TTL) in which case they have to forward a request to the origin source to confirm its current contents.
+
+![picture 47](images/53072930f6997e688112f148b0f1453bc7bab597eb3de4ced96508da1e8a39b1.png)  
+
+
+- More frequent catche HITS=lower origin load (a cache HIT is when the edge location is actually storing your request content)
+- Default TTL (behaviour)=24 hours (validity period)
+- You can set Minimum TTL and Maximum TTL values
+- Acts as limits on the origin header.
+- Origin Header: Cache-Control max-age (seconds)
+- Origin Header: Cache-Control s-maxage (seconds)
+  - Both Cache-Control max-age and Cache-Control s-maxage set the time (in seconds) after which the object will expire.
+- Origin Header: Expires (Date & Time)
+  - Sets the date and time after which the object will expire.
+- Custom Origin or S3 (via object metadata)
+
+- Cache Invalidation... performed on a distribution.
+ - Expires any object regardless of TTL based on your invalidation pattern.
+![picture 55](../images/34b7a277d80b44721c1885f6dc1b3e132f3d19266b5938096111117f835234db.png)  
+- ... applies to all edge locations... takes time
+- Cost for performing cache invalidation is the same regardless of number of objects matched by the path pattern.
+- /images/whiskers1/jpg
+- /images/whiskers*'
+- /images/*
+- /*
+- Versioned file names are a better alternative to Cache Invalidation... whiskers1_v1.jpg//_v2.jpg//v3.jpg. Simply point your application to the new version.
+  - Versioned file names do not impact the cached content on the users browser.
+  - Retains all versions of the object so you can move between them.
+  - Cheaper alternative to cache invalidation.
+
+
 
 #### 1.14.1.1. Caching Optimization
 
@@ -5536,9 +5592,33 @@ caching or just selected ones.
 - To be secure, a website generates a certificate, and has a CA sign it. The
 website then uses that certificate to prove its authenticity.
 - ACM allows you to create, renew, and deploy certificates.
-- Supported AWS services ONLY (CloudFront, ALB and API Gateway, Elastic Beanstalk, CloudFormation, **NOT EC2**)
-- If it's not a managed service, ACM doesn't support it.
+- Supported AWS services ONLY (CloudFront, ALB and API Gateway, Elastic Beanstalk, CloudFormation, **NOT EC2 Directly**)
+- If it's not a managed service, generally ACM doesn't support it.
 - CloudFront must have a trusted and signed certificate. Can't be self signed.
+
+![picture 53](images/059dcd154cff2d8bdd6f220cf6e1ef7da5bc578d9c685783c188dc3bb82fcb4b.png)  
+
+
+### CloudFront and SSL/TLS
+
+- CloudDront Default Domain Name (CNAME)
+- e.g: https://d111111abcde8.cloudfron.net/
+- SSL Supported by default... *.cloudfront.net cert
+- Alternate Domain Names (CNAMES) can be configured using R53 e.g cdn.catagram...
+- Verify Ownership (optionally HTTPS) using a matching certificate
+- Generate or import in ACM..Regional service, certificate should be in the same region as the service you are trying to use.
+- If you are trying to use a global service like cloudfront, then your certificate needs to be in us-east-1
+- HTTP or HTTPS, HTTP=> HTTPS, HTTPS Only
+- Two SSL Connections: Viewer=> CloudFront and CloudFront=> Origin
+- ... Both need valid public certificates (and intermediate certs). No self-signed certificates.
+
+- Historically every SSL-enabled site needed its own IP
+- Encryption starts at the TCP layer...
+- Host headers happens after that in Layer 7// Application Layer
+- SNI is TLS extension, allowing a host to be included
+- Resulting in many SSL Certs/Hosts using a shared IP
+- Old browsers don't support SNI... CF charges extra for dedicated IP
+
 
 ### 1.14.3. Origin Access Identity (OAI)
 
