@@ -2182,9 +2182,6 @@ or AWS Public Zones (S3, SQS, SNS, etc.)
 
 ![image](https://user-images.githubusercontent.com/52617475/143519889-47e025e9-0ac2-410d-bda1-a15774338360.png)
 
-
-![image](https://user-images.githubusercontent.com/52617475/143519926-e5ae5162-d6cb-4e7e-8cd0-833c30527750.png)
-
 In this example, an EC2 instance has:
 
 - Private IP address of 10.16.16.20
@@ -2195,6 +2192,10 @@ Instead, the IGW creates a record that links the instance's private IP
 to the public IP. This is why when an EC2 instance is created it only
 sees the private IP address. This is IMPORTANT. For IPv4 it is not configured
 in the OS with the public address.
+
+
+![image](https://user-images.githubusercontent.com/52617475/143519926-e5ae5162-d6cb-4e7e-8cd0-833c30527750.png)
+
 
 When the linux instance wants to communicate with the linux update service,
 it makes a packet of data.
@@ -2749,7 +2750,8 @@ This is used data, not allocated data. If you have a 40 GB volume but only
 use 10 GB, you will only be charged for the allocated data.
 This is not how EBS itself works as you pay for the entire volume.
 
-![image](https://user-images.githubusercontent.com/52617475/143810012-0f6ea0ce-3d1c-4eae-9650-f66b04d272c2.png)
+![picture 67](images/502dbd872fbd15db85993edd1e07a85dac5476d33406a3e02519d0a15f62faec.png)  
+
 
 
 The data is incrementally stored which means doing a snapshot every 5 minutes
@@ -3272,6 +3274,7 @@ the script, the instance will be in:
 - Bad config but still likely running.
   - The instance will probably still pass its checks.
   - It will not be configured as you expected.
+TODO
 
 ![image](https://user-images.githubusercontent.com/52617475/144712322-046b0083-73dd-4c71-badc-5bf6716d2fdc.png)
 
@@ -3372,6 +3375,8 @@ instance **meta-data**.
 
 EC2 and the secure token service ensure the credentials never expire as long as the instance profile is attached.
 
+TODO
+
 ![image](https://user-images.githubusercontent.com/52617475/144717004-a1ecc52b-c243-4382-b499-ea730d0ce0aa.png)
 
 
@@ -3440,6 +3445,8 @@ We can use parameter store to store the configuration for the CW agent.
 
 #### 1.8.6.1. Cluster Placement -> Pack Instances Close Together
 
+TODO
+
 ![image](https://user-images.githubusercontent.com/52617475/144717588-71f39689-6653-406e-babe-aaeb07460e5c.png)
 
 Designed so that instances within the same cluster are physically close together.
@@ -3473,6 +3480,8 @@ If the hardware fails, the entire cluster will fail.
 
 #### 1.8.6.2. Spread Placement -> Keep Instances Separated
 
+TODO
+
 ![image](https://user-images.githubusercontent.com/52617475/144717723-d8fd3947-ff17-4269-9816-a00b18db68cd.png)
 
 
@@ -3495,6 +3504,8 @@ group.
 from each other. Several mirrors of an application; different nodes of an application; etc.
 
 #### 1.8.6.3. Partition Placement -> Groups of Instances Spread Apart
+
+TODO
 
 ![image](https://user-images.githubusercontent.com/52617475/144717806-f7b84570-b9e4-4e7a-9f60-448e35ba863e.png)
 
@@ -3540,6 +3551,8 @@ matching host size.
 - This is mostly used for licensing problems related to ports.
 
 ### 1.8.8. Enhanced Networking
+
+TODO
 
 Enhanced networking uses SR-IOV.
 The physical network interface is aware of the virtualization.
@@ -3612,6 +3625,7 @@ associated with the private hosted zone all resource records can be accessed. Bo
 ![image](https://user-images.githubusercontent.com/52617475/144801039-11f17ef2-24da-42bf-bf59-1a7480ce4dee.png)
 
 ### 1.9.2. CNAME
+TODO 
 
 ![image](https://user-images.githubusercontent.com/52617475/144856997-d0dc6696-f6e7-441a-a6d8-608adf63110b.png)
 
@@ -3883,11 +3897,11 @@ nodes in a database. Flexible.
 
 Particular database frameworks: ACID and BASE
 
-**ACID**
+**ACID** acronym commonly used to describe RDS
 
 ![image](https://user-images.githubusercontent.com/52617475/145081120-8d8d5085-cd07-4622-b4a9-fe4c535940c9.png)
 
-**BASE**
+**BASE** acronym commonly used to describe DynamoDB
 
 ![image](https://user-images.githubusercontent.com/52617475/145081631-4b2326d9-3326-41f8-9965-ebfeb5bb010d.png)
 
@@ -4118,6 +4132,7 @@ encryption, configuration, and networking without intervention.
 - Offers global availability improvements and global resilience.
 
 ### 1.10.7. Amazon RDS security
+TODO
 
 ![image](https://user-images.githubusercontent.com/52617475/145321926-99efedf1-c03d-4155-9c26-82e94ca80dad.png)
 
@@ -5711,15 +5726,18 @@ more internet based hops and this means a lower quality connection.
 
 ### 1.15.1. VPC Flow Logs
 
-- Capture packet metadata, not packet contents. For packet contents you need a packet sniffer. Flow logs only capture things like:
+- Capture packet **metadata**, not packet contents. For packet contents you need a packet sniffer. Flow logs only capture things like:
   - Source IP
   - Destination IP
   - Packet size
   - Anything which could be observed from the outside of the packet.
 - Capture data at various different monitoring points.
-  - VPC: all interfaces in that vpc
-  - Subnets: interfaces in that subnet
+  - VPC: all network interfaces in every subnet in that vpc
+  - Subnets: all interfaces in that subnet
   - Interface directly
+
+![picture 68](images/b07fa2250fe1a788f5b7ba068ffa6dfc5f103430d859475a0af17e566419a997.png)  
+
 - VPC flow logs are **NOT** realtime
 - Destination can be [S3](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html) or [CloudWatch logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-cwl.html)
 - Flow log inheritance is downwards starting at the VPC.
@@ -5732,24 +5750,10 @@ more internet based hops and this means a lower quality connection.
   - Amazon DNS Server
   - Amazon Windows Licensing Server
 
-Example of Flow Logs
+**Example of Flow Logs**
 
-```html
-<version>
-<account>
-<interface-id>
-<srcaddr>
-<dstaddr>
-<srcport>
-<dstport>
-<protocol>
-<packets>
-<bytes>
-<start>
-<end>
-<action>
-<log-status>
-```
+![picture 69](images/6b04df489065303ee3c3559f01725d877d6c3e5f94c70f833b2fb9ea3d8f0653.png)  
+
 
 ### 1.15.2. Egress-Only Internet Gateway
 
@@ -5760,14 +5764,17 @@ Example of Flow Logs
 - Using IPv6, all IPs are publicly routable.
   - Internet Gateway (IPv6) allows all IPs **in** and **out**
 - Egress-only is **outbound only** for IPv6. It is exactly the same as
-NAT, only outbound only.
+NAT, only connection must be initiated outbound only (response is allowed in).
 - To configure the Egress-only gateway, you must add default IPv6 route `::/0`
 added to RT with `eigw-id` as target.
+
+![picture 70](images/2302ea8f22ae3793d008753fbb07b62bf29a5da7968c95f31fd7663bad662850.png)  
+
 
 ### 1.15.3. VPC Gateway Endpoints
 
 - Provide _private_ access to S3 and DynamoDB
-  - Allow a private only resource inside a VPC or any resource inside a private-only VPC access to S3 and DynamoDB. (Remember that both S3 and DynamoDB are public services)
+  - Allow a private only resource inside a VPC or any resource inside a private-only VPC to access to S3 and DynamoDB. (Remember that both S3 and DynamoDB are public services)
 
 Normally when you want to access a public service through a VPC, you
 need infrastructure. You would create an IGW and attach it to the VPC.
