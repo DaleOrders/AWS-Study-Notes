@@ -5777,13 +5777,16 @@ added to RT with `eigw-id` as target.
   - Allow a private only resource inside a VPC or any resource inside a private-only VPC to access to S3 and DynamoDB. (Remember that both S3 and DynamoDB are public services)
 
 Normally when you want to access a public service through a VPC, you
-need infrastructure. You would create an IGW and attach it to the VPC.
-Resources inside need to be granted IP address or implement one or more
+need infrastructure and configuration. You would create an IGW and attach it to the VPC.
+Resources inside need to be granted public IP address or implement one or more
 NAT gateways which allow instances with private IP addresses to access
 these public services.
 
+![picture 71](images/ca9cbb147593d625406044aab1e9c1981555f6a1a8ce6a5d178e0a86f2d97d0d.png)  
+
+
 - When you allocate a gateway endpoint to a subnet, a ***prefix list*** is added
-to the route table. The target is the gateway endpoint. Any traffic destined for S3, goes via the gateway endpoint. The gateway endpoint is highly available for all AZs in a region by default.
+to the route table. The target is the gateway endpoint. Any traffic destined for S3, goes via the gateway endpoint rather than the internet gateway. The gateway endpoint is highly available for all AZs in a region by default.
 
 - With a gateway endpoint you set which subnet will be used with it and
 it will configure automatically. A gateway endpoint is a VPC gateway object.
@@ -5792,16 +5795,22 @@ it will configure automatically. A gateway endpoint is a VPC gateway object.
 - Gateway endpoints can only be used to access services in the same region.
 Can't access cross-region services. You cannot, for instance, access an S3 bucket located in the `ap-southeast-2` region from a gateway endpoint in the `us-east-1` region.
 
+![picture 72](images/GatewayEndpoints.png)  
+
 - Prevent Leaky Buckets: S3 buckets can be set to private only by allowing access ONLY from a gateway endpoint. For anything else, the _implicit deny_ will apply.
 
 A limitation is that they are only accessible from inside that specific VPC.
 
+
 ### 1.15.4. VPC Interface Endpoints
 
 - Provide private access to AWS Public Services.
-  - Anything EXCEPT S3 and DynamoDB
-- These are not HA by default and are added to specific subnets.
-  - For HA, add one endpoint, to one subnet, per AZ used in the VPC
+  - Anything EXCEPT DynamoDB
+
+  ![picture 73](images/51ad3b1dcfcfdcccf31448648176359b0ed13d0d97e679885aea2e2a1841ed1c.png)  
+
+- These are not HA by default and are added to specific subnets per subnet. If AZ goes down then so too does the Interface operation.
+  - For HA, add one endpoint, to one subnet, per AZ used in the VPC. 
   - Must add one endpoint for one subnet per AZ
 - Network access controlled via security groups.
 - You can use Endpoint policies to restrict what can be accessed with
@@ -5811,12 +5820,15 @@ the endpoint.
   - PrivateLink allows external services to be injected into your VPC either from AWS or $3^{rd}$ parties.
 - Endpoint provides a **NEW** service endpoint DNS
   - e.g. `vpce-123-xyz.sns.us-east-1.vpce.amazonaws.com`
+
+![picture 74](images/InterfaceEndpoints.png)  
+
 - **Regional DNS** is one single DNS name that works whatever AZ you're using to
 access the interface endpoint. Good for simplicity and HA.
 - **Zonal DNS** resolved to that one specific interface in that one specific AZ.
 - Either of those two points of endpoints can be used by applications to
 directly and immediately utilize interface endpoints.
-- PrivateDNS associates R53 private hosted zone with your VPC. This private
+- Private DNS associates R53 private hosted zone with your VPC. This private
 hosted zone carries a replacement DNS record for the default service
 endpoint DNS name. It overrides the default service DNS with a new version
 that points at your interface endpoint. Enabled by default.
@@ -5842,6 +5854,8 @@ Interface endpoints because they use normal VPC network interfaces are **not hig
 
 VPC Peering is a service that lets you create a private and encrypted network link between ***two and only two VPCs***.
 
+![picture 75](images/VPCPeering.png)  
+
 - Peering connection can be in the same or cross region and in the same or across accounts.
 
 - When you create a VPC peer, you can enable an option so that public hostnames
@@ -5857,7 +5871,7 @@ with VPC peers inside the same region.
 
 In different regions, you can utilize security groups, but you'll need to
 reference IP addresses or IP ranges. If VPC peers are in the same region,
-then you can do the logical referencing of an entire security group.
+then you can do the logical referencing of an entire security group. 
 
 VPC peering connects **ONLY TWO**
 
@@ -5866,6 +5880,7 @@ If you want to connect 3 VPCs, you need 3 connections. You can't route
 through interconnected VPCs.
 
 VPC Peering Connections CANNOT be created with overlapping VPC CIDRs.
+
 
 ---
 
@@ -5877,11 +5892,20 @@ VPC Peering Connections CANNOT be created with overlapping VPC CIDRs.
 using IPSec, running over the public internet (in most cases).
 - This can be fully Highly Available if you design it correctly
 - Quick to provision, less than an hour.
-- VPNs connect VPCs and private on-prem networks.
+- VPNs connect VPCs and private on-premise networks.
 - Virtual Private Gateway (VGW) is the target on one or more route tables
 - Customer Gateway (CGW) can represent two things:
-  1. logical piece of configuration on AWS
+  1. logical piece of configuration in AWS
   2. A physical piece on-prem router which the VPN connects to.
+
+**One VPN**
+![picture 76](images/Site-to-Site-VPN.png)  
+- Highly available on the AWS side as there are two endopoints which are conntected to CGW. If one fails, then the network could still function.
+- On customer side, there is only one CGW. If that fails, the entire ntwork will fail.
+
+
+**Highly available VPN solution**
+![picture 77](images/Site-to-Site-VPN-HA.png) 
 
 Differences between static and dynamic VPN.
 
@@ -5891,7 +5915,10 @@ Static| Dynamic |
  Networks for remote side statically configured on the VPN connection | BGP is configured on both the customer and AWS side using (ASN). Networks are exchanged via BGP. | C2
  Routes for remote side added to route tables as static routes | Routes can be added statically or configured dynamically by using a feature called ***route propagation*** on the route tables in the VPC| C3
 
-- VPN connection itself stores the config and links to one VGW and one CGW
+ ![picture 78](images/c9859d872d4e48db6e0a438cd2ef6204990b12d9158a3b8e168bb1e2b04ae1e5.png)  
+
+
+- VPN connection itself stores the configuation and links to one VGW and one CGW
 - Speed cap on VPN with two tunnels of 1.25 Gbps (gigabits per second).
   - AWS limit, will need to check speed supported by customer router.
   - Will be processing overhead on encrypting and decrypting data.
@@ -5910,9 +5937,9 @@ Static| Dynamic |
 - Port operating at a certain speed which belongs to a certain AWS account.
 - Allocated at a DX location which is a major data center.
 - Two speeds
-  - 1 Gpbs: 1000-Base-LX
-  - 10 Gbps: 10GBASE-LR
-- This is a **cross connect** to your customer router (requires VLANs/BGP)
+  - 1 Gpbs: 1000-Base-LX standard
+  - 10 Gbps: 10GBASE-LR standard
+- Is a **cross connect** to your customer router (requires VLANs/BGP)
 - You can connect to a partner router if extending to your location.
   - The port needs to be arranged to connect somewhere else and connect to
   your hardware.
@@ -5920,12 +5947,14 @@ Static| Dynamic |
 - You can run Virtual Interfaces (VIFs) over a single DX connect fiber optic line.
 - There is a one-to-many relationship between a DX line and VIFs. Therefore, you can multiple VIFs running on a single DX line. 
 - VIFs are of two types:
-  - Private VIF (VPC)
+  - **Private VIF** (VPC)
     - Connects to one AWS VPC
     - Can have as many Private VIFs as you want.
   - **Public VIF** (Public Zone Services)
     - Only public services, not public internet
     - Can be used with a site-to-site VPN to enable a private encryption using IPSec.
+
+![picture 79](images/DirectConnect.png)  
 
 Has one physical cable with **no high availability and no encryption**.
 DX Port Provisioning is quick, the cross-connect takes longer.
@@ -5934,7 +5963,7 @@ Generally use a VPN first then bring a DX in and leave VPN as backup.
 
 - Up to 40 Gbps with aggregation, 4 x 10 Gbps ports.
 - It does not use public internet and provides consistently low latency.
-  - Does not consume any data.
+- Does not consume any data (bandwidth).
 
 DX provides NO ENCRYPTION and needs to be managed on a per application basis.
 There is a common way around this limitation.
@@ -5950,9 +5979,27 @@ You run an IPSEC VPN over the public VIF, over the Direct Connect connection,
 you get all of the benefits of Direct Connect such as high speeds, and all
 the benefits of IPSEC encryption.
 
+![picture 75](images/493df51301e8b74f8d5d81bf2ad91d3f98e1cae889ce136d82979ed0b2a6eda3.png)  
+
+### DX and resilence
+
+![picture 76](images/e06eb7fc4622d6b421c158f6f9a3ca0d9079dc14acae1295fbb452a62f936284.png)  
+
+![picture 77](images/336d8c5c8a9161519f8f40243acbf4682c656ebcddaab2c88d199298fe9ce141.png)  
+
+![picture 78](images/644f4ccb2eb6a981b491582914542860f003eb8114b0d9b2ac04a047a11a6d23.png)  
+
+![picture 79](images/a503b80cb524467189d3c8b584b2bcd4335337cd806a4de5c7129bacd795ab56.png)  
+
+
+
 ### 1.16.3. AWS Transit Gateway (TGW)
 
-- Network transit hub to connect VPCs to on premises networks
+Using Peering connections between various VPCs and on-premise infrastructure can quickly become quite complex.
+
+![picture 80](images/c1b0dbc1c496bfa7ef5cbc3907a3a29c28a6b1c935c59022bd83cb378e84d5fa.png)  
+
+- Network transit hub to connect VPCs to each other and on premises networks
 - Significantly reduces network complexity.
   - Supports transitive routing. No need to create a mesh topology.
 - Single network gateway object which makes it HA and scalable.
@@ -5966,6 +6013,11 @@ is required.
   - You can use these for cross-region peering attachments.
 - Can share between accounts using AWS Resource Access Manager (RAM)
 - You achieve a less network complexity if you implement a transit gateway (TGW)
+
+![picture 81](images/d304de3aa6dc94beb6008351960ba7ed839b71966904362795feb53952540c9c.png)  
+
+
+
 
 ### 1.16.4. Storage Gateway
 
