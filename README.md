@@ -2695,12 +2695,22 @@ at all.
 - TEMPORARY
 
 ### 1.6.7. EBS vs Instance Store
+ 
+- Persistence... EBS (avoid Instance Store)
+- Resilence... EBS (avoid Instance Store)
+- Storage isolated from instance lifecycle... EBS
+- Resilence w/ App in-built Replication... it depends
+- High performance needs... if depends
+- Super high performance needs... Instance Store
+- Cost... Instance Store (it's often included)
 
-![image](https://user-images.githubusercontent.com/52617475/143730444-83d4e091-c04f-4ca4-9a10-0feea52621cc.png)
-
-
-![image](https://user-images.githubusercontent.com/52617475/143730600-81fa29df-499e-407c-8859-4ad90f7c3e08.png)
-
+- Cheap=ST1 or SC1
+- Throughput... streaming... ST1
+- Boot... **NOT** ST1 or SC1
+- GP2/3-up to 16,000 IOPS
+- IO1/2-up to 64,000 IOPS (*256,000)
+- RAID0+EBS up to 260,000IOPS(io1/2-BE/GP2/3)
+- More than 260,000 IOPS-Instance Store
 
 ### 1.6.8. EBS Snapshots, restore, and fast snapshot restore
 
@@ -6023,27 +6033,42 @@ is required.
 
 - Hybrid Storage Virtual Application (On-premise)
   - Can be run inside AWS as part of certain disaster recovery scenarios
+  - Extension storage capacity of on premise capacity into file and volume storage into AWS
   - Allows for migration of existing infrastructure into AWS slowly.
-- Tape Gateway (VTL) Mode
+  -Backup storage for your on premise storage.
+**Tape Gateway (VTL) Mode**
   - Virtual Tapes are stored on S3
-- File Mode (SMB and NFS)
+![picture 83](images/3a9124086d385a93fb66be1ee8837b1b7aee947d6a5a1b6a6778b32c0cc7e125.png)  
+
+
+**File Mode (SMB and NFS)**
   - File Storage Backed by S3 Objects
-- Volume Mode (Gateway Stored)
+![picture 82](images/49c0448e7c82df423fb2be406c66fab53237a60fa708516a53f52758a40aa2a5.png) 
+
+
+**Volume Mode (Gateway Stored)**
   - Block Storage backed by S3 and EBS
   - Great for disaster recovery
   - Data is kept locally
   - Awesome for migrations
-- Volume Mode (Cache Mode)
+
+![picture 84](images/88e455a3b1ab0eed4f8a42e7a6b4cb438814d600920b7344a170a427b471a4a4.png)  
+
+
+**Volume Mode (Cache Mode)**
   - Data added to gateway is not stored locally.
   - Backup to EBS Snapshots
   - Primarily stored on AWS
   - Great for limited local storage capacity.
 
+![picture 85](images/1fb957f06b3f8d320cc7282c56d028fab67aa52804fc4d289875826197e8568a.png)  
+
+
 ### 1.16.5. Snowball / Edge / Snowmobile
 
 Designed to move large amounts of data IN and OUT of AWS.
 Physical storage the size of a suitcase or truck.
-Ordered from AWS, use, then return.
+physical device ordered from AWS, used, then returned.
 
 #### 1.16.5.1. Snowball
 
@@ -6051,7 +6076,7 @@ Ordered from AWS, use, then return.
 - 1 Gbps or 10 Gbps connection
 - 50TB or 80TB Capacity.
   - 10TB to 10PB of data is economical range.
-  - Good for multiple locations
+  - Good for multiple locations using multiple devices
 - No compute
 
 #### 1.16.5.2. Snowball Edge
@@ -6066,12 +6091,12 @@ Ordered from AWS, use, then return.
     - (with EC2) includes 1TB SSD
   - Compute optimized
     - 100TB storage, 7.68 GB NVME (fast PCI bus storage),52 vCPU, 208 GiB RAM
-  - Compute with GPU
-    - Same as compute, but with GPU
+  - Compute optimized with GPU
+    - Same as compute optimized, but with GPU
 
 #### 1.16.5.3. Snowmobile
 
-Portable data center within a shipping container on a truck.
+Portable data center within a shipping container on a single truck (literally). One location only, one site.
 This is a special order and is not available in high volume.
 Ideal for single location where 10 PB+ is required.
 Max is 100 PB per snowmobile.
@@ -6091,7 +6116,7 @@ One common directory is **Active Directory** by Microsoft and its full name is
 - AWS managed implementation.
 - Runs within a VPC as a private service.
 - Provides HA by deploying into multiple AZs.
-- Certain services in AWS need a directory, Amazon Workspaces.
+- Certain services in AWS need a directory, e.g Amazon Workspaces.
 - To join EC2 instances to a domain you need a directory.
 - Can be isolated inside AWS only or integrated with existing on-prem system.
 - Connect Mode allows you to proxy back to on-premises.
@@ -6099,10 +6124,19 @@ One common directory is **Active Directory** by Microsoft and its full name is
 #### 1.16.6.1. Directory Modes
 
 - **Simple AD**: should be default. Designed for simple requirements.
+
+![picture 86](images/9a6ebaf7b7a2160799bbf0ffb0ae8078ff42e871aa658a22da2890f7c30293b6.png)  
+
 - **Microsoft AD**: is anything with Windows or if it needs a trust relationship
 with on-prem. This is not an emulation or adjusted by AWS.
+![picture 87](images/7e4358e9c9472d4da35e9f97628cadde4725d6b86da4773b3fdb085b4305339e.png)  
+
+
 - **AD Connector**: Use AWS services without storing any directory info in the
 cloud, it proxies to your on-prem directory.
+
+![picture 88](images/3ec60bd43e15de5d96e0890e9f921b536e5bccebee2a609816451d3255dc9abf.png)  
+
 
 ### 1.16.7. AWS DataSync
 
