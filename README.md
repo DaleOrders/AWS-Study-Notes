@@ -6347,75 +6347,322 @@ is much more efficient to do these encryption processes.
 
 ## AWS Config
  
+ **Standard features in green, optional features in pink**
 ![picture 97](images/2fc66c105d830f873e4ce39ffbc84fd29e2521164332106f3dded9a19536a793.png) 
 
-- Record configuration changes over time on resources
+- Record configuration changes over time on resources within an AWS account
+- Has to be enabled
 - Auditing of changes, compliance with standards
-- Does not prevent changes happening... no protection
-- Regional Service... supports cross-region and account aggregation
+- Does not prevent changes happening... no protection. You can still create non-compliant resources.
+- Regional Service... supports cross-region and cross account aggregation
 - Changes can generate SNS notification and near-realtime events via EventBridge & Lambda
 
 ## Amazon Macie
 
 - Data Secruity and Data Privacy Service
-- Discover, Monitor and Protect Data...stored in S3 Buckets
-- Automated discovery of data i.e PII, PHI, Finance
-- Managed Data Identifiers- Built-in - ML/Patterns
-- Custom Data Identifiers- Proprietary - Regex Based
+- Discover, Monitor and Protect Data stored in **S3 Buckets**
+- Automated discovery of data i.e Personally identifiable Information(PII), Personal Health Information (PHI), Financial
+- **Managed Data Identifiers**- Built-in Common types using ML/Patterns
+- **Custom Data Identifiers**- Proprietary - Regex Based
 - Integrates - With Security Hub & 'finding events' to EventBridge
-- Centrally manage... either via AWS ORG or one Macie Account Inviting
+- Centrally managed by master account via AWS ORG or extending Macie Account Invitation
 
 ![picture 99](images/4878375c98fefc62081547409706eafb95a4e4c8cdae6349e6c459c292d806e5.png)  
 
 
-- Managed data identifiers - maintained by AWS
+- Managed data identifiers - created and maintained by AWS
 - ... growing list of common sensitive data types
-- ... Credentials, finance, Health, personal identifiers
+- ... Credentials, financial, Health, personal identifiers
 - Custom data identifiers - created by you
-- Regex - definies a 'pattern' to match in data e.g [A-Z]-\d{8}
-- Keywords - optional sequences that need to be in proximity to regex match
-- Maximum Match Distance - how close keywords are to regex pattern
-- Ignore Words - if regex match contains ignore words, it's ignored
+- Regex - defines a 'pattern' to match in data e.g [A-Z]-\d{8}
+  - Keywords - optional sequences that need to be in proximity to regex match
+  - Maximum Match Distance - how close keywords are to regex pattern
+  - Ignore Words - if regex match contains ignore words, it's ignored
 
 
-- Policy Findings or Sensitive data findings
+**Policy Findings or Sensitive data findings examples**
 - Policy:IAMUser/S3BlockPublicAccessDisabled,
   Policy:IAMUser/S3BlockPublicAccessDisabled, Policy:IAMUser/S3BucketPublic, Policy:IAMUser/S3BucketSharedExternally
 
 - Sensitive Data:S3Object/Credentials, SensitiveData:S3Object/CustomIdentifier, SensitiveData:S3Object/Financial, SensitiveDataLS3Object/Multiple, SensitiveData:S3Object/Personal
 ## Amazon Inspector
 
-
-- Scans Ec2 instances & the instance OS
-- ... Vulnerabilities and deviations against best practice
-- Length... 15 miins, 1 hour, 8/12hours or 1 day
+- Scans Ec2 instances & the instance OS (not AMI or applications though)
+- Looks for Vulnerabilities and deviations against best practice
+- Length: 15 mins, 1 hour, 8/12hours or 1 day
 - Provides a report of findings ordered by priority
-- Netowkr Assessment (Agentless)
-- Network & Host Assessment (Agent)
+- Network Assessment (No Agent required to be installed)
+- Network & Host Assessment (Agent required to be installed)
  
-
 - Rules packages determine what is checked
-- Network Reachability (no agent required)
+- Network Reachability (no agent)
 - ... Agent can provide additional OS visibility
-- Check reachability end to end, Ec2, ALB, DX, ELB, ENI, IGW, ACLs, RTs, SGs, Subnets, VPCs, VGWs &VPC Peering
-- RecognizedPirtWithListener, RecognizedPortNoListener, RecognizedPortNoAgent
+- Check reachability end to end, EC2, ALB, DX, ELB, ENI, IGW, ACLs, RTs, SGs, Subnets, VPCs, VGWs & VPC Peering
+- Returns: RecognizedPortWithListener, RecognizedPortNoListener, RecognizedPortNoAgent
 - UnrecognizedPortWithListener
 
+**Inspector keywords for exam**
 - Packages (...Host Assessments, Agent required)
-- Common vulnerabilities and exposures (CVE)
-- Center for Internet Security (CIS) Benchmarks
-- security best practices for Amazon Inspector
+  - Common vulnerabilities and exposures (CVE)
+  - Center for Internet Security (CIS) Benchmarks
+  - Security best practices for Amazon Inspector
 ## Amazon Guardduty
-![picture 106](../images/c74d6fe8ccbb28ee76fb34f3d14a448b61257369bcd9959dcadc78cafc226970.png)  
+![picture 106](images/c74d6fe8ccbb28ee76fb34f3d14a448b61257369bcd9959dcadc78cafc226970.png)  
 
 - Continuous security monitoring service
 - Analyses supported Data Sources
 - ...plus AI/ML, plus threat intelligence feeds
-- Identifies unexpected and unauthorise activity
+- Identifies unexpected and unauthorised activity
 - ... notify or event-driven protect/remediation
-- Supports multiple accounts (Master and Member)
+- Supports multiple accounts (Master, account you enabled GD in, and invited Members)
 ---
+## 1.17 CloudFormation
 
+### Cloudformation Logical and Physical Resources
+
+![picture 108](images/3e1537718386e64524192f7af090e3a8cd904b2155f08653e80576d29eb4d80f.png)  
+
+- CloudFormation Template - YAML or JSON
+- ...contains logical resources - the 'WHAT'
+- Templates are used to create Stacks
+- ... 1 stack, 100 stacks, 20.. stacks in each region
+- ... stacks create physical resources from the logical
+- if a stacks template is changed - physical resources are changes
+- if a stack is deleted, normally, the physical resources are deleted
+
+![picture 109](images/d8481a2fcdd8c7a18286092ae366906b4554102ae0d53b3d243953dd6b78770e.png)  
+
+### CloudFormation Template and Pseudo Parameters
+
+![picture 111](images/fb7eb626b294a9799f560ad2056f25dab76f30a132bc3f267f0cc2d981d19583.png)  
+
+
+- Template Parameters accept inpu - Console/CLI/API
+- ... when a stack is created or updated
+- Can be referenced from within Logical Resources
+- ... influence physical resources and/or configuration
+- Can be configured with Defaults, AllowedValues, Min and Max length & AllowedPatterns, NoEcho & Type
+
+![picture 112](images/ec60932900c8ced13add8cbeb814d116b90bb709bde12a9041dffe79456b68e7.png)  
+
+### CloudFormation Intrinsic Functions
+
+
+**Ref & Fn::GetAtt**
+![picture 114](images/bfb595d69700d72b053111c304e0da63b7ad4d7274686d365b7f7116c689c90f.png)  
+
+**Fn:: Join & Fn::Split**
+![picture 116](images/9a0c5e1bd4f3113df4275bb20c0f2eaf508488a0580f61111086f82751371e47.png)  
+
+
+**Fn::GetAZs & Fn::Select**
+![picture 115](images/667a80ce115a88cc1fc493acb9f231edab1da8b22e8def494c4d74efa1a4728c.png)  
+
+- Conditions(Fn:: IF, And, Equals, Not & Or)
+**Fn::Base64 & Fn::Sub**
+![picture 117](images/d62e225f01448b0159fd0033e8a37f1712e794d3d98cdaf3a202d421ff9bae53.png)  
+
+
+**Fn::Cidr**
+![picture 118](images/8ae48499be9b97c1dad5749104e07538410c8822d9db2e3062386695d51251f0.png)  
+
+- Later... Fn:ImportValue, Fn::FindInMap, Fn::Transform
+
+### CloudFormation Mappings
+
+![picture 119](images/70f6d1eb09defdd89f036e1d2ba54aebeb7dcd489a236637e132e3e4077d8f24.png)  
+
+- Templates can contain a Mappings object
+- ... which can contain many mappings
+- ... which map keys to values, allowing lookup
+- Can have one key, or Top & Second Level
+- Mappings use the !FindInMap intrinstic function
+- Common use... retrieve AMI for given region & architecture
+- Improve Template Portability 
+
+![picture 120](images/787e8526f4a8ed8cce098d2cf55eb7346e7869c8f0e817cd3d4f42f736da58e7.png)  
+
+
+### CloudFormation Outputs
+
+
+- Templates can have an optional Outputs section
+- Values can be declared in this section...
+- ...visible as outputs when using the CLI
+- ... visible as outputs in the console UL
+- ... accesssible from a parent stack when using nesting
+- ... Can be exported, allowing scross-stack references
+
+
+![picture 122](images/d2730ad80aea8ce88b3c83ea2ae22378cb4466ea120c2584d5b13fab4e1f5ad1.png)  
+
+### CloudFormation Conditions
+
+- Created in the optional 'Conditions' section of a template
+- Conditions are evaluated to **TRUE** or **FALSE**
+- ...processed before resources are created
+- Use the other intrinsic functions AND, EQUALS, IF, NOT, OR
+- ... associated with logical resources to control if they are created or not
+- e.g ONEAZ, TWOAZ, THREEAZ - how many AZs to create resources in
+- e.g PROD, DEV - ctonrol the size of instances created within a stack
+
+![picture 124](images/80f699fe5d0bf4b65dbf19e014ee4e1c90165aa42a1e9aada92f0e620e3ddb56.png)  
+
+### CloudFormation DependsOn
+
+- CloudFormation tries to be efficient
+- ... does things in parallel (create, update & delete)
+- ... tries to determine a dependency order (VPC=>SUBNET=>EC2)
+- ... references or functions crease these
+- DependsOn lets you explicitly define these
+- ...If resources B and C depend on A
+- ... both wait for A to complete before starting
+
+
+![picture 126](images/db92810ba20271993cc7dfe6c8d3dad19c2eab3ecaa00d8b2e673112768e8909.png)  
+
+### CloudFormation Wait Conditions & cfn-signal
+
+![picture 127](../images/4dda401ec4d326764556638d98453aef728669eaaee57c24b7f8c5299d392bf6.png)  
+
+- Logical Resources in the template
+- ... Used to create a Stack
+- ... creates physical resources in AWS
+- ... Logical Resource CREATE_COMPLETE= ALL OK?
+
+- Configure CloudFormation to hold
+- Wait for 'X' number of success signals
+- Wait for Timeout H:M:S for those signals (12 hour max)
+- If success signals recieved ... CREATE_COMPLETE
+- If failure signal recieved... creation fails
+- If timeout is reached... creation fails
+- ...CreationPolicy or WaitCondition
+
+![picture 129](images/6c94af436686c0b2d511b7fd50205a343e900850ef04ae7c9f0f8293275633ce.png)  
+
+
+
+![picture 130](images/df3a82ecec81e641a9a48989c878763170a0b620f35905634351af6409ca3521.png)  
+
+
+### CloudFormation Nested Stacks
+
+![picture 131](images/d5569f27fb9d9970dcca9d62252e5d1ea2f861ff84a8ebb2c9f7aba78fce0a7d.png)  
+
+
+- Overcome the 500 Resource Limit of one stack
+- Modular templates... code reuse
+- Make the installation process earlier...
+- ... nested stacks created by the root stack
+- **Use only when everything is lifecycle linked**
+
+![picture 132](images/c461a8db64a29c476c45642dfdad3d36fbb4e525bffdae9b3c3e261a77ecf4af.png)  
+
+### CloudFormation Cross-Stack References
+![picture 134](images/f2a287db7361cc19de076965713471bb2fe83ee6522888ac7fd184c03515d378.png)  
+
+![picture 135](images/dd6cf7a343983a8cca994292535efe6928d3045bff46ba71cd59c3b4784bdc6c.png)   
+
+- Outpus are normally not visible from other stacks 
+- Nested stacks can reference them...
+- Outputs can be exported... making them visible from other stacks
+- Exports must have a unique name in region
+- Fn::ImportValue can be used instead of Ref
+
+![picture 137](images/ad811983314d3916afb784fc3fedac56487605da8ef4b6f5b37c9a7641cc04d4.png)  
+
+### CloudFormation Stack Sets 
+
+- Deploy CFN stacks across many accounts & regions
+- StackSets are containers in an admin account...
+- contain stack instances... which reference stacks
+- Stack instances & stacks are in 'target accounts'
+- Each stack= 1 region in 1 account
+- Security= self-managed or service-managed
+
+![picture 139](images/8a7c2a4e787d8a4aa0bcc2fdb1b19287dde97dad71d0351329d36eb479179319.png)  
+
+
+- Term: Concurrent Accounts
+- Term: Failure Tolerance
+- Term: Retain Stacks
+- Scenario: Enable AWS Config
+- Scenario: AWS config Rules - MFA, EIPS, EBS Encryption
+- Scenario: Create IAM Roles for cross-account access
+
+### CloudFormation Deletion Policy
+
+![picture 142](images/dd4c7718c0bd7a891cbbe9c4e325d990fb41e1074d5c1703ed152378005f56ec.png)  
+
+
+- If you delete a logical resource from a template
+- ... by default, the physical resource is deleted
+- This can cause data loss
+- With deletion policy, you can define on each resource
+- ... Delete (Default), Retain or (if supported) Snapshot
+- EBS volume, ElastiCache, Neptune, RDS, Redshift
+- Snapshots continue on past Stack lifetime - you have to clean up ($$)
+- **ONLY APPLIES TO DELETE... NOT REPLACE**
+
+### CloudFormation Stack Roles
+
+![picture 144](images/964b979a3441eb9552b780d60da61ac12820a650881f0fb8f742ae999094cf12.png)  
+
+- When you create a stack - CFN creates physical resources
+- CFN uses the permissions of the logged in identity
+- Which means you need permissions for AWS
+- CFN can assume a role to gain the permissions
+- This lets you implement role separation
+- The identity creating the stack doesn't need resource permission, only PassRole
+
+
+### CloudFormation Init (CFN-INIT)
+
+- Simple configuration management system
+- Configuration directives stored in template
+- AWS::CloudFormation::Init part of a logical resource
+- Procedural - How (User Data)
+- ... vs Desired State - What (cfn-init)
+- cfn-init helper script - installed on EC2 OS (makes it so)
+
+![picture 146](images/e4f64efc0452a1a57c32481fcb235ba6993652ba62844df536c59fdbeb7a0c12.png)  
+
+
+### CloudFormation cfn-hup
+
+![picture 148](images/76962a32c6bf4cec2eaf042b24b8a8d00ab2a2b54caebd331fad590f1bb79a43.png)  
+
+- cfn-init is run once as part of bootstrapping (user data)
+- ... if CloudFormation::Init is updated, it isn't rerun
+- cfn-hrup helper is a daemon which can be installed
+- it detects changes in resource metadata
+- ... running configurable actions when a change is detected
+- UpdateStack=> updated config on Ec2 instances
+
+### CloudFormation ChangeSets
+
+
+![picture 150](images/079ba42cbcb1b174b62a91edab954c28de3f80e88e04355f49905e299b25fc13.png)  
+
+- Template=> Stack=> Physical Resources (CREATE)
+- Stack (Delete)=>(Delete) Physical Resources
+- v2 Template=> Existing Stack=> Resources Change
+- No interruption, some interruption, replacement
+- Change Sets let you preview changes (A Change Set)
+- ...multiple different versions (lots of change sets)
+- Chosen changes can be applied by executing the change set
+
+### CloudFormation Custom Resources
+
+- Logical Resources in a template- What you want
+- CFN uses them to CREATE, UPDATE and DELETE physical resources
+- CloudFormation doesn't support everything
+- Custom Resources let CFN integrate with anything it doesn't yet or doesn't natively support
+- Passes data to something gets data back from something
+
+![picture 152](images/1cea1e9799efd0fd2e627675c02f85c28919844ac4f5959500c170e16f2dcf0d.png)  
+
+---
 ## 1.18. NoSQL-and-DynamoDB
 
 ### 1.18.1. DynamoDB Architecture
