@@ -6149,9 +6149,12 @@ can handle 50 million files.
 - Can use bandwidth limiters to avoid customer impact
 - Supports incremental and scheduled transfer options
 - Compression and encryption in transit is also supported
-- Has built in data validation and automatic recovery from transit errors.
+- Has built in data validation by default and automatic recovery from transit errors.
 - AWS service integration with S3, EFS, FSx for Windows servers.
-- Pay as you use product.
+- Pay as you use product (per GB).
+
+
+![picture 89](images/9eaf909466040bc5f371f478fc605ea1023e7139da768db049f032c1e641f6cf.png)  
 
 #### 1.16.7.1. AWS DataSync Components
 
@@ -6181,8 +6184,11 @@ can handle 50 million files.
 - Can perform full range of different backups
   - Client side and AWS side
   - Can perform automatic and on-demand backups.
-- File systems can be access using VPC, Peering, VPN, Direct Connect. Native
-windows filesystem or Directory Services.
+- File systems can be access using VPC, Peering, VPN, Direct Connect connections. Native
+windows filesystem or Directory Services are keywords to look for.
+
+![picture 90](images/8a1d530c30fe88e865b838cce88188f16c41af913444c5218cdfa2db0edc566c.png)  
+
 
 #### 1.16.8.1. Words to look for
 
@@ -6195,14 +6201,21 @@ windows filesystem or Directory Services.
 
 ### FSx for Lustre
 
-- Designed for HPC - Linux workloads Clients
+![picture 92](images/014ac60038dbabca12a4d6de4ac0bbeebbd48a51f7df23d7660e748bf695f063.png)  
+
+
+
+- Designed for High Performance Computing - Linux workloads Clients (POSIX)
 - Designed for Machine Learning, Big Data, Financial Modelling
-- 100 GB/s throughout & sub millisecond latencies
+- 100 GB/s throughout & sub-millisecond latencies
 - Deployment types **Persistent** or **Scratch**
   - Scratch - Optimized for Short term no replication & fast ( Designed for pure performance) - NO HA, NO REPLICATION
-  - Persistent - longer term, HA ( IN ONE AZ), self-healing
+  - Persistent - longer term, HA ( IN ONE AZ ONLY), self-healing
 - Accessible over VPN or Direct Connect
 - Can be backed up to S3 ( Manual or Automatic 0-35 days retention)
+
+![picture 91](images/be10c75f1ae3b53d3e0b2387c803471a76752f754daf2fd1d453a6e1307e55f3.png)  
+
 
 ---
 
@@ -6221,11 +6234,15 @@ is invoked and changes a secret, the password can automatically change in RDS.
 
 #### 1.17.1.1. Secrets Manager Example
 
+![picture 93](images/e70ebc26cbf739d31b4053df9b9c23c0a1f83b9e5e37b54a911f3cad42371c41.png)  
+
 1. The Secrets Manager SDK retrieves database credentials.
 2. SDK uses IAM credentials to retrieve the secrets.
 3. Application uses the secrets to access the database.
 4. Periodically, a lambda function is invoked to rotate the secrets.
 5. The Lambda uses an execution role to get permissions.
+
+
 
 Secrets are secured using KMS so you never risk any leakage via physical access
 to the AWS hardware and KMS ensures role separation.
@@ -6238,7 +6255,7 @@ IP addresses. Without detailed analysis, the traffic looks like normal
 requests to your website.
 
 - Shield Standard
-  - Free with Route53 and CloudFront as default
+  - Free with Route53 or CloudFront enabled as default
   - Provides layer 3 and layer 4 protection against DDoS attacks.
 - Shield advanced
   - $3000 per month
@@ -6258,10 +6275,15 @@ against increased costs.
 
 #### 1.17.2.1. Example of Architecture
 
+
+
+
 Shield standard automatically looks at the data before any data reaches
 past Route53.
 The user is directed to the closest CloudFront location. Again, shield
 standard looks at the data again before it moves on.
+
+![picture 94](images/44b6c102fd8557179c7326ee58dde08a3e8eeece8421351a731974e98cdf20b0.png)  
 
 WAF Rules are defined and included in a WEBACL which is associated to a
 cloud front distribution and deployed to the edge.
@@ -6301,7 +6323,10 @@ HSM will not integrate with AWS by design and uses industry standard APIs.
 
 KMS can use CloudHSM as a **custom key store**, CloudHSM integrates with KMS.
 
-HSM is not highly available and runs within one AZ. To be HA, you need at least
+![picture 95](images/06fd9f7086a39de8968b24e8c56795ce310a031068021e721d9c6dc2b3d05044.png)  
+
+
+HSM is not highly available and runs only within one AZ. To be HA, you need at least
 two HSM devices and one in each AZ you use. Once HSM is in a cluster, they
 replicate all policies in sync automatically.
 
@@ -6320,6 +6345,75 @@ is much more efficient to do these encryption processes.
 - Can protect the private keys an issuing certificate authority.
 - Anything that needs to interact with non AWS products.
 
+## AWS Config
+ 
+![picture 97](images/2fc66c105d830f873e4ce39ffbc84fd29e2521164332106f3dded9a19536a793.png) 
+
+- Record configuration changes over time on resources
+- Auditing of changes, compliance with standards
+- Does not prevent changes happening... no protection
+- Regional Service... supports cross-region and account aggregation
+- Changes can generate SNS notification and near-realtime events via EventBridge & Lambda
+
+## Amazon Macie
+
+- Data Secruity and Data Privacy Service
+- Discover, Monitor and Protect Data...stored in S3 Buckets
+- Automated discovery of data i.e PII, PHI, Finance
+- Managed Data Identifiers- Built-in - ML/Patterns
+- Custom Data Identifiers- Proprietary - Regex Based
+- Integrates - With Security Hub & 'finding events' to EventBridge
+- Centrally manage... either via AWS ORG or one Macie Account Inviting
+
+![picture 99](images/4878375c98fefc62081547409706eafb95a4e4c8cdae6349e6c459c292d806e5.png)  
+
+
+- Managed data identifiers - maintained by AWS
+- ... growing list of common sensitive data types
+- ... Credentials, finance, Health, personal identifiers
+- Custom data identifiers - created by you
+- Regex - definies a 'pattern' to match in data e.g [A-Z]-\d{8}
+- Keywords - optional sequences that need to be in proximity to regex match
+- Maximum Match Distance - how close keywords are to regex pattern
+- Ignore Words - if regex match contains ignore words, it's ignored
+
+
+- Policy Findings or Sensitive data findings
+- Policy:IAMUser/S3BlockPublicAccessDisabled,
+  Policy:IAMUser/S3BlockPublicAccessDisabled, Policy:IAMUser/S3BucketPublic, Policy:IAMUser/S3BucketSharedExternally
+
+- Sensitive Data:S3Object/Credentials, SensitiveData:S3Object/CustomIdentifier, SensitiveData:S3Object/Financial, SensitiveDataLS3Object/Multiple, SensitiveData:S3Object/Personal
+## Amazon Inspector
+
+
+- Scans Ec2 instances & the instance OS
+- ... Vulnerabilities and deviations against best practice
+- Length... 15 miins, 1 hour, 8/12hours or 1 day
+- Provides a report of findings ordered by priority
+- Netowkr Assessment (Agentless)
+- Network & Host Assessment (Agent)
+ 
+
+- Rules packages determine what is checked
+- Network Reachability (no agent required)
+- ... Agent can provide additional OS visibility
+- Check reachability end to end, Ec2, ALB, DX, ELB, ENI, IGW, ACLs, RTs, SGs, Subnets, VPCs, VGWs &VPC Peering
+- RecognizedPirtWithListener, RecognizedPortNoListener, RecognizedPortNoAgent
+- UnrecognizedPortWithListener
+
+- Packages (...Host Assessments, Agent required)
+- Common vulnerabilities and exposures (CVE)
+- Center for Internet Security (CIS) Benchmarks
+- security best practices for Amazon Inspector
+## Amazon Guardduty
+![picture 106](../images/c74d6fe8ccbb28ee76fb34f3d14a448b61257369bcd9959dcadc78cafc226970.png)  
+
+- Continuous security monitoring service
+- Analyses supported Data Sources
+- ...plus AI/ML, plus threat intelligence feeds
+- Identifies unexpected and unauthorise activity
+- ... notify or event-driven protect/remediation
+- Supports multiple accounts (Master and Member)
 ---
 
 ## 1.18. NoSQL-and-DynamoDB
