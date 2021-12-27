@@ -2273,6 +2273,7 @@ This cannot be edited and is defaulted on each rule list.
 If no other rules match the traffic being evaluated, it will be denied.
 
 #### 1.5.6.1. NACLs example below
+![picture 154](images/bd1f54d3e89d1d10f48e64b9deeeb8d6e70531834e61db6163c5c3f4a8876fb1.png)  
 
 
 - Bob wants to view a blog using https(tcp/443)
@@ -5611,6 +5612,7 @@ to forward them to the origin.
 
 If the application does use **query string parameters**, you can use all of them for
 caching or just selected ones.
+![picture 155](../images/82d77e14c5d7ad5127048b0c80939046333276542b0a6c840657a7cbdf73fff6.png)  
 
 ### 1.14.2. AWS Certificate Manager (ACM)
 
