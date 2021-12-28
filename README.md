@@ -7104,14 +7104,15 @@ by implementing DAX and caching those results.
 - DAX supports write-through. If you write data to DynamoDB, you can
 use the DAX SDK. DAX will handle that data being committed to DynamoDB
 and also storing that data inside the cache.
-- DAX is not a public service and is deployed within a VPC. Anything
-that uses that data many times will benefit from DAX.
+- DAX is not a public service and is deployed within a VPC. Any application
+that uses DAX will also need to be deployed in that VPC.
 - Any questions which talk about caching with DynamoDB, assume it is DAX.
+- If you need strongly consistent reads or if your application uses reads infrequently, then DAX may not be best.
 
 ### 1.18.7. Amazon Athena
 
 - You can take data stored in S3 and perform Ad-hoc queries on data. Pay
-only for the data consumed.
+only for the data consumed and the storage of the object in S3.
 - Start off with structured, semi-structured and even unstructured data that is
 stored in its raw form on S3.
 - Athena uses **schema-on-read**, the original data is never changed
@@ -7119,7 +7120,7 @@ and remains on S3 in its original form.
 - The schema which you define in advance, modifies data in flight when its read.
 - Normally with databases, you need to make a table and then load the data in.
 - With Athena you create a schema and load data on this schema on the fly in
-a relational style way without changing the data.
+a relational style way without changing the data stored in S3.
 - The output of a query can be sent to other services and can be
 performed in an event driven fully serverless way.
 
@@ -7128,6 +7129,9 @@ performed in an event driven fully serverless way.
 The source data is stored on S3 and Athena can read from this data.
 In Athena you are defining a way to get the original data and defining
 how it should show up for what you want to see.
+
+![picture 198](images/5d258bf3969702596c2ca3262b80cf692b9d395ac50d70757ddbdf3f620ded10.png)  
+
 
 Tables are defined in advance in a data catalog and data is projected
 through when read. It allows SQL-like queries on data without transforming
@@ -7139,3 +7143,52 @@ You can optimize the original data set to reduce the amount of space uses
 for the data and reduce the costs for querying that data. For more information see the AWS [documentation.](https://aws.amazon.com/cloudtrail/pricing/)
 
 [^1]: For more information on Server Name Indication see the Cloudfare SNI [documentation.](https://www.cloudflare.com/learning/ssl/what-is-sni/)
+
+![picture 199](images/ed23302d905803390c8a088b2a528c55095ebcaef051552237197004391c68b8.png)  
+
+
+#### 1.18.7.2. ElastiCache
+
+An in-memory database offering high performance
+
+![picture 201](images/09c66e06b7f11d1cf3b5e83c7707221d921439ea39d80a354c7af81ca59ab81b.png)  
+
+Scales well to accomodate increases in demand. Cost benefits are most evident at large scale consumption.
+
+- Managed Redis or Memcached as a service
+- Can be used to cache data - for read heavy workloads with low latency requirements
+- reduces database workloads (cost effective)
+- Can be used to store Session Data (stateless Servers- good for fault tolerant design)
+- Requires application code changes
+
+![picture 202](images/757b7f689bbc52dc84777ce6a74eda9bf33abe60fbeb9f2536a0ab0c2c130c43.png)  
+
+![picture 203](images/ba02366e6c4920f120057e178e2be863bde45abca572719958fc47c59f4d7070.png)  
+
+
+
+
+#### 1.18.7.3. RedShift Architecture
+
+![picture 206](images/10224b45f13deb0463abf7e9e0de1946be5a71dd8e6c4c53c24e6b2b4ebab881.png)  
+
+
+- Petabyte-scale Data warehouse
+- OLAP (Column based) not OLTP (row/transaction). RDS is OLTP (insert, modify, delete), OLAP is for complex queries
+- Pay as you go, similar structure to RDS
+- Direct Query S3 using Redshift Spectrum without loading it into redshift
+- Direct Query other DBs using federated query (external databases)
+- Integrates with AWS tooling such as Quicksight
+- SQL-like interface JDBC/ODBC connections
+- Server based (not serverless like Athena), not ad hoc like Athena
+- One AZ in a VPC - network cost/performance. No HA by design.
+- Leader Node you interact with- Query input, planning and aggregation
+- Compute Node - performing queries of data
+- VPC security, IAM permissions, KMS at rest encryption, CW Monitoring
+- Redshift Enhanced VPC Routing- Can be configured with your VPC network using Redshift Enhanced VPC Routing
+
+#### 1.18.7.4. RedShift DR and Resilence
+
+![picture 207](images/5edcfedf61f82c634ad51b79871704aded38cee0d5fe354dcde9f1d3d3aef2ec.png)  
+
+
