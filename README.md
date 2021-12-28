@@ -2467,6 +2467,9 @@ handles it all. In EC2 this feature is called **enhanced networking**.
 
 EC2 instances are virtual machines run on EC2 hosts (which are physical hardware managed by aws). Generally runs instances of all the same type, but different sizes.
 
+![picture 192](images/5645a0dcbf04f87c5d0d9090e8565785783b5cad614421d0400c2d6687c5a454.png)  
+
+
 Tenancy:
 
 - **Shared** - Instances are run on shared hardware, but isolated from other customers. It is the default.
@@ -2475,6 +2478,10 @@ Tenancy:
   that are not Dedicated instances.
 - **Dedicated host** - Instances are run on a physical server fully dedicated for your use.
   Pay for entire host, don't pay for instances.
+
+![picture 191](images/4cbb1fb9af2f87da6e81443682d40a57ee35cd74a33b2671946abd421374d209.png)  
+
+
 
 - **AZ resilient service. They run within only one AZ.**
   - You can't access them cross AZ.
@@ -2615,7 +2622,7 @@ size increases.
 
 You should be careful to not exceed baseline performance for long periods as you could potentially deplete the credits
 
-General default is gp2/3. Gp3 is cheaper than gp2.
+**General default is gp2/3. Gp3 is cheaper than gp2.**
 
 ![image](https://user-images.githubusercontent.com/52617475/143730352-873a6634-78c7-4a43-8143-c2703bdbf0e0.png)
 
@@ -2985,6 +2992,9 @@ Great for data analytics when the process can occur later or withstand interrupt
 
 **Standard Reserve**
 
+![picture 190](images/7eab97274670b6d884406133b468358dfe3330eea30fff7d0b4e0c13cc6fefa7.png)  
+
+
 Up to 75% off on-demand.
 The trade off is commitment.
 You're buying capacity in advance for 1 or 3 years.
@@ -3052,6 +3062,9 @@ Autorecovery can kick in and help, if there is spare capacity. Only works on ins
 As customer load increases, the server may need to grow to handle more data.
 The server can increase in capacity, but this will require a reboot.
 
+![picture 188](images/4e1607e0821731c880d9f36e5879bcf18e5f167104bbeaa1b82bb62bfc22a080.png)  
+
+
 - Often times vertical scaling can only occur during planned outages.
 - Larger instances also carry a **$ premium** compared to smaller instances.
 - Instance size is an upper cap on performance.
@@ -3064,6 +3077,10 @@ As the customer load increases, this adds additional capacity.
 Instead of one running copy of an application, you can have multiple versions
 running on each server.
 This requires a load balancer.
+
+
+![picture 189](images/29563762c06389424c0649d9a6a709f40d1a123c6057377011d1babe5321dfd3.png)  
+
 
 > A load balancer is an _appliance_ that sits in between your servers -- in this case instances -- and your customers.
 
@@ -3115,6 +3132,9 @@ For example curl http://169.254.169.254/latest/meta-data/public-ipv4 will contac
 
 Virtualization Problems
 
+![picture 180](images/16628f59e728f7273d8d1501f7cbbd59e5711e2f65281238548c667126d1a973.png)  
+
+
 Using an EC2 virtual machine with Nitro Hypervisor, 4 GB ram, and 40 GB disk,
 the OS can consume 60-70% of the disk and much of the available memory.
 Containers leverage the similarities of multiple guest OS by removing duplicate
@@ -3122,14 +3142,15 @@ resources. This allows applications to run in their own isolated environments.
 
 #### 1.7.1.1. Image Anatomy
 
-![Anatomy of a docker image](Learning-Aids/09-Containers-and-ECS/ImageAnatomy.png)
+![picture 182](images/bc947e4f42d7cfe60906f1de2c3231fed09aabe4aec7c83b996bbe14e85a5c92.png)  
 
 A Docker image is composed of multiple independent layers. Docker images are stacks of these layers and not a single, monolithic disk image. Docker images are created initially using a _docker file_.
 Each line in a docker file is processed one by one and each line creates a new filesystem layer inside the docker image it creates.
 Images are created from scratch or a base image.
 Images contain read only layers, images are layer onto images.
 
-![image](https://user-images.githubusercontent.com/52617475/144763546-b787e828-421b-4f64-9ee2-89eebfc92332.png)
+![picture 183](images/0713dfd2d909b3fedcf627617457c01bf28154623e437548cc5e78561914c359.png)  
+
 
 
 ##### 1.7.1.1.1. What are images used for
@@ -3142,9 +3163,15 @@ Images contain read only layers, images are layer onto images.
 
 A container registry or hub is a hub of container images. As a developer or solution architect, you use a dockerfile to create a container image. Then you upload that image to a private/public repository such as the docker hub. In the case of a public hub, other people will likely do the same including vendors of the base OS such as the CentOS example shown above. From there, these container images can then be deployed to docker hosts, which are just services running a container engine (e.g. docker).
 
+![picture 184](images/f667dbefa8d2379195d12126935647a3960f9190637ad2a9ccab97a4be85600f.png)  
+
+
 A docker host can run many containers based on or more images. A single image can be to generate containers on many docker hosts.
 Dockerfile can create a container image where it gets stored
 in the container registry.
+
+![picture 181](images/6075c1d36b9a3b93a91566210d063a191b2019ceed8d90cfdd9b81e3e0e67f6e.png)  
+
 
 #### 1.7.1.3. Container Key Concepts
 
@@ -3173,7 +3200,8 @@ ECS runs into two modes: 1. Using EC2; 2. Using Fargate.
 - **Task definitions** store the container definitions (resources) used by the task - cpu, memory, networking mode, compatability (ec2 or fargate).
   - It also stores the **task role**, an IAM role that allows the task access to other AWS resources.
 
-![image](https://user-images.githubusercontent.com/52617475/144706302-b0e8e62e-1ed5-4dfa-af23-4a26566f156d.png)
+![picture 185](images/2aac86c66db0d41d68ce901503724a7b84a117fa7bff8442e3ef3bd17b859b84.png)  
+
 
 
 > Task roles are the best practice way for giving containers within ECS permissions to access AWS products and services.
@@ -3184,8 +3212,6 @@ See the [AWS documentation on container definition](https://docs.aws.amazon.com/
 
 ECS **Service** is configured via Service Definition and represents
 how many copies of a task you want to run for scaling and HA. Adds capacity and resilience. 
-
-![image](https://user-images.githubusercontent.com/52617475/144706427-f723891e-26b6-4259-909a-ac64aeeebbeb.png)
 
 
 ### 1.7.3. ECS Cluster Types
@@ -3202,6 +3228,9 @@ ECS cluster is created within a VPC. It benefits from the multiple AZs that
 are within that VPC.
 You specify an initial size which will drive an **auto scaling group**.
 
+![picture 186](images/03bf041c01fd5894b02393357574d56c51d49d102575545cc28573a13874737f.png)  
+
+
 ECS using EC2 mode is not a serverless solution, you need to worry about
 capacity and availability for your cluster.
 
@@ -3209,14 +3238,14 @@ The container instances are not delivered as a managed service, they
 are managed as normal EC2 instances.
 You can use spot pricing or prepaid EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them.
 
-![image](https://user-images.githubusercontent.com/52617475/144707470-2882c841-43e4-479f-8097-3f95fc12ff97.png)
-
 
 #### 1.7.3.2. Fargate mode
 
-![image](https://user-images.githubusercontent.com/52617475/144707567-09d05e62-134e-4df9-8db2-83b5c90e4eea.png)
 
 Removes more of the management overhead from ECS, no need to manage EC2.
+
+![picture 187](images/68d478b2cf5ef75894ed67042abe97d655999d8e67e411675b504fde472f077e.png)  
+
 
 **Fargate shared infrastructure** allows all customers
 to access from the same pool of resources.
@@ -3278,6 +3307,9 @@ Now the EC2 service provides some user data through to the EC2 instance.
 There is SW within the OS designed to look at the metadata IP for any user data.
 If it sees any user data, it executes this on launch of that instance.
 
+![picture 179](images/3e9b26bda3c902b5926173fb448b288a6a88b596b769d48e5001c198c55113ea.png)  
+
+
 This is treated like any other script the OS runs. At the end of running
 the script, the instance will be in:
 
@@ -3285,9 +3317,6 @@ the script, the instance will be in:
 - Bad config but still likely running.
   - The instance will probably still pass its checks.
   - It will not be configured as you expected.
-TODO
-
-![image](https://user-images.githubusercontent.com/52617475/144712322-046b0083-73dd-4c71-badc-5bf6716d2fdc.png)
 
 
 #### 1.8.1.2. User Data Key Points
@@ -3341,7 +3370,8 @@ stack and you define this data in the CloudFormation template called
 
 #### 1.8.2.1. cfn-init explained
 
-![image](https://user-images.githubusercontent.com/52617475/144715670-5b0c036d-3007-4582-8fe6-911bec806fc7.png)
+![picture 178](images/2e115e8e0a1934e0cbe40c5c491364e31c97feb5a06a184bf135c3f72847a7a8.png)  
+
 
 Starts off with a **CloudFormation template**.
 This has a logical resource within it which is to create an EC2 instance.
@@ -3361,7 +3391,8 @@ but the bootstrapping inside the instance could have failed.
 A **CreationPolicy** is something which is added to a logical resource
 inside a CloudFormation template. You create it and supply a timeout value.
 
-![image](https://user-images.githubusercontent.com/52617475/144715904-8617065d-b867-4375-a286-a12329a5421b.png)
+![picture 177](images/565dd452634620d89d57611be26db320bbfc20f5cb37f4dce398adc4b0e74037.png)  
+
 
 
 This waits for a signal from the resource itself before moving to a create
@@ -3386,9 +3417,8 @@ instance **meta-data**.
 
 EC2 and the secure token service ensure the credentials never expire as long as the instance profile is attached.
 
-TODO
+![picture 176](images/7420511d68a2c83396b6dfff49c90c86900142293ddbfedb8ab75ecd9c841d2b.png)  
 
-![image](https://user-images.githubusercontent.com/52617475/144717004-a1ecc52b-c243-4382-b499-ea730d0ce0aa.png)
 
 
 Key facts
@@ -3456,9 +3486,8 @@ We can use parameter store to store the configuration for the CW agent.
 
 #### 1.8.6.1. Cluster Placement -> Pack Instances Close Together
 
-TODO
+![picture 173](images/a24beda9bb1ed251cd5fce4f759f984818524227eecb1b4b425f432212dec6b8.png)  
 
-![image](https://user-images.githubusercontent.com/52617475/144717588-71f39689-6653-406e-babe-aaeb07460e5c.png)
 
 Designed so that instances within the same cluster are physically close together.
 
@@ -3491,9 +3520,7 @@ If the hardware fails, the entire cluster will fail.
 
 #### 1.8.6.2. Spread Placement -> Keep Instances Separated
 
-TODO
-
-![image](https://user-images.githubusercontent.com/52617475/144717723-d8fd3947-ff17-4269-9816-a00b18db68cd.png)
+![picture 174](images/5bf87cafb070aacb68143fce719cf9af733f1b4d15fbfb572897fb1487965111.png)  
 
 
 Keep instances separated
@@ -3516,9 +3543,7 @@ from each other. Several mirrors of an application; different nodes of an applic
 
 #### 1.8.6.3. Partition Placement -> Groups of Instances Spread Apart
 
-TODO
-
-![image](https://user-images.githubusercontent.com/52617475/144717806-f7b84570-b9e4-4e7a-9f60-448e35ba863e.png)
+![picture 175](images/6954ef0b87f950916747ca458b6db0769cd8674ebfb3a71c9802c2395c382477.png)  
 
 
 Groups of instances spread apart
@@ -3563,14 +3588,14 @@ matching host size.
 
 ### 1.8.8. Enhanced Networking
 
-TODO
 
 Enhanced networking uses SR-IOV.
 The physical network interface is aware of the virtualization.
 Each instance is given exclusive access to one part of a physical network
 interface card.
 
-![image](https://user-images.githubusercontent.com/52617475/144719623-416706c1-dab0-4f4d-b358-f6e8e41b62eb.png)
+![picture 172](images/80112de79e4023117c9b10e7c29e859e56218cdd474f7d96514e67f2a92cee47.png)  
+
 
 There is no charge for this and is available on most EC2 types.
 It allows for higher IO and lower host CPU usage
@@ -3643,6 +3668,8 @@ TODO
 ![image](https://user-images.githubusercontent.com/52617475/144873446-a1d244c9-cbd0-4000-863e-734603b19b9e.png)
 
 
+
+
 ### 1.9.2. Route 53 Health Checks
 
 Route checks will allow for periodic health checks on the servers.
@@ -3680,8 +3707,6 @@ There are three types of checks.
 - Endpoint checks
 - CloudWatch alarms
 - Checks of checks (calculated)- application as a whole and individual application components
-
-
 
 
 ### 1.9.3. Route 53 Routing Policies Examples
@@ -4143,7 +4168,6 @@ encryption, configuration, and networking without intervention.
 - Offers global availability improvements and global resilience.
 
 ### 1.10.7. Amazon RDS security
-TODO
 
 ![image](https://user-images.githubusercontent.com/52617475/145321926-99efedf1-c03d-4155-9c26-82e94ca80dad.png)
 
@@ -4216,6 +4240,9 @@ Aurora clusters like RDS use endpoints, so these are DNS addresses which
 are used to connect to the cluster. Unlike RDS, Aurora clusters have
 multiple endpoints that are available for an application.
 
+ ![image](https://user-images.githubusercontent.com/52617475/145459844-3a7ba5b8-b1b0-4944-99fc-755dc47f2ed8.png)
+
+
 Minimum endpoints
 
 - **Cluster endpoint** always points at the primary instance.
@@ -4226,7 +4253,6 @@ Minimum endpoints
   - Additional replicas which are used for reads will be load balanced
   automatically.
   
-  ![image](https://user-images.githubusercontent.com/52617475/145459844-3a7ba5b8-b1b0-4944-99fc-755dc47f2ed8.png)
 
 
 #### 1.10.8.2. Costs
@@ -4480,13 +4506,14 @@ App services include kinesis, step functions, SNS and SQS.
 
 ### 1.12.1. Load Balancing Fundamentals
 
-![image](https://user-images.githubusercontent.com/52617475/146122542-40cc20e3-3857-43ac-8b1b-b66517c4722d.png)
-
 There are three types of load balancers (ELB) available in AWS.
 Split between v1(avoid/migrate) and v2(preferred)
 Application Load Balancer (ALB) -v2- HTTP/S, Websocket
 Network Load Balancer (NLB)- v2- TCP, TLS, UDP
 V2- faster, cheaper, supports target groups and rules.
+
+![image](https://user-images.githubusercontent.com/52617475/146122542-40cc20e3-3857-43ac-8b1b-b66517c4722d.png)
+
 
 When you provision an ELB, you have to decide if you want to configure
   -ipv4 or dual stack (ipv4 and ipv6)
@@ -4551,7 +4578,7 @@ Clients shouldn't see errors that occur with one server.
 
 ### 1.12.2. Application Load Balancer (ALB)
 
-![image](https://user-images.githubusercontent.com/52617475/146179448-97905cbc-4470-4e62-8814-a8839fcb7136.png)
+![picture 171](images/e37429e77390a840dc0bbcd3b1b60a6c71213ef7d05bf9a07f20e095ab836a45.png)  
 
 
 ALB is a layer 7 or Application Layer Load Balancer. It is capable of inspecting data that passes through it. It can only understand the application layer `http` and `https` protocols and take actions based on things in those protocols like paths, headers, and hosts. No TCP/UDP/TLS Listeners. L7 content including cookies, custom headers, user location and app behaviour.
@@ -4789,7 +4816,6 @@ The main benefit is the elastic load balancer removes the SSL wrapper and gets t
 HTTP and can take actions based on what's contained in this plain text
 protocol.
 
-![SSL Offload](Learning-Aids/14-HA-and-Scaling/SSLOffload.png)
 
 #### 1.12.6.2. Pass-through - Network Load Balancer
 
@@ -4910,7 +4936,8 @@ anything of value otherwise the system fails. Can not scale to 0.
 
 Data no longer moves between tiers to be processed and instead uses a queue.
 
-![picture 12](AWS-SAA-Course\images\65197105cf8ebd733b5d4807cc132d0e87466752a7c069e046d6836eb0e2e4a4.png)  
+![picture 170](images/76c2405b7ab66b45eef985c609162bbf70875708ff8adcebb4c27d812dfc41b4.png)  
+
 
   - Often **FIFO** (first in, first out)
 - Data moves into a S3 bucket.
@@ -5612,7 +5639,7 @@ to forward them to the origin.
 
 If the application does use **query string parameters**, you can use all of them for
 caching or just selected ones.
-![picture 155](../images/82d77e14c5d7ad5127048b0c80939046333276542b0a6c840657a7cbdf73fff6.png)  
+![picture 155](images/82d77e14c5d7ad5127048b0c80939046333276542b0a6c840657a7cbdf73fff6.png)  
 
 ### 1.14.2. AWS Certificate Manager (ACM)
 
@@ -6677,10 +6704,10 @@ Note you can **not** self-reference as is shown here.
 
 NoSQL Database as a Service (DBaaS)
 
-- Wide column Key/Value database.
+- NoSQL, Wide column Key/Value database.
 - Not like RDS which is a Database Server as a Product.
-  - This is only the database.
-- Capacity can be provisioned or use on-demand mode
+- No self-managed servers or infrastructure
+- Capacity can be provisioned automatically/manually or on-demand
 - Highly resilient across AZs and optionally globally resilient.
 - Data is replicated across multiple storage nodes by default.
 - Really fast, single digit millisecond access to data.
@@ -6689,12 +6716,15 @@ NoSQL Database as a Service (DBaaS)
 
 #### 1.18.1.1. Dynamo DB Tables
 
+![picture 156](images/34bad74f8a12fcd017eb226c4bf523f754a7d8d54f74c938617f6d8a7aaffc1a.png)  
+
+
 - **Table** a grouping of items which share the same primary key.
 - **Items** within a table are how you manage the data.
   - There is no limit to the number of items in a table.
 - Two types of primary key:
-  - Simple (Partition)
-  - Composite (Partition and Sort)
+  - Simple (Partition) (PK)
+  - Composite (Partition and Sort) (PK and SK)
 - Every item in the table needs a unique primary key.
 - Attributes may or may not be there. This is not necessary.
 - Items can be at most 400KB in size. This includes the primary key and
@@ -6717,6 +6747,9 @@ that is retained until you manually remove that backup. This can be used to
 restore data in the same region or cross-region. You can adjust indexes, or
 adjust encryption settings.
 
+![picture 157](images/d70a5cf0f2c9fe2dc840ced13580f2309cbe8a45526c69e88a5d9b50f34ff0cc.png)  
+
+
 **Point-in-time Recovery**: Must be enabled on each table and is off by
 default. This allows continuous record of changes for 35 days to allow you to
 replay any point in that window to a 1 second granularity.
@@ -6728,7 +6761,7 @@ replay any point in that window to a 1 second granularity.
 - If you see key value and DynamoDB is an answer, this is likely the proper
 choice.
 
-Access to Dynamo is from the console, CLI, or API. You don't have SQL access.
+Access to Dynamo is from the console, CLI, or API. You don't have SQL query access.
 
 Billing based on:
 
@@ -6744,17 +6777,17 @@ Can purchase reserved capacity with a cheaper rate for a longer term commit.
 
 **On-Demand**: Unknown or unpredictable load on a table. This is also good
 for as little admin overhead as possible. Pay a price per million
-Read or Write units. This is as much as 5 times the price as provisioned.
+Read and Write units. This is as much as 5 times the price as provisioned.
 
 **Provisioned**: RCU and WCU set on a per table basis.
 
 Every operation consumes at least 1 RCU/WCU
 
-1 RCU = 1 x 4KB read operation per second. This rounds up.
+1 RCU = 1 x 4KB read operation per second. This rounds up to at least RCU.
 1 WCU = 1 x 1KB write operation per second.
 
-Every single table has a WCU and RCU burst pool. This is 500 seconds
-of RCU or WCU as set by the table.
+Every single table has a WCU and RCU burst pool. This is 300 seconds
+of RCU or WCU as set by the table. Try to not rely on this too much as once depleted you have to increase capacity.
 
 #### 1.18.2.2. Query
 
@@ -6770,10 +6803,13 @@ discards data, but capacity is still consumed.
 In this example you can only query for one weather station.
 
 If you query a PK it can return all fields items that match. It is always
-more efficient to pull as much data as needed per query to save RCU.
+more efficient to pull as much data as needed per query to save RCU. An operation is performed on the entire size of the item so there is a cost benefit to designing a database with smaller sized items. 
+
+![picture 158](images/4f3f52fb665c406aababfad3b9b397821bd49ddac8bf871a6e37d28deac2eb2d.png)  
+
 
 You have to query for at least one item of PK and are charged for the
-response of that query operation.
+response of that query operation (the entire item) even if you only want to filter for one attribute (the pink box).
 
 If you filter data and only look at one attribute, you will still be
 charged for pulling all the attributes against that query.
@@ -6782,18 +6818,26 @@ charged for pulling all the attributes against that query.
 
 Least efficient when pulling data from Dynamo, but the most flexible.
 
+![picture 159](images/0994bff888947b2952f1295c05afae3b9f12c8f72a6a21ae02f432b9454f3355.png)  
+
+
 Scan moves through the table item by item consuming the capacity
-of every item. Even if you consume less than the whole table, it will
-charge based on that. It adds up all the values scanned and will charge
+of every item. Even if you filter or return only a few items, it will still
+charge based on the whole table. It adds up all the values scanned and will charge
 rounding up.
 
 #### 1.18.2.4. DynamoDB Consistency Model
+
+How soon updates take to be reflected in the database (returned in a read)
 
 **Eventually** Consistent: easier to implement and scales better
 **Strongly (Immediately)** Consistent: more costly to achieve
 
 Every piece of data is replicated between storage nodes. There is one
-Leader storage node and every other node follows.
+Leader storage node and every other node follows. If the Leader node ever fails, another storage node is desingated leader.
+
+![picture 160](images/cbb2193026f3a0ad575e56be4a560f5dd452f0e6dc6caefa3cfe90fa41896bad.png)  
+
 
 Writes are always directed to the **leader node**. Once the leader
 is complete, it is **consistent**. It then starts the process of replication.
@@ -6811,6 +6855,10 @@ database or medical information, you must use strongly consistent reads.
 If you can tolerate the cost savings you can scale better.
 
 #### 1.18.2.5. WCU Example Calculation
+
+
+![picture 161](images/13e42cf452d505a5718e5136e32163f0ff20ffedce44f6a27727e5c5ef264b3e.png)  
+
 
 - Store 10 items per second with 2.5K average size per item.
 - Calculate WCU per item, round up, then multiply by average per second.
@@ -6830,6 +6878,10 @@ Answer: $N_i \cdot S_i$ = $10 \cdot 3 = 30$ WCUs
 
 #### 1.18.2.6. RCU Example Calculation
 
+![picture 162](images/139ca699d8e8ec0bbb943c3c4225538b66bf1b40f169a7c336662f497808b477.png)  
+
+
+
 - Retrieve 10 items per second with 2.5K average size per item.
 - Calculate RCU per item, round up, then multiply by average per second.
 - (2.5 KB / 4 KB) = 1 * 10 p/s = 10 RCU for strongly consistent.
@@ -6845,6 +6897,7 @@ $S_i = 1$ $\Rightarrow$ how many 2.5 ($\sim$3) can you get in 4, which is 1.
 Answer: $N_i \cdot S_i$ = $10 \cdot 1 = 10$ RCUs
 
 ### 1.18.3. DynamoDB Streams and Triggers
+![picture 165](images/a2973bce5d1c384ac02a2c78609aa1e176087a24ce0adee7f1a733c0d0726eb6.png)  
 
 DynamoDB stream is a time ordered list of changes to items in a DynamoDB
 table. A stream is a 24 hour rolling window of the changes.
@@ -6869,6 +6922,9 @@ Pre or post change state might be empty if you use
 **insert** or **delete**
 
 #### 1.18.3.1. Trigger Concepts
+
+![picture 166](images/5ea64eea4a90eaf8c028483037209392ddb1eccee0bd88c0d84c56714659453a.png)  
+
 
 Allow for actions to take place in the event of a change in data
 
@@ -6895,7 +6951,13 @@ to the table.
 
 #### 1.18.4.1. Local Secondary Indexes (LSI)
 
-- Choose alternative sort key with the same partition key on base table data.
+Choose alternative sort key with the same partition key on base table data.
+
+  ![picture 163](images/72ed7354c1e395576b7715b6a850813e1f7e074ada29847c6a38a42281e010d2.png)  
+
+Only items with the new SK will appear in the LSI (ie. only items with sunny days), so you can filter the table before performing a scan.
+
+
   - If item does not have sort key it will not show on the table.
 - These must be created with a base table in the beginning.
   - This cannot be added later.
@@ -6908,21 +6970,25 @@ to the table.
   - KEYS_ONLY
   - INCLUDE
 
+
 #### 1.18.4.2. Global Secondary Index (GSI)
+
+![picture 164](images/62bc467e0fd468462d4847ac3da6479d681267de4cf3aab306019f25b7437bfa.png)  
+
 
 - Can be created at any time and much more flexible.
 - There is a default limit of 20 GSIs for each table.
 - Allows for alternative PK and SK.
-- GSI will have their own RCU and WCU allocations.
+- GSI will have their own RCU and WCU allocations if you are using provisioned capacity for the base table.
 - You can then choose which attributes are included in this table.
 - GSIs are **always** eventually consistent. Replication between
 base and GSI is Async
 
 #### 1.18.4.3. LSI and GSI Considerations
 
-- Must be careful which projections are used to manage capacity.
+- Must be careful which projections (Keys_only, include, all) are used to manage capacity.
 - If you don't project a specific attribute, then you require the attribute when
-querying data, it will then fetch the data later in an inefficient way.
+querying data, it will fetch the data later in an inefficient way.
 - This means you should try to plan what will be used on the front.
 
 **GSI as default** and only use LSI when **strong consistency** is required
@@ -6938,7 +7004,10 @@ to look at other attributes from the original purpose.
 - Tables are created in multiple AWS regions. In one of the tables, you
 configure the links between all of the tables.
 - DynamoDB will enable replication between all of the tables.
-  - Tables become table replicas.
+  - Tables become table replicas. All tables support reads and writes.
+
+![picture 167](images/c87a360737616a4698ff39557836e511ddfef74f09250cef10e934357a25019c.png)  
+
 - Between the tables, **last writer wins** in conflict resolution.
   - DynamoDB will pick the most recent write and replicate that.
 - Reads and Writes can occur to any region and are replicated within a second.
@@ -6949,7 +7018,10 @@ configure the links between all of the tables.
 
 ### 1.18.6. DynamoDB Accelerator (DAX)
 
-This is an in memory cache for Dynamo.
+This is an in-memory cache for Dynamo.
+
+![picture 168](images/c2bad9a5b634f320b08c706ebdabc936feebf30008b3314056ea9ba1621fa608.png)  
+
 
 **Traditional Cache**: The application needs to access some data and checks
 the cache. If the cache doesn't have the data, this is known as a cache miss.
@@ -6969,8 +7041,11 @@ one SKD. It is tightly integrated and much less admin overhead.
 This runs from within a VPC and is designed to be deployed to multiple
 AZs in that VPC. Must be deployed across AZs to ensure it is highly available.
 
+![picture 169](images/45ff22b5f45ae9746843e5dccc797d3f16f2d84788e12b850da9fd1f4cf9e56d.png)  
+
+
 DAX is a cluster service where nodes are placed into different AZs. There is
-a **primary node** which is the read and write note. This replicates out to
+a **primary node** which is the read and write node. This replicates out to
 other nodes which are **replica nodes** and function as read replicas. With this
 architecture, we have an EC2 instance running an application and the DAX
 SDK. This will communicate with the cluster. On the other side, the cluster
@@ -6979,7 +7054,7 @@ communicates with DynamoDB.
 DAX maintains two different caches. First is the **item cache** and this caches
 individual items which are retrieved via the **GetItem** or **BatchGetItem**
 operation. These operate on single items and must specify the items partition
-or sort key.
+or sort key (if present).
 
 There is a **query cache** which holds data and the parameters used for the
 original query or scan. Whole query or scan operations can be rerun
@@ -6995,7 +7070,7 @@ DAX can use write-through caching, so that data is written into DAX at the
 same time as being written into the database.
 
 If a cache miss occurs while reading, the data is also written to the primary
-node of the cluster and the data is retrieved. And then it's replicated from
+node of the cluster as the data is retrieved. And then it's replicated from
 the primary node to the replica nodes.
 
 When writing data to DAX, it can use write-through. Data is written to the
