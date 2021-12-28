@@ -2412,6 +2412,9 @@ EC2 provides Infrastructure as a Service (IaaS Product)
 
 Servers are configured in three sections without virtualization.
 
+![picture 193](images/cdb398536936ae386dc89712a158ee2da874a0df7a0d1ce19d565f67b44aab18.png)  
+
+
 - CPU hardware
 - Kernel
   - Operating system
@@ -2430,6 +2433,9 @@ Guest OS wrapped in a VM and had devices mapped into their OS to emulate real
 HW. Drivers such as graphics cards were all SW emulated to allow the process
 to run properly.
 
+![picture 194](images/fba1382b42484c320d3f178063d5d08433c167a5b2b481ad87ed80f50147427e.png)  
+
+
 The guest OS still believed they were running on real HW and tried
 to take control of the HW. The areas were not real and only allocated
 space to them for the moment.
@@ -2439,6 +2445,9 @@ System calls are intercepted and translated in SW on the way. The guest OS needs
 no modification, but slows down a lot.
 
 #### 1.6.1.2. Para-Virtualization
+
+![picture 195](images/9e2ee24834b968678db4a78f39a433ef7bb8da0955c9f1bb2fb17a9e1d7528d7.png)  
+
 
 Guest OS are modified and run in HV containers, except they do not use slow
 binary translation. The OS is modified to change the **system calls** to
@@ -2452,11 +2461,17 @@ functions so the HV can come in and support. When guest OS tries to run
 privileged instructions, they are trapped by the CPU and do not halt
 the process. They are redirected to the HV from the HW.
 
+![picture 196](images/f881451cb324a0294f12efe98b052cb0728adcf19a6a20b5e41c22b3627bc947.png)  
+
+
 What matters for a VM is the input and output operations such
 as network transfer and disk IO. The problem is multiple OS try to access
 the same piece of hardware but they get caught up on sharing.
 
 #### 1.6.1.4. SR-IOV (Singe Route IO virtualization)
+
+![picture 197](images/bd3defd52f0da3dc236ea2a009a4c8cc112c460d0daffbd3134f0f99267b3754.png)  
+
 
 Allows a network or any card to present itself as many mini cards.
 As far as the HV is concerned, they are real dedicated cards for their
