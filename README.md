@@ -1902,7 +1902,12 @@ The filtering happens at the S3 service itself saving time and data.
 
 ### 1.5.1. Networking Refresher
 
+
 #### 1.5.1.1. IPv4 - RFC 791 (1981)
+
+![picture 213](images/4fee2f5c715be3ab8538dc02ec22ebf87cab44435e617ab3a4ed4960ddf5a0bb.png)  
+
+
 
 Dotted decimal notation for human readability.
 
@@ -6341,6 +6346,11 @@ service attack. Normally not possible to block them by using individual
 IP addresses. Without detailed analysis, the traffic looks like normal
 requests to your website.
 
+
+**DDoS Attack**
+![picture 214](images/58e6fd145bb7c97c99fe59863207666a41c5e0426dc24c53ea9e4e446bab6b6d.png)  
+
+
 - Shield Standard
   - Free with Route53 or CloudFront enabled as default
   - Provides layer 3 and layer 4 protection against DDoS attacks.
@@ -6361,9 +6371,6 @@ against increased costs.
     - Rules are added to WEBACL and evaluated when traffic arrives.
 
 #### 1.17.2.1. Example of Architecture
-
-
-
 
 Shield standard automatically looks at the data before any data reaches
 past Route53.
