@@ -58,7 +58,7 @@ standard protocols and methods.
 The *Infrastructure Stack* or *Application Stack* contains multiple components
 that make up the total service. There are parts that **you** manage as well
 as portions the **vendor** manages. The portions the vendor manages and you
-are charged for is the **unit of consumption** which are represented in green.
+are charged for is the **unit of consumption** (in green).
 
 1. On-Premises: The individual manages all components from data to facilities.
 Provides the most flexibility, but also most IT intensive.
@@ -316,7 +316,7 @@ Private Key - Stored on local machine to initiate connection.
 Public Key - AWS places this key on the instance.
 
 If the instance has a public IPv4, you can login in the console with 'EC2 Instance Connect' or 'SSH Client'. If your instance
-has a private IPv4, then you can login using 'Session Manager'
+has a private IPv4, then you can login using 'Session Manager' assuming you have configured IAM permissions.
 
 ### 1.2.6. S3 (Default Storage Service)
 
@@ -335,8 +335,8 @@ You can't mount an S3 Bucket.
 
 Can be thought of a file. Two main components:
 
-- Object Key: File name in a bucket
-- Value: Data or contents of the object
+- **Object Key**: File name in a bucket
+- **Value**: Data or contents of the object
   - Zero bytes to 5 TB
 
 Other components:
@@ -431,12 +431,12 @@ representation of a template. One template can create infinite amount of stacks.
 ![image](https://user-images.githubusercontent.com/52617475/145609770-be4fd1bd-8481-47f1-8540-3e4a647a1825.png)
 
 
-For any **Logical Resources** in the stack,
-CF will make a corresponding **Physical Resources** in your AWS account.
+For any **Logical Resource** in the stack,
+CF will make a corresponding **Physical Resource** in your AWS account.
 
 It is cloud formations job to keep the logical and physical resources in sync.
 
-A template can be updated and then used to update the same stack.
+A template can be updated and then used to update the same stack, adding or removing resources.
 
 ![image](https://user-images.githubusercontent.com/52617475/145609874-3dfcc704-af60-4608-9e42-f3d61d8e0899.png)
 
@@ -559,7 +559,7 @@ Used when HA and FT don't work.
 
 ### 1.2.12. Domain Name System (DNS)
 
-DNS is a discovery service. Translates machines into humans and vice-versa.
+DNS is a discovery service. Translates machines addresses into language humans can understand and vice-versa.
 It is a huge database and has to be distributed.
 
 Parts of the DNS system
@@ -644,14 +644,14 @@ allowing domain registration
 
 ![image](https://user-images.githubusercontent.com/52617475/145612545-bc72bc84-52ab-45eb-86ee-6d9d81d303a9.png)
 
-Has relationships with all major registries (registrar)
+Has relationships with all major registries (singular: registrar)
 
-- Route 53 will check with the top level domain to see if the name is available
+- Route 53 will check the top level domain to see if the name is available
 - Route 53 creates a zone file for the domain to be registered
 - Allocates nameservers for that zone
   - Generally four of these for one individual zone
   - This is a hosted zone
-  - The zone file will be put on these four managed nameservers
+  - The zone file will be stored on these four managed nameservers
 - Route 53 will communicate with the `.org` registry and add the nameserver records 
 into the zone file for that top level domain.
   - This is done with a nameserver record (NS).
@@ -689,7 +689,7 @@ One common usage is to prove domain ownership.
 This is a numeric setting on DNS records in seconds.
 Allows the admin to specify how long the query can be stored
 at the resolver server.
-If you need to upgrade the records, it is smart to lower the TTL value first.
+If you need to upgrade the records, it is smart to lower the TTL value first to ensure that previous copies of the record can be removed in minimal time.
 
 Getting the answer from an Authoritative Source is known as an
 **Authoritative Answer**.
@@ -762,7 +762,7 @@ identity which can be used in this way.
 There are two ways to authenticate:
 
 - 1 Username and 1 Password
-- 0, 1 or at most 2 Access Keys (CLI)
+- 0, 1 or, at most, 2 Access Keys (CLI)
 
 Once the **Principal** has authenticated, it becomes an **authenticated identity**
 
@@ -814,7 +814,7 @@ These two ARNs do not overlap
 ![image](https://user-images.githubusercontent.com/52617475/145615992-886dfa51-426d-4acd-8708-9a85aadcb15b.png)
 
 
-Containers for users. **You cannot login to IAM groups** They have no
+IAM Groups are containers for users. **You cannot login to IAM groups** They have no
 credentials of their own. Used solely for management of IAM users.
 
 Groups bring two benefits
@@ -839,8 +839,8 @@ A bucket can give access to one or more users or one or more roles.
 **GROUPS ARE NOT A TRUE IDENTITY**
 **THEY CAN'T BE REFERENCED AS A PRINCIPAL IN A POLICY**
 
-An S3 Resource cannot grant access to a group, it is not an identity.
-Groups are used to allow permissions to be assigned to IAM users.
+A S3 Resource cannot grant access to a group, it is not an identity.
+Groups are only used to allow permissions to be assigned to IAM users.
 
 ### 1.3.4. IAM Roles
 
@@ -851,7 +851,7 @@ A single thing that uses an identity is an IAM User. It can be a person, applica
 IAM Roles are also identities that are used by large groups of individuals.
 If have more than 5000 principals, it could be a candidate for an IAM Role due to limit of 5000 users per account.
 
-IAM Roles are **assumed** you become that role.
+IAM Roles are **assumed**, you become that role.
 
 This can be used short term by other identities.
 
