@@ -2795,7 +2795,7 @@ will not necessarily increase the charge as opposed to doing one every hour.
 Provides at rest encryption for block volumes and snapshots.
 
 When you don't have EBS encryption, the volume is not encrypted.
-The operating system itself may be performing internally, but
+The operating system itself may be performing encryption internally, but
 that is a separate thing.
 
 When you set up an EBS volume initially, EBS uses KMS and a customer master key.
@@ -3676,13 +3676,18 @@ associated with the private hosted zone all resource records can be accessed. Bo
 ![image](https://user-images.githubusercontent.com/52617475/144801039-11f17ef2-24da-42bf-bf59-1a7480ce4dee.png)
 
 ### 1.9.2. CNAME
-TODO 
 
-![image](https://user-images.githubusercontent.com/52617475/144856997-d0dc6696-f6e7-441a-a6d8-608adf63110b.png)
+- "A" maps a name to an IPv4 Address
+- CNAME maps a name to another name
+- CNAME is invalid for naked/apex name
+- Many AWS services use a DNS name (ELBs)
+- Should be the same type as what the record is pointing to
+- Alias records map a name to an AWS resource
+  - Can be used for naked/apex names, functions like CNAME
+  - There is no charge for Alias requests pointing at AWS resources
+  - Alias should be your default when choosing a record for which maps to an AWS service
 
-![image](https://user-images.githubusercontent.com/52617475/144873446-a1d244c9-cbd0-4000-863e-734603b19b9e.png)
-
-
+![picture 208](images/bfcbbee72893dff38bdcb2f09d61f89af60b6a138b3a09750200c5c5306c525b.png)  
 
 
 ### 1.9.2. Route 53 Health Checks
@@ -6037,11 +6042,18 @@ the benefits of IPSEC encryption.
 
 ### DX and resilence
 
+How to create High Availability Architecture
+
 ![picture 76](images/e06eb7fc4622d6b421c158f6f9a3ca0d9079dc14acae1295fbb452a62f936284.png)  
+
+Inital design has 7 points of failure.
 
 ![picture 77](images/336d8c5c8a9161519f8f40243acbf4682c656ebcddaab2c88d199298fe9ce141.png)  
 
+
 ![picture 78](images/644f4ccb2eb6a981b491582914542860f003eb8114b0d9b2ac04a047a11a6d23.png)  
+
+
 
 ![picture 79](images/a503b80cb524467189d3c8b584b2bcd4335337cd806a4de5c7129bacd795ab56.png)  
 
