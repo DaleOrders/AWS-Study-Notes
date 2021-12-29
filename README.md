@@ -210,10 +210,10 @@ The higher the / number is, the smaller the grouping.
 
 Two /17's will fit into a /16, sixteen /20 subnets can fit into one /16.
 
-/17 = 1 subnet
-/18 = 2 subnets
-/19 = 4 subnets
-/20 = 16 subnets (2 **x)
+- /17 = 1 subnet
+- /18 = 2 subnets
+- /19 = 4 subnets
+- /20 = 16 subnets (2 **x)
 
 To calculate number of IP adddress:
 /20 example
@@ -1007,7 +1007,7 @@ They don't grant permissions themselves, just act as a barrier. For access to a 
 
 #### 1.3.7.1. Allow List vs Deny List
 
-Deny list is the default.
+**Deny list is the default.**
 
 When you enable SCP on your org, AWS applies `FullAWSAccess`. This means
 SCPs have no effect because nothing is restricted. It has zero influence
@@ -1076,14 +1076,14 @@ This allows to **store**, **monitor** and **access** logging data.
 - Can be more fields, but at least these two
 
 Comes with some AWS Integrations.
-Security is provided with IAM roles or Service roles
-Can generate metrics based on logs **metric filter**
+Security is provided with IAM roles or Service roles.
+Can generate metrics based on **metric filters**
 
 #### 1.3.8.1. Architecture of CloudWatch Logs
 
 ![image](https://user-images.githubusercontent.com/52617475/145618084-ba433aa7-44f4-4331-a74b-583e2dc6a0ae.png)
 
-It is a regional service `us-east-1`
+It is a regional service, for example, `us-east-1`
 
 Need logging sources such as external APIs or databases. This sends
 information as **log events**. These are stored in **log streams**. This is a
@@ -1108,11 +1108,11 @@ by default and is no additional cost.
 To customize the service you need to create a new **trail**.
 Two types of events. Default only logs Management Events
 
-- Management Events:
+- **Management Events**:
 Provide information about management operations performed on resources
 in the AWS account. Ex: Create an EC2 instance or terminating one.
 
-- Data Events:
+- **Data Events**:
 Objects being uploaded to S3 or a Lambda function being invoked. This is not
 enabled by default and must be enabled for that trail.
 
@@ -1155,7 +1155,7 @@ management point for all the APIs and management events for that org.
 - It can be configured to store data indefinitely in S3 or CloudWatch Logs.
 - Management events are only saved by default
 - IAM, STS, CloudFront are Global Service events and log to `us-east-1`
-  - Trail must be enabled to do this
+  - Trail must be enabled to do track these global services
 - NOT REALTIME - There is a delay. Approximately 15 minute delay
 
 #### 1.3.9.3. CloudTrail Pricing
@@ -1233,8 +1233,8 @@ Static website hosting creates a **website endpoint**.
 This is influenced by the bucket name and region it is in.
 This cannot be changed.
 
-You can use a custom domain for a bucket, but then the bucket name matters.
-The name of the bucket must match the domain.
+You can use a custom domain name for a website hosted on a bucket, but then the bucket name matters.
+The name of the bucket must match the domain name you have registered.
 
 ![image](https://user-images.githubusercontent.com/52617475/144759064-b5126ab6-1c11-40dd-bb28-e2652cb7f1c8.png)
 
@@ -1265,7 +1265,7 @@ We could then change our DNS and move customers to a backup website on S3.
 
 Without Versioning:
 
-- Each object is identified solely by the object key, it's name.
+- Each object is identified solely by the object key, its name.
 - If you modify an object, the original of that object is replaced.
 - The attribute, **ID of object**, is set to **null**.
 
@@ -1274,8 +1274,9 @@ Versioning
 ![image](https://user-images.githubusercontent.com/52617475/144758991-e8027ec9-c702-494f-bd68-afea523e54df.png)
 
 - This is off by default.
-- Once it is turned on, it cannot be turned off.
+- Once it is turned on, it cannot be turned off. 
 - Versioning can be suspended and enabled again.
+- This is important to remember as you pay for storage for all previous copies you made, even if versioning is suspended and not making any more copies.
 - This allows for multiple versions of objects within a bucket.
 - Objects which would modify objects **generate a new version** instead.
 
@@ -1283,7 +1284,7 @@ The latest or current version is always returned when an object version
 is not requested.
 
 When an object is deleted, AWS puts a **delete marker** on the object
-and hides all previous versions. You could delete this marker to enable
+and hides all previous versions. To the user, it looks like all copies have been deleted. You could delete this marker to re-enable
 the item.
 
 To delete an object, you must delete all the versions of that object
@@ -1310,7 +1311,7 @@ Single PUT Upload
 
 - Objects uploaded to S3 are sent as a single stream by default.
 - If the stream fails, the upload fails and requires a restart of the transfer.
-- Single PUT upload up to 5GB
+- Single PUT upload up to  a maximum of 5GB
 
 Multipart Upload
 
@@ -1327,8 +1328,12 @@ Multipart Upload
 
 S3 Accelerated Transfer
 
+**S3 without Accelerated Transfer**
+
 ![image](https://user-images.githubusercontent.com/52617475/145710621-59cff8bf-15c8-46ae-8f13-301a056a1cd0.png)
 
+
+**S3 with Accelerated Transfer**
 
 ![image](https://user-images.githubusercontent.com/52617475/145710636-75006734-e7b6-4afe-bd5b-c10745a8b927.png)
 
@@ -1361,7 +1366,8 @@ find and access the base storage device, they can't do anything with it.
 
 #### 1.4.5.3. Terms
 
-- plaintext: unencrypted data not limited to text
+- plaintext: unencrypted data not limited to text (document, text, app etc)
+- Algorithm: mathematical operation which turns plaintext into ciphertext
 - key: a password
 - ciphertext: encrypted data generated by an algorithm from plaintext and a key
 
@@ -1411,7 +1417,7 @@ to find the message unless you know what to look for.
 
 One party would take another party's public key and encrypt some data to create
 ciphertext. That ciphertext can be hidden in another file so long as both
-parties know how the data will be hidden.
+parties know how the data will be hidden. In this case, there is a hidden pixelation in the dog's nose, which can serve as a hidden message.
 
 ![image](https://user-images.githubusercontent.com/52617475/145621212-2ef94b1a-d263-4a29-a926-ff6f9989a39f.png)
 
@@ -1425,7 +1431,7 @@ parties know how the data will be hidden.
 - Create, store, and manage keys.
   - Can handle both symmetric and asymmetric keys.
 - KMS can perform cryptographic operations itself.
-- Keys never leave KMS.
+- Main key never leaves KMS.
 - Keys use **Federal Information Processing Standard (FIPS) 140-2 (L2)** security standard.
   - Some features are compliant with Level 3.
   - All features are compliant with Level 2.
@@ -1435,7 +1441,7 @@ parties know how the data will be hidden.
 
 - Managed by KMS and used within cryptographic operations.
 - AWS services, applications, and the user can all use them.
-- Think of them as a container for the actual physical master keys.
+- Think of them as a container for the actual physical main keys.
 - These are all backed by **physical** key material.
 - You can generate or import the key material.
 - CMKs can be used for up to **4KB of data**.
@@ -1474,7 +1480,7 @@ Architecture
 1. DEK is generated right before something is encrypted.
 2. The data is encrypted with the plaintext version of the DEK.
 3. Discard the plaintext data version of the DEK.
-4. The encrypted DEK is stored next to the ciphertext generated earlier.
+4. The encrypted DEK is stored next to the ciphertext generated earlier so that the CMK knows which Main Key belongs to which ciphertext.
 
 #### 1.4.6.3. KMS Key Concepts
 
@@ -1555,8 +1561,10 @@ encrypted in transit outside of these methods.
 
 Client-Side encryption
 
-- Objects being encrypted by the client before they leave.
-- Data being sent the whole time it is sent as cypher text.
+- Data is encrypted in transit using HTTPS
+- Data inside the tunnel is in encrypted form.
+- Objectsencrypted by the client before they leave.
+- Data being sent the whole time is sent as ciphertext.
 - AWS has no way to see into the data.
 - The encryption burden is on the customer and not AWS.
 
@@ -1653,7 +1661,7 @@ If you don't have access to KMS, you don't have access to the object.
 ![image](https://user-images.githubusercontent.com/52617475/144760044-37bdd7ef-6ee6-4d83-88a0-638f149c5e67.png)
 
 
-#### SSL and TLS
+#### SSL and TLS (Optional section)
 
 ![picture 212](images/f968718a42d71933c214a08829a6911ee102338676ae4224021af689d063b1f5.png)  
 
@@ -2014,7 +2022,7 @@ the prefix.
 
 VPC Consideration
 
-- What size should the VPC be. This will limit the use.
+- What size should the VPC be? This will limit the use.
 - Are there any networks we can't use?
 - Be mindful of ranges other VPCs use or are used in other cloud environments
 - Try to predict the future uses.
@@ -2022,7 +2030,7 @@ VPC Consideration
 - VPC min /28 network (16 IP)
 - VPC max /16 (65456 IP)
 - Avoid common range 10.0 or 10.1, include up to 10.10
-  - Suggest starting of 10.16 for a nice clean base 2 number.
+  - Suggest starting at 10.16 for a nice clean base 2 number.
 
 Reserve 2+ network ranges per region being used per account.
 Think of the highest region you will operate in and add extra as a buffer.
@@ -2229,7 +2237,7 @@ about the private address and instead uses the instance's public IP address.
 If the instance uses an IPv6 address, that public address is good to go. The IGW
 does not translate the packet and only pushes it to a gateway.
 
-IGW handles **static IP Addressing**
+IGW handles **Static Network Address Translation** where a private IP address is changed to a public IP address to route the packet of data out to the public internet. On return, it changes the public IP address back to the private IP address.
 
 ![picture 211](images/cce9cbff995fd22e365c09d999b6a21f5456801b708152e1aa8a42f0b48c21ff.png)  
 
@@ -2816,13 +2824,13 @@ Billed using a GB/month metric.
 20 GB stored for half a month, represents 10 GB-month.
 
 This is used data, not allocated data. If you have a 40 GB volume but only
-use 10 GB, you will only be charged for the allocated data.
-This is not how EBS itself works as you pay for the entire volume.
+use 10 GB, you will only be charged for 10GB.
+This is not how EBS itself works as you pay for the entire volume regardless of how much you use.
 
 ![picture 67](images/502dbd872fbd15db85993edd1e07a85dac5476d33406a3e02519d0a15f62faec.png)  
 
 
-
+In this example, the first you pay for 10GB, second you pay for 4GB (the changed data) and third you pay for 2 GB (the changed data).
 The data is incrementally stored which means doing a snapshot every 5 minutes
 will not necessarily increase the charge as opposed to doing one every hour.
 
@@ -2991,7 +2999,7 @@ Images of EC2 instances that can launch more EC2 instance.
 
     - AMI contains:
       - Permissions: who can use it, is it public or private
-      - EBS snapshots are created from attached EBS volumes
+      - EBS snapshots are created from attached EBS volumes and stored in S3 buckets
         - Snapshots are referenced inside the AMI using block device mapping.
         - Table of data that links the snapshot IDs that you've just
         created when making that AMI and it has for each one of those
