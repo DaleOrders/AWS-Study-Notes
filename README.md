@@ -2229,10 +2229,12 @@ with your on premise identification service.
 
 ### 1.5.6. Network Access Control List (NACL)
 
-![image](https://user-images.githubusercontent.com/52617475/143906249-49d98194-d45b-432f-9e3a-0ac63b291946.png)
-
 Network Access Control Lists (NACLs) are a type of security filter
 (like firewalls) which can filter traffic as it enters or leaves a subnet.
+
+
+![image](https://user-images.githubusercontent.com/52617475/143906249-49d98194-d45b-432f-9e3a-0ac63b291946.png)
+
 
 All VPCs have a default NACL, this is associated with all subnets of that VPC
 by default.
@@ -2296,8 +2298,9 @@ back on a different port.
 
 #### 1.5.6.2. NACL Exam PowerUp
 
+NACLs require rules to allow inbound **and** outbound traffic. They are therefore stateless.
 
-- **NACLs are stateless**
+- **Stateless Firewalls**
 ![image](https://user-images.githubusercontent.com/52617475/143520699-de9a010d-1a37-4fc8-9252-cbe77c947409.png)
 
   - Initiation and response traffic are separate streams requiring two rules.
@@ -2316,14 +2319,14 @@ NACLs are processed in order starting at the lowest rule number until
 it gets to the catch all. A rule with a lower rule number will be processed
 before another rule with a higher rule number.
 
-<img width="1520" alt="NATArchitecture" src="https://user-images.githubusercontent.com/52617475/144763033-b70dcb7b-4825-4ea4-b2f6-98578f7b904b.png">
+
 
 
 ### 1.5.7. Security Groups
 
-**SGs are stateful**
-
 Security Groups only require rules to allow inbound traffic (outbound traffic is automatically allowed). They are therefore stateful.
+
+**Stateful Firewalls**
 
 ![image](https://user-images.githubusercontent.com/52617475/143520585-ccd33ab8-1444-48cf-8608-b08c35011d54.png)
 
@@ -2370,6 +2373,8 @@ that boundary. It does not direct traffic within the subnet.
 
 Set of different processes that can address IP packets to public internet, via IGW, by changing
 their source or destination addresses.
+
+<img width="1520" alt="NATArchitecture" src="https://user-images.githubusercontent.com/52617475/144763033-b70dcb7b-4825-4ea4-b2f6-98578f7b904b.png">
 
 **IP masquerading**, hides CIDR block behind one IP. This allows many IPv4
 addresses to use one public IP for **outgoing** internet access.
