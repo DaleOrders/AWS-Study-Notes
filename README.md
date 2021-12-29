@@ -24,6 +24,7 @@
 - [1.16. Hybrid-and-Migration](#116-hybrid-and-migration)
 - [1.17. Security-Deployment-Operations](#117-security-deployment-operations)
 - [1.18. NoSQL-and-DynamoDB](#118-nosql-and-dynamodb)
+- [1.19. Networking Fundamentals](#119-network-fundamentals)
 
 ---
 
@@ -4011,7 +4012,7 @@ Particular database frameworks: ACID and BASE
 It is always a bad idea to do this.
 
 - Splitting an instance over different AZs
-  - Adds reliability consideration between the AZs
+  - Adds reliability concerns between the AZs
   - Adds a cost to move the data between AZs
 
 ![image](https://user-images.githubusercontent.com/52617475/145082267-25a39610-3488-43e3-97ff-dd683de11d50.png)
@@ -4061,9 +4062,9 @@ same tooling as if you were accessing a self-managed database.
 
 The database can be optimized for:
 
-db.m5 general
-db.r5 memory
-db.t3 burst
+- db.m5 general
+- db.r5 memory
+- db.t3 burst
 
 There is an associated size and AZ selected.
 
@@ -7248,5 +7249,59 @@ Scales well to accomodate increases in demand. Cost benefits are most evident at
 #### 1.18.7.4. RedShift DR and Resilence
 
 ![picture 207](images/5edcfedf61f82c634ad51b79871704aded38cee0d5fe354dcde9f1d3d3aef2ec.png)  
+
+---
+## 119-network-fundamentals
+
+![picture 215](images/187088dfa4a46be8116f7aa23b20415ef41eb78976a489c5e257706206f69df5.png)  
+
+**Layer 1 - Physical**
+![picture 216](images/adab550fc390afadacef7e83a509a8d92e3a084a724324c799df7892cb3c7c00.png)  
+
+![picture 217](images/cbfc88119b0013a190e7520ae61dc773dbdfda39c76a009a86f2add612063b10.png) 
+
+**Layer 2 - Data Link**
+![picture 218](images/bd0d21d31389bd66e57ec39ab014bc5a9fb1d7b32d2fd6fc8ddc4ff523e105a5.png)  
+
+![picture 219](images/65ec157fa1d95aac2ad3b5276ef2b14be20241eb3b26a1f3f949fc51ae778167.png)  
+
+![picture 220](images/2d10004c900ffcc1d84e4e3073a1ae7640570cc2dd4201940c439e6cb390217f.png)  
+
+![picture 221](images/0d2d078526fcfd88c7c27702ed461a4227ff21bc4e3c57ae2af917a5771a7cd9.png)  
+
+![picture 222](images/7abddedaf79d2d47f7f2680825a502689729144af01267bbc01fd5eee56ca70d.png)  
+
+
+**Layer 3 - Network**
+
+![picture 223](images/428bf4b89776fa0bccf09a50ec3c9bdf03f3fb15b387318a3bb0a36b5836dc51.png)  
+
+![picture 224](images/652d5cda18a5f733198b63d5a6df45bede8adddbd38cb4b2a849ee05119c7e1c.png)  
+
+![picture 225](images/91e241b28849c22631a8bbece5ecb4f0b05a548de1f3e4ddc44b0aa9bebc26ad.png)  
+
+![picture 226](images/3601f09e19d4ffb8f77ac72b81323960f4453c6d14f1df5e0cb94ff59bf10c40.png)  
+
+![picture 227](images/a00228a72a2bbac10724ad9d5801cb05423511f34c7c564f4226555309224e4b.png) 
+
+
+**Layer 4 - Transport**
+
+![picture 228](images/7eb6dae5005ecd6b824a961f3b97edba3c7f0cfdae46b7505844740047453ebb.png)  
+
+![picture 229](images/d43b401434e90f2b31275b8370ab9e243f1d6b54d5d80abff09027ceab24c37f.png)  
+
+![picture 230](images/0aa549c2682b44ab0ba3aaee4a362d154eb00570cba44917b4f2dcbdfa3641cb.png) 
+
+![picture 231](images/016ee56d289cf6a36770245902b28c5e93cabc668ce6127288ad095f073dd126.png)  
+
+**Layer 5 - Session**
+
+![picture 232](images/757e4868b8671451d6ca07afc143ebf894b5837d97e1e947f7d6dab0cf4d9a4d.png)  
+
+
+
+
+
 
 
