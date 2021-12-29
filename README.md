@@ -2323,9 +2323,15 @@ before another rule with a higher rule number.
 
 **SGs are stateful**
 
+Security Groups only require rules to allow inbound traffic (outbound traffic is automatically allowed). They are therefore stateful.
+
 ![image](https://user-images.githubusercontent.com/52617475/143520585-ccd33ab8-1444-48cf-8608-b08c35011d54.png)
 
+Logical references allow you to scale your applications. In this situation, the left subnet is allowing traffic from the right using a logical reference.
+
 ![image](https://user-images.githubusercontent.com/52617475/143908278-2a6b2de8-aa7a-467f-bc6c-ef5c593f968a.png)
+
+If you use logical references, yo can add more instances to the subnet without needing to update the network configuration.
 
 ![image](https://user-images.githubusercontent.com/52617475/143908525-7aeb4fcc-9590-4950-9375-fdbd90155e0f.png)
 
@@ -2339,6 +2345,8 @@ before another rule with a higher rule number.
   - They see traffic and response as the same thing.
 
 ![image](https://user-images.githubusercontent.com/52617475/143908872-7e070ee6-35de-40cd-97c5-fa0670e6ed08.png)
+
+In the example above, using a self-reference to a security group means that you can continue to add instances to the subnet (scale) without needing to update the network configuration. All instances with this security group attached will be able to communicate.
 
 - Understand AWS logical resources so they're not limit to IP traffic only.
   - Can have a source and destination referencing the instance and not the IP.
