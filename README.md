@@ -947,28 +947,28 @@ as well as individual payment methods.
 If you have more than 5 to 10 accounts, you would want to use an org.
 
 Take a single AWS account **standard AWS account** and create an org.
-The standard AWS account then becomes the **management account**.
-The master account can invite other existing standard AWS accounts. They will
+The standard AWS account then becomes the **management account** (the one with the crown in the image below).
+The management account can invite other existing standard AWS accounts. They will
 need to approve their joining to the org.
 
 When standard AWS accounts become part of the org, they
 become **member accounts**.
 Organizations can only have one **management account** and zero or more
-**member accounts**. Good practice is to consolidate billing of all the accounts under the management account, but otherwise not use it. Log into one account and role switch into the other accounts.
+**member accounts**. Good practice is to consolidate billing of all the accounts under the management account, but otherwise not use it. Log into one account and role switch into the other accounts. In the image below users on-prem login into one account (bottom left) and rolw switch into the other three accounts.
 
 ![image](https://user-images.githubusercontent.com/52617475/145617277-228fd627-4aa7-4240-8d90-6e35a08e56a9.png)
 
 
 #### 1.3.6.1. Organization Root
 
-This is a container that can hold AWS member accounts or the master account.
+This is a container that can hold AWS member accounts or the management account.
 It could also contain **organizational units** which can contain other
 units or member accounts inside.
 
 #### 1.3.6.2. Consolidated billing
 
 The individual billing for the member accounts is removed and they pass their
-billing to the master account.
+billing to the management account.
 Inside an AWS organization, you get a single monthly bill for the master
 account which covers all the billing for each users.
 Can offer a discount with consolidation of reservations and volume discounts due to pooling of resources.
@@ -995,11 +995,11 @@ JSON policy document that can be attached:
 - A specific Organizational Unit
 - A specific member only.
 
-The master account cannot be restricted by SCPs which means this
+The management account cannot be restricted by SCPs which means this
 should not be used because it is a security risk.
 
 SCPs limit what the account, **including root user** can do inside that account.
-They don't grant permissions themselves, just act as a barrier. For access to a service both IAM and SCP must permit use.
+They don't grant permissions themselves, just act as a barrier. For access to a service both IAM and SCP must permit use. In this image below, only the three services in the middle of the venn diagram would be accessible.
 
 ![image](https://user-images.githubusercontent.com/52617475/145617993-e0568aa7-6625-4e91-93ad-b8528de21382.png)
 
