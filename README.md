@@ -1653,6 +1653,11 @@ If you don't have access to KMS, you don't have access to the object.
 ![image](https://user-images.githubusercontent.com/52617475/144760044-37bdd7ef-6ee6-4d83-88a0-638f149c5e67.png)
 
 
+#### SSL and TLS
+
+![picture 212](images/f968718a42d71933c214a08829a6911ee102338676ae4224021af689d063b1f5.png)  
+
+
 ### 1.4.9. S3 Object Storage Classes
 
 Picking a storage class can be done while uploading a specific object.
@@ -1955,6 +1960,9 @@ CIDR Example: `10.0.0.0/16`
 `10.0.0.0/16` is the equivalent of `1234` as a password. You should consider
 other ranges that people might use to ensure it does not overlap.
 
+![picture 209](images/d61bdb2dead6524a50cbf7d083c3d7c4dec9f2bae8f8628f551b89aeaeb9342a.png)  
+
+
 #### 1.5.1.6. Packets
 
 Contains:
@@ -2216,6 +2224,11 @@ about the private address and instead uses the instance's public IP address.
 If the instance uses an IPv6 address, that public address is good to go. The IGW
 does not translate the packet and only pushes it to a gateway.
 
+IGW handles **static IP Addressing**
+
+![picture 211](images/cce9cbff995fd22e365c09d999b6a21f5456801b708152e1aa8a42f0b48c21ff.png)  
+
+
 #### 1.5.5.4. Bastion Host / Jumpbox
 
 It is an instance in a public subnet inside a VPC.
@@ -2401,6 +2414,11 @@ with a Route Table in each private subnet AZ pointing to the NATGW as target.
 - You can connect to NAT instance just like any other instance, you can use them as Bastion host or can use them for port forwarding.
 - With NAT Gateway it is not possible, it is managed service. NAT Gateway cannot be used as Bastion host and it cannot do port forwarding.
 - **You cannot use SG with NAT instance, you can only use NACLs.**
+
+- NAT Gateway handles **Port Translation** using a **Nat Table**
+
+
+![picture 210](images/f718b6742a6ffa61df038512efa70aeaf4f770b208406b3068800577c9ad0315.png)  
 
 
 - NAT is not required for IPv6. Inside AWS all IPv6 addresses are publicly routable. IG works with all IPv6 addresses directly.
