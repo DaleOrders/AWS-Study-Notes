@@ -3267,11 +3267,12 @@ in the container registry.
 ![picture 238](images/9d9d8d2c347aa03e515c8315ff33754b9764df84385913d83dab0bacbaa055be.png)  
 
 
-### 1.7.2. Elastic Container Service (ECS) Definitions
+### 1.7.2. Elastic Container Service (ECS) Concepts
+
 
 - Accepts containers and instructions you provide. It orchestrates where and how to run the containers. It is a managed container-based compute service.
 
-ECS runs into two modes: 
+ECS runs in two modes: 
 1. Using EC2
 2. Using Fargate
 
@@ -3280,44 +3281,24 @@ ECS runs into two modes:
 
 ![picture 240](images/23b2136b0bd9463771c28a4c0519615b9dd30950d7eb19e683409bc17f78b1f5.png)  
 
-
-
 - Container images will be located on a registry.
   - AWS provides a registry called **Elastic Container Registry** (ECR).
   - Dockerhub can be used as well.
+
 - **Container definition** tell ECS where your container image is. It tells ECS which port your container uses (e.g. port 80, which is http). Container definition gives ECS just enough info about a single container.
-- It defines which image to use and the ports that will be exposed.
+  - It defines which image to use and the ports that will be exposed.
 
 - **Task definitions** store the container definitions used by the **task** - cpu, memory, networking mode, compatability (ec2 or fargate).
   - It also stores the **task role**, an IAM role that allows the task access to other AWS resources.
 
 
-**Example**: 
+**Example of Task Definition**: 
 ![picture 242](images/de0b1b574f35e27f31fdfbb1f2c6093ddb84e19c570d3ada0bc738827c187e39.png)  
 
 
-- **Service** defines the minimum and maximum Tasks from one Task Definition that run at any given time, utlising autoscaling, and load balancing capability.
+- **Service** defines the minimum and maximum Tasks from one Task Definition that run at any given time, utlising autoscaling, and load balancing capability. Adds capacity and resilience. 
 
 ![picture 241](images/f00fbb39b49453bb74041ddbda87d2458dac24e5a2feebff1c7b1d610004e4ab.png)  
-
-
-
-
-
-### 1.7.2. Elastic Container Service (ECS) Concepts
-
-![picture 185](images/2aac86c66db0d41d68ce901503724a7b84a117fa7bff8442e3ef3bd17b859b84.png)  
-
-
-
-> Task roles are the best practice way for giving containers within ECS permissions to access AWS products and services.
-
-- Task does not scale on its own and it is not highly available.
-
-See the [AWS documentation on container definition](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html) and [task definition](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_TaskDefinition.html) for more information.
-
-**Service** is configured via Service Definition and represents
-how many copies of a task you want to run for scaling and HA. Adds capacity and resilience. 
 
 
 ### 1.7.3. ECS Cluster Types
