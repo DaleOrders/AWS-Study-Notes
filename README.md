@@ -1000,7 +1000,7 @@ The management account cannot be restricted by SCPs which means this
 should not be used because it is a security risk.
 
 SCPs limit what the account, **including root user** can do inside that account.
-They don't grant permissions themselves, just act as a barrier. For access to a service both IAM and SCP must permit use. In this image below, only the three services in the middle of the venn diagram would be accessible.
+They don't grant permissions themselves, just act as a barrier. For access to a service both IAM and SCP must permit use. In this image below, only the three green services in the middle of the venn diagram would be accessible.
 
 ![image](https://user-images.githubusercontent.com/52617475/145617993-e0568aa7-6625-4e91-93ad-b8528de21382.png)
 
@@ -1482,6 +1482,26 @@ Architecture
 2. The data is encrypted with the plaintext version of the DEK.
 3. Discard the plaintext data version of the DEK.
 4. The encrypted DEK is stored next to the ciphertext generated earlier so that the CMK knows which Main Key belongs to which ciphertext.
+
+#### KMS Key Encryption 
+
+![picture 233](images/a45a657d7088aa5a9a788b01e7bbb435bc829937742a9cb90006f533cb0ab8fe.png)  
+
+The process is as follows:
+1. Create a CMK on KMS.
+2. Call the create-datakey operation of KMS to create a DEK. Then you get a plaintext DEK and a ciphertext DEK. The ciphertext DEK is generated when you use a CMK to encrypt the plaintext DEK.
+3. Use the plaintext DEK to encrypt the file. A ciphertext file is generated.
+4. Save the ciphertext DEK and the ciphertext file together in a persistent storage device or a storage service.
+
+#### KMS Key Decryption 
+
+![picture 234](images/e15b21d48972865f7e784306300cf2f2da6530fae99f2a5de8a6f5c9a802cb13.png)  
+
+The process is as follows:
+1. Obtain the ciphertext DEK and file from the persistent storage device or the storage service.
+2. Call the decrypt-datakey operation of KMS and use the corresponding CMK (the one used for encrypting the DEK) to decrypt the ciphertext DEK. Then you get the plaintext DEK. If the CMK is deleted, the decryption fails. Therefore, properly keep your CMKs.
+
+3. Use the plaintext DEK to decrypt the ciphertext file.
 
 #### 1.4.6.3. KMS Key Concepts
 
