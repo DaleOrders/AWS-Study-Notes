@@ -3264,21 +3264,47 @@ in the container registry.
 - Ports need to be **exposed** to allow outside access from the host and beyond.
 - Application stacks can be multi container
 
-### 1.7.2. Elastic Container Service (ECS) Concepts
+![picture 238](images/9d9d8d2c347aa03e515c8315ff33754b9764df84385913d83dab0bacbaa055be.png)  
+
+
+### 1.7.2. Elastic Container Service (ECS) Definitions
 
 - Accepts containers and instructions you provide. It orchestrates where and how to run the containers. It is a managed container-based compute service.
 
-ECS runs into two modes: 1. Using EC2; 2. Using Fargate.
+ECS runs into two modes: 
+1. Using EC2
+2. Using Fargate
 
 - ECS allows you to create a cluster.
   - Clusters are where containers run from.
+
+![picture 240](images/23b2136b0bd9463771c28a4c0519615b9dd30950d7eb19e683409bc17f78b1f5.png)  
+
+
+
 - Container images will be located on a registry.
   - AWS provides a registry called **Elastic Container Registry** (ECR).
   - Dockerhub can be used as well.
 - **Container definition** tell ECS where your container image is. It tells ECS which port your container uses (e.g. port 80, which is http). Container definition gives ECS just enough info about a single container.
-  - A pointer to which image to use and the ports that will be exposed.
-- **Task definitions** store the container definitions (resources) used by the task - cpu, memory, networking mode, compatability (ec2 or fargate).
+- It defines which image to use and the ports that will be exposed.
+
+- **Task definitions** store the container definitions used by the **task** - cpu, memory, networking mode, compatability (ec2 or fargate).
   - It also stores the **task role**, an IAM role that allows the task access to other AWS resources.
+
+
+**Example**: 
+![picture 242](images/de0b1b574f35e27f31fdfbb1f2c6093ddb84e19c570d3ada0bc738827c187e39.png)  
+
+
+- **Service** defines the minimum and maximum Tasks from one Task Definition that run at any given time, utlising autoscaling, and load balancing capability.
+
+![picture 241](images/f00fbb39b49453bb74041ddbda87d2458dac24e5a2feebff1c7b1d610004e4ab.png)  
+
+
+
+
+
+### 1.7.2. Elastic Container Service (ECS) Concepts
 
 ![picture 185](images/2aac86c66db0d41d68ce901503724a7b84a117fa7bff8442e3ef3bd17b859b84.png)  
 
@@ -3290,7 +3316,7 @@ ECS runs into two modes: 1. Using EC2; 2. Using Fargate.
 
 See the [AWS documentation on container definition](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html) and [task definition](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_TaskDefinition.html) for more information.
 
-ECS **Service** is configured via Service Definition and represents
+**Service** is configured via Service Definition and represents
 how many copies of a task you want to run for scaling and HA. Adds capacity and resilience. 
 
 
@@ -3306,7 +3332,7 @@ ECS Cluster manages:
 
 ECS cluster is created within a VPC. It benefits from the multiple AZs that
 are within that VPC.
-You specify an initial size which will drive an **auto scaling group**.
+You specify an initial size which will drive an **auto scaling group** (ASG).
 
 ![picture 186](images/03bf041c01fd5894b02393357574d56c51d49d102575545cc28573a13874737f.png)  
 
@@ -3316,7 +3342,15 @@ capacity and availability for your cluster.
 
 The container instances are not delivered as a managed service, they
 are managed as normal EC2 instances.
-You can use spot pricing or prepaid EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them.
+You can use spot pricing or prepaid EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them. 
+
+![picture 236](images/a1fc5429fa26ad3bfd446791a8ae7dac0098a753a52a5fec7d801bc93c242639.png)  
+
+1. All docker container images are tagged and stored in AWS ECR (Elastic Container Repository)
+2. ECS Task Definition contains details about the docker image location and the tag that needs to be run on the ECS as a container.
+3. ECS reads the task definition and schedules the tasks on the EC2 instances registered with it.
+4. Each EC2 instance(usually running Amazon Linux or Amazon Linux 2 ECS Optimized AMI) has a ECS-AGENT which pulls the docker image from ECR and runs it on the EC2 instance.
+
 
 
 #### 1.7.3.2. Fargate mode
