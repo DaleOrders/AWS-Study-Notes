@@ -582,6 +582,8 @@ It then passes the information back to the DNS client.
 
 ![image](https://user-images.githubusercontent.com/52617475/145611553-dc6de9bb-6534-45cc-b76e-df33b9c49f41.png)
 
+In this example, the user types www.amazon.com into the browser. This queries the name server that has the zone file that contains the DNS record for www.amazon.com. It returns 104.98.34.131. This is what the webserver uses to return the website www.amazon.com.
+
 
 
 #### 1.2.12.1. DNS Root
@@ -617,10 +619,10 @@ Assuming a laptop is querying DNS directly for www.amazon.com and using
 a root hints file to know how to access a root server and query the root zone.
 
 - When something is trusted in DNS, it is an **authority**.
-- One piece can be authoritative for root.
+- One piece can be authoritative for the root.
 - One piece can be authoritative for amazon.com
-- The root zone is the start and the only thing trusted in DNS.
-- The root zone can delegate a part of itself to another zone or entity.
+- The root zone is the start and the only thing trusted in DNS. It is hosted on a root server (there are 13 worldwide)
+- The root zone can delegate its authority to another zone or entity.
 - That someone else then becomes authoritative for just the part that's delegated.
 - The root zone is just a database of the top level domains.
 
@@ -645,7 +647,7 @@ allowing domain registration
 
 ![image](https://user-images.githubusercontent.com/52617475/145612545-bc72bc84-52ab-45eb-86ee-6d9d81d303a9.png)
 
-Has relationships with all major registries (singular: registrar)
+Has relationships with all major registries.
 
 - Route 53 will check the top level domain to see if the name is available
 - Route 53 creates a zone file for the domain to be registered
@@ -984,11 +986,11 @@ Some enterprises may use an AWS account while smaller ones may use the master.
 
 #### 1.3.6.4. Role Switching
 
-Allows you to switch between accounts from the command line.
+Allows you to switch between accounts from the console or command line.
 
 ### 1.3.7. Service Control Policies
 
-Can be used to restrict what member accounts in an org can do.
+Can be used to restrict what member accounts in an organisation can do.
 
 JSON policy document that can be attached:
 
@@ -1012,7 +1014,7 @@ They don't grant permissions themselves, just act as a barrier. For access to a 
 
 When you enable SCP on your org, AWS applies `FullAWSAccess`. This means
 SCPs have no effect because nothing is restricted. It has zero influence
-by themselves.
+initially.
 
 ```json
 {
@@ -1026,7 +1028,7 @@ by themselves.
 ```
 
 SCPs by themselves don't grant permissions. When SCPs are enabled,
-there is an implicit allow.
+all services are implicitly allowed as services by default are denied. To have access to an service both IAM and SCP must grant permissions (see venn diagram above).
 
 You must then add any services you want to Deny such as `DenyS3`
 
@@ -1068,12 +1070,12 @@ services offered by AWS. A lot less admin overhead.
 
 ### 1.3.8. CloudWatch Logs
 
-This is a public service, this can be used from AWS VPC or on premise
+This is a public service, which can be used from AWS VPC or on-premise
 environment.
 
-This allows to **store**, **monitor** and **access** logging data.
+This allows the user to **store**, **monitor** and **access** logging data.
 
-- This is a piece of information data and a timestamp
+- This is a piece of data and a timestamp
 - Can be more fields, but at least these two
 
 Comes with some AWS Integrations.
@@ -1254,7 +1256,7 @@ We could then change our DNS and move customers to a backup website on S3.
 #### 1.4.2.3. S3 Pricing
 
 - Cost to store data, per GB / month fee
-  - Prorated for less than a GB or month.
+  - Pro-rated for less than a GB or month.
 - Data transfer fee
   - Data in is always free
   - Data out is a per GB charge
@@ -1340,7 +1342,7 @@ S3 Accelerated Transfer
 
 
 - Off by default.
-- Uses the network of AWS edge locations to speed up transfer.
+- Uses the network of AWS edge locations to speed up transfer (reduces the number of hops between source and destination).
 - Bucket name cannot contain periods.
 - Name must be DNS compatible.
 - Benefits improve the larger the location and distance.
@@ -1513,12 +1515,12 @@ The process is as follows:
   as S3 which uses KMS for encryption.
 - Customer managed CMKS
   - Created explicitly by the customer.
-  - Much more more configurable, for example the key policy can be edited.
-  - Can allow other AWS accounts access to CMKS
+  - Much more configurable, for example the key policy can be edited.
+  - Can allow other AWS accounts access to CMKs
 
 All CMKs support key rotation.
 
-- AWS automatically rotates the keys every 1095 days (3 years)
+- AWS managed CMKs automatically rotate every 1095 days (3 years)
 - Customer managed keys rotate every year.
 
 CMK itself contains:
@@ -1619,8 +1621,7 @@ The hash can identify if the specific key was used to encrypt the object.
 
 
 To decrypt the object, you must tell S3 which object to decrypt and provide
-it with the key used to encrypt it. If the key that you supply is correct,
-the proper hash, S3 will decrypt the object, discard the key, and return the
+it with the key used to encrypt it. If the key that you supply is correct, S3 will decrypt the object, discard the key, and return the
 plaintext version of the object.
 
 #### 1.4.8.2. SSE-S3 AES256 (Server-side encryption w/ Amazon S3 managed keys)
@@ -1631,7 +1632,7 @@ the keys are used, but has little admin overhead.
 
 SSE-S3 Encryption Steps
 
-1. When putting data into S3, only need to provide plaintext.
+1. When putting data into S3, customer only needs to provide plaintext.
 2. S3 generates fully managed and rotated **master key** automatically.
 3. Object generates a key specific for each object that is uploaded.
 4. The master key is used to encrypt the specific object key, and the
@@ -1645,7 +1646,7 @@ Three Problems with this method:
 
 - Not good for regulatory environment where keys and access must be controlled.
 - No way to control key material rotation.
-- No role separation. A full S3 admin can decrypt data and open objects.
+- No role separation. Anyone with S3 admin permissions can decrypt data and open objects.
 
 #### 1.4.8.3. SSE-KMS (Server-side encryption w/ customer master keys stored in AWS KMS)
 
@@ -1783,7 +1784,7 @@ Retrieval methods:
 - Additional fee of $0.0025 per 1,000 objects tracked.
 - If an object is not accessed for 30 days, it will move into Standard-IA.
 
-This is good for objects that are unknown their access pattern.
+This is good for objects that have unknown or unpredictable access patterns.
 
 ### 1.4.10. Object Lifecycle Management
 
@@ -1835,12 +1836,12 @@ source bucket and replicate them to the destination bucket.
 When different accounts are used, the role is not by default trusted
 by the destination account. If configuring between accounts, you must
 add a bucket policy on the destination account to allow the IAM role from
-the source account access to the bucket.
+the destination account access to the bucket.
 
 #### 1.4.11.1. S3 Replication Options
 
 - Which objects are replicated.
-  - Default is all source objects, but can select a smaller subset of objects.
+  - Default is all source objects in the bucket, but you can select a smaller subset of objects if you want.
 - Select which storage class the destination bucket will use.
   - Default is the same type of storage, but this can be changed.
 - Define the ownership of the objects.
@@ -1857,7 +1858,7 @@ the source account access to the bucket.
   - If you enable replication on a bucket that already has objects, the old
   objects will not be replicated.
 - Both buckets must have versioning enabled.
-- It is a one way replication process only.
+- It is a one way replication process only (from source to destination).
 - Replication by default can handle objects that are unencrypted or SSE-S3.
   - With configuration it can handle SSE-KMS, but KMS requires more
 configuration to work.
@@ -1871,11 +1872,11 @@ some of those objects.
 
 #### 1.4.11.3. Why use replication
 
-SRR - Log Aggregation
-SRR - Sync production and test accounts
-SRR - Resilience with strict sovereignty requirements
-CRR - Global resilience improvements
-CRR - Latency reduction
+Same Region Replication - Log Aggregation
+Same Region Replication - Sync production and test accounts
+Same Region Replication - Resilience with strict sovereignty requirements
+Cross Region Replication - Global resilience improvements
+Cross Region Replication - Latency reduction
 
 ### 1.4.12. S3 Presigned URL
 
@@ -1901,10 +1902,10 @@ a certain date and time as requested by the IAM admin user.
 ![image](https://user-images.githubusercontent.com/52617475/145711282-fad45aea-f0c3-41d7-ad39-67ae52c12cd7.png)
 
 
-- You can create a presigned URL for an object you have do not have access to.
+- You can still create a presigned URL for an object you have do not have access to (not prevented from doing so).
 The object will not allow access because you do not have access.
 - When using the URL the permission that you have access to, matches the identity
-that generated it at the moment the item is being accessed. If you as the creator lose access, then the user of the presigned url
+permissions that generated it at the moment the item is being accessed (not at the time it was generated). If you as the creator lose access, then the user of the presigned url
 immediately loses access as well.
 - If you get an access deny it means the ID never had access, or lost it.
 - Don't generate presigned URLs with an IAM role.
@@ -1915,7 +1916,7 @@ immediately loses access as well.
 This provides a ways to retrieve parts of objects and not the entire object.
 
 If you retrieve a 5TB object, it takes time and consumes 5TB of data.
-Filtering at the client side doesn't reduce this cost.
+Filtering at the client side doesn't reduce this cost (you pay for the amount of data that leaves S3).
 
 S3 and Glacier select lets you use SQL-like statements to select part of the
 object which is returned in a filtered way.
@@ -1962,7 +1963,7 @@ some corporations. Some IP addresses was always left unused.
 
 #### 1.5.1.3. Internet / Private IPs - RFC1918
 
-These can't communicate over the internet and are used internally only
+These can't communicate over the internet and are used internally only (Private IPs)
 
 - One class A network: `10.0.0.0` - `10.255.255.255`
 - 16 Class B networks: `172.16.0.0` - `172.31.255.255`
@@ -2061,10 +2062,16 @@ An example using 4 AWS accounts.
 ![image](https://user-images.githubusercontent.com/52617475/144762598-1f383724-037f-4f5c-af55-b8332a1c6c4b.png)
 
 
-- Regions with 2 ranges in each Region
+- Regions
   - 3 regions in US
   - 1 region in Europe
   - 1 region in AUS
+
+= 5 regions
+
+Reserve 2 network ranges per region= 5*2=10 ranges
+Allocate these ranges for each account=10*4=40 ranges
+
 - Total of 40 ranges, 10 ranges for each account.
 
 #### 1.5.2.1. How to size VPC
@@ -2350,7 +2357,7 @@ NACLs require rules to allow inbound **and** outbound traffic. They are therefor
 - **Stateless Firewalls**
 ![image](https://user-images.githubusercontent.com/52617475/143520699-de9a010d-1a37-4fc8-9252-cbe77c947409.png)
 
-  - Initiation and response traffic are separate streams requiring two rules.
+- Initiation and response traffic are separate streams requiring two rules. The request (green) can be initated by the client to a server (top half) or a server to another server (bottom half). The resposne is in orange.
 - NACLs are attached to subnets and only filter data as it crosses the
 subnet boundary. Two EC2 instances in the same subnet will not check against
 the NACLs when moving data.
@@ -2375,6 +2382,7 @@ Security Groups only require rules to allow inbound traffic (outbound traffic is
 
 **Stateful Firewalls**
 
+
 ![image](https://user-images.githubusercontent.com/52617475/143520585-ccd33ab8-1444-48cf-8608-b08c35011d54.png)
 
 Logical references allow you to scale your applications. In this situation, the left subnet is allowing traffic from the right using a logical reference.
@@ -2396,7 +2404,7 @@ If you use logical references, yo can add more instances to the subnet without n
 
 ![image](https://user-images.githubusercontent.com/52617475/143908872-7e070ee6-35de-40cd-97c5-fa0670e6ed08.png)
 
-In the example above, using a self-reference to a security group means that you can continue to add instances to the subnet (scale) without needing to update the network configuration. All instances with this security group attached will be able to communicate.
+In the example above, using a self-reference to a security group means that you can continue to add instances to the subnet (scale up) without needing to update the network configuration. All instances with this security group attached will be able to communicate with each other.
 
 - Understand AWS logical resources so they're not limit to IP traffic only.
   - Can have a source and destination referencing the instance and not the IP.
@@ -2704,12 +2712,17 @@ You should be careful to not exceed baseline performance for long periods as you
 
 **General default is gp2/3. Gp3 is cheaper than gp2.**
 
-![image](https://user-images.githubusercontent.com/52617475/143730352-873a6634-78c7-4a43-8143-c2703bdbf0e0.png)
+![picture 243](images/f3ecc8d0482aa54a5403cf50fc3ea6dcf742a94eac3366cd0554439d34d756cf.png)  
 
+
+-Bucket fills with credit which can be used for storage (a min amount + an extra amount based on GB stored)
+- Bucket can be depleted if you exceed the credit you have been allocated
+- Potential to burst capacity during high periods of operation.
+- Maximum 16,000 IO credits per second available
 
 ![image](https://user-images.githubusercontent.com/52617475/143730377-8c47389d-ede8-478d-844a-7638e8b5ea40.png)
 
-
+- Standard performance- 3,000 IOPs, extra cost up to 16,000 IOPs
 
 #### 1.6.5.2. Provisioned IOPS SSD (io1)
 
@@ -2839,10 +2852,14 @@ able to do instant restores to. Each combination of Snapshot and AZ counts
 as one FSR set. You can have 50 FSR sets per region.
 FSR is not free and can get expensive with lost of different snapshots.
 
+![picture 244](images/21860f5c03487f1d4417d84a55dbd12c02f62490da095dd15e430f9203bf1a38.png)  
+
+Shows how EBS snapshots can be used with S3 to replicate storage into another AZ or region. Please note that a snapshot in one AZ can not be taken from an instance located in another AZ (red cross). Data replication across regions provides global resilence.
+
+
 #### 1.6.8.2. Snapshot Consumption and Billing
 
 Billed using a GB/month metric.
-20 GB stored for half a month, represents 10 GB-month.
 
 This is used data, not allocated data. If you have a 40 GB volume but only
 use 10 GB, you will only be charged for 10GB.
@@ -2851,7 +2868,7 @@ This is not how EBS itself works as you pay for the entire volume regardless of 
 ![picture 67](images/502dbd872fbd15db85993edd1e07a85dac5476d33406a3e02519d0a15f62faec.png)  
 
 
-In this example, the first you pay for 10GB, second you pay for 4GB (the changed data) and third you pay for 2 GB (the changed data).
+In this example, the first you pay for 10GB, second you pay for 4GB (the changed data) and third you pay for 2 GB (the changed data). Each snapshot references the unchanged data in the previous snapshot.
 The data is incrementally stored which means doing a snapshot every 5 minutes
 will not necessarily increase the charge as opposed to doing one every hour.
 
@@ -2884,7 +2901,7 @@ decrypted data encryption key to read and write data on the volume. It is used
 for all cryptographic operations when data is being used to and from the
 volume.
 
-When data is stored at rest, it is stored as ciphertext.
+When data is stored at rest, it is stored as ciphertext. 
 
 If the EBS volume is ever moved, the key is discarded.
 
@@ -3173,7 +3190,7 @@ servers get equal parts of the load.
 - This requires either *application support* or *off-host* sessions.
   - If you use off-host sessions, then your session data is stored in another place, an external database.
   - This means that the servers are what's called **stateless**, they are just dumb instances of your application.
-  - The application does care which instance you are connected to because your session is externally hosted somewhere else.
+  - The application does not care which instance you are connected to because your session is externally hosted somewhere else.
   - With off host sessions and horizontal scaling, there is no disruption when scaling.
   
 
@@ -3199,7 +3216,7 @@ Meta-data contains information on the:
 - This is not authenticated or encrypted. Anyone who can gain access to the
 instance can see the meta-data. This can be restricted by local firewall.
 
-public IPv4 is never configured or known by the operating system of an instance at any point. The internet gateway translates the private address into public address.
+The public IPv4 is never configured or known by the operating system of an instance at any point. The internet gateway translates the private address into public address.
 
 For example curl http://169.254.169.254/latest/meta-data/public-ipv4 will contact the metadata service and retrieve the public ipv4 information.
 
@@ -3246,7 +3263,7 @@ A container registry or hub is a hub of container images. As a developer or solu
 ![picture 184](images/f667dbefa8d2379195d12126935647a3960f9190637ad2a9ccab97a4be85600f.png)  
 
 
-A docker host can run many containers based on or more images. A single image can be to generate containers on many docker hosts.
+A docker host can run many containers based on one or more images. A single image can be to generate containers on many docker hosts.
 Dockerfile can create a container image where it gets stored
 in the container registry.
 
@@ -3323,7 +3340,7 @@ capacity and availability for your cluster.
 
 The container instances are not delivered as a managed service, they
 are managed as normal EC2 instances.
-You can use spot pricing or prepaid EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them. 
+You can use spot pricing or reserved EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them. 
 
 ![picture 236](images/a1fc5429fa26ad3bfd446791a8ae7dac0098a753a52a5fec7d801bc93c242639.png)  
 
@@ -3348,17 +3365,17 @@ to access from the same pool of resources.
 Fargate deployment still uses a cluster with a VPC where AZs are specified.
 
 For ECS tasks, they are injected into the VPC. Each task is given an
-_elastic network interface_ which has an IP address within the VPC. They then
+_elastic network interface_ (in purple) which has an IP address within the VPC. They then
 run like a VPC resource.
 
-You only pay for the container resources you use. You don't need to manage host, think about high availabilit, capacity.
+You only pay for the container resources you use. You don't need to manage host, think about high availability, capacity.
 
 
 #### 1.7.3.3. EC2 vs ECS(EC2) vs Fargate
 
 If you already are using containers, use **ECS**.
 
-**EC2 mode** is good for a large workload if you are price conscious.
+**EC2 mode** is good for a large, consistent workloads if you are price conscious.
 This allows for spot pricing and prepayment discounts, but will probably require more admin overhead.
 
 **Fargate** is great if you:
@@ -3436,7 +3453,7 @@ When looking at an AMI, this can be measured in minutes.
 
 AMI baking will front load the time needed by configuring as much as possible.
 
-- Use AMI backing for any part of the process that is time intensive.
+- Use AMI baking for any part of the process that is time intensive.
 - Use bootstrap for the final configuration.
 
 This way you reduce the post-launch time and thus the boot-time-to-service.
@@ -3484,7 +3501,7 @@ if the EC2 instance was provisioned properly. It may be marked as complete,
 but the bootstrapping inside the instance could have failed.
 
 A **CreationPolicy** is something which is added to a logical resource
-inside a CloudFormation template. You create it and supply a timeout value.
+inside a CloudFormation template. You create it and supply a timeout value (15 minutes in this example).
 
 ![picture 177](images/565dd452634620d89d57611be26db320bbfc20f5cb37f4dce398adc4b0e74037.png)  
 
@@ -3497,7 +3514,7 @@ complete state. Waits the designated time for a success or error signal, if no s
 
 IAM roles are the best practice ways for services to be granted permissions.
 EC2 instance roles are roles that an instance can assume and anything
-running in that instance has the permissions that role grants.
+running in that instance has the permissions that that role grants.
 
 Starts with an IAM role with a permissions policy.
 EC2 instance role allows the EC2 service to assume that role.
@@ -3544,8 +3561,7 @@ Parameter Store:
   - This integrates with **kms** to encrypt passwords.
 - Allows for public parameters such as the latest AMI parameter to be stored
 and referenced during EC2 creation
-- Is a public service so any services needs access to the public sphere or
-to be an AWS public service.
+- Is a public service.
 - Applications, EC2 instances, lambda functions can all request access to
 parameter store.
 - Tied closely to IAM, can use
@@ -3557,12 +3573,12 @@ parameter store.
 ![image](https://user-images.githubusercontent.com/52617475/144717419-f5ace722-8f20-4d14-8418-e769892d19e2.png)
 
 
-CloudWatch and CloudWatch Logs cannot natively capture data inside an instance.
+CloudWatch (CW) and CloudWatch Logs cannot natively capture data inside an instance.
 
-CloudWatch Agent is required for OS visible data. It sends this data into CW
+CloudWatch Agent is required for OS visible data. It sends this data into CW.
 For CW to function, it needs configuration and permissions in addition
 to having the CW agent installed.
-The CW agent needs to know what information to inject into CW and CW Logs.
+The CW agent needs to know what information to inject into CW and CW Logs. In this example, a cloudwatch agent is installed and configured on an instance.
 
 The agent also needs some permissions to interact with AWS.
 This is done with an IAM role as best practice.
@@ -3611,7 +3627,7 @@ If the hardware fails, the entire cluster will fail.
 - Best practice to use the same type of instance (not mandatory).
 - Best practice to launch all instances at once (not mandatory, but highly recommended).
 - This is the only way to achieve **10Gbps SINGLE stream performance**, other data metrics assume multiple streams.
-- Use cases: Performance, fast transfer speeds, and low consistent latency.
+- Use cases: High Performance, fast transfer speeds, and low consistent latency.
 
 #### 1.8.6.2. Spread Placement -> Keep Instances Separated
 
@@ -3634,7 +3650,7 @@ group.
 - Not supported for dedicated instances or hosts.
 
 - Use case: small number of critical instances that need to be kept separated
-from each other. Several mirrors of an application; different nodes of an application; etc.
+from each other. Launching instances in a spread placement group reduces the risk of simultaneous failures that might occur when instances share the same racks. Spread placement groups provide access to distinct racks, and are therefore suitable for mixing instance types or launching instances over time.
 
 #### 1.8.6.3. Partition Placement -> Groups of Instances Spread Apart
 
@@ -3644,17 +3660,17 @@ from each other. Several mirrors of an application; different nodes of an applic
 Groups of instances spread apart
 
 If a problem occurs with one rack's networking or power, it will
-at most take out one instance.
+at most take out one partition.
 
 The main difference is you can launch as many instances in each partition
 as you desire.
 
-When you launch a partition group, you can allow AWS decide or you can
+When you launch a partition group, you can allow AWS decide where the instances go or you can
 specifically decide.
 
 ##### 1.8.6.3.1. Partition Placement Exam PowerUp
 
-- 7 partitions maximum for each AZ
+- 7 partitions maximum for each AZ (multiple instances can be placed in each partition)
 - Instances can be placed into a specific partition, or AWS can pick.
 - This is not supported on dedicated hosts.
 - Great for HDFS, HBase, and Cassandra
@@ -3745,8 +3761,8 @@ instances within that VPC.
 
 ![image](https://user-images.githubusercontent.com/52617475/144800765-7b5b5a91-5e0d-4978-878b-e5e8c00efa44.png)
 
-Same as public hosted zones except these are not public.
-They are associated with VPCs and are only accesible within those VPCs via the R53 resolver. Good for company intranet.
+Same as public hosted zones except these are not accessible over the public internet.
+They are associated with VPCs and are only accesible within those VPCs via the R53 resolver. Good for company intranet as it means that the content is restricted to your own network. In this image, only queries from associated VPCs (VPC1 and VPC2) can query the animals4life.org website through the R53 resolver.
 
 It's possible to use a technique called Split-view for public and internal use with the same
 zone name. A common architecure is to make the public hosted zone a subset of the private hosted zone
