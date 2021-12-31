@@ -3762,12 +3762,12 @@ instances within that VPC.
 ![image](https://user-images.githubusercontent.com/52617475/144800765-7b5b5a91-5e0d-4978-878b-e5e8c00efa44.png)
 
 Same as public hosted zones except these are not accessible over the public internet.
-They are associated with VPCs and are only accesible within those VPCs via the R53 resolver. Good for company intranet as it means that the content is restricted to your own network. In this image, only queries from associated VPCs (VPC1 and VPC2) can query the animals4life.org website through the R53 resolver.
+They are associated with VPCs and are only accesible within those VPCs via the R53 resolver. Good for company intranet as it means that the content is restricted to users on your own network. In this image, only queries from associated VPCs (VPC1 and VPC2) can query the animals4life.org website through the R53 resolver.
 
 It's possible to use a technique called Split-view for public and internal use with the same
 zone name. A common architecure is to make the public hosted zone a subset of the private hosted zone
 containing only those records that are meant to be accessed from the Internet, while inside VPCs
-associated with the private hosted zone all resource records can be accessed. Both have the same name (animals4life.org) but different accessible records.
+associated with the private hosted zone all resource records can be accessed. Both have the same name (animals4life.org) but different accessible records. In this examples queries from VPC1 can access all records while public queries can access all records (except accounting which is restricted as a private record).
 
 ![image](https://user-images.githubusercontent.com/52617475/144801039-11f17ef2-24da-42bf-bf59-1a7480ce4dee.png)
 
@@ -3808,7 +3808,7 @@ for additional costs. These checks are per health checker. Since there are many
 you will automatically get one every few seconds. The 10 second option will
 complete multiple checks per second.
 
-There could be one of three checks
+There could be one of three checks performed:
 
 - TCP checks: R53 tries to establish TCP with end point within 10 (fast) or 30 seconds (standard).
 - HTTP/HTTPS: Same as TCP but within 4 seconds. The end point must respond
@@ -3864,8 +3864,8 @@ with the lowest latency. In this example, the client is in Australia. The databa
 
 - **Geolocation**: Focused to delivering results matching the query of your
 customers. The record will first be matched based on the US state if possible.
-If this does not happen, the record will be checked based on the country, then based oncontinent.
-Finally, if nothing matches again it will respond with the default response.
+If this does not happen, the record will be checked based on the country, then based on continent.
+Finally, if nothing matches it will respond with the default response.
 This can be used for licensing rights. If overlapping regions occur,
 the priority will always go to the most specific or smallest region. The US
 will be chosen over the North America record. Not about the closest record, but that one that is applicable (ie if you are in the UK you will not get a Canadian record returned.
@@ -3905,11 +3905,17 @@ Bias can be added or subtracted to manipulate the routing zone. In this example,
 
 ![image](https://user-images.githubusercontent.com/52617475/145068819-251aedde-1f69-4b43-8b5e-dace17b74cd0.png)
 
+In the example above, user purchases a domain name from R53. R53 checks availability and creates entry in the TLD registry ('PIR' in this example) and provides links to 4 name servers who will host the zone file (which contains the record).
+
 
 ![image](https://user-images.githubusercontent.com/52617475/145069216-2053060b-60be-4a37-83b2-664b5e87eb66.png)
 
+In the example above, user purchases a domain name from R53. R53 checks availability and creates entry in the TLD registry ('PIR' in this example) and provides links to 4 **external** name servers who will host the zone file (which contains the record). These NS are hosted by a 3rd party provider.
+
 
 ![image](https://user-images.githubusercontent.com/52617475/145069596-ee796b15-60bd-413f-a7b6-ff7ca8257b63.png)
+
+In the example above, user purchases a domain name from a 3rd party domain registrar ('Hover' in this examples). They checks availability and creates entry in the TLD registry ('PIR' in this example) and provides links to 4 name servers on R53 who will host the zone file (which contains the record). These NS are hosted by a AWS.
 
 
 
