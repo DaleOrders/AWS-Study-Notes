@@ -3918,7 +3918,6 @@ In the example above, user purchases a domain name from R53. R53 checks availabi
 In the example above, user purchases a domain name from a 3rd party domain registrar ('Hover' in this examples). They checks availability and creates entry in the TLD registry ('PIR' in this example) and provides links to 4 name servers on R53 who will host the zone file (which contains the record). These NS are hosted by a AWS.
 
 
-
 ---
 
 ## 1.10. Relational-Database-Service-RDS
@@ -4013,8 +4012,8 @@ If you needed to read the price of one item you need that
 row first. If you wanted to query all of the sizes of every order, you will
 need to check for each row.
 
-Great for things which deal in rows and items where they are constantly
-accessed, modified, and removed.
+Great for things which deal in associated items along a row where they are constantly
+accessed, modified, and removed. Grouped as a row.
 
 ##### 1.10.1.2.5. Column Database (Redshift)
 
@@ -4039,11 +4038,11 @@ These are great for relationship driven data.
 
 ![image](https://user-images.githubusercontent.com/52617475/145079517-eaadbfc0-5a67-4a49-91b2-57e62f2cbe5d.png)
 
-Nodes are objects inside a graph database. They can have properties.
+Nodes are objects inside a graph database (the circles). They can have properties.
 
-Edges are relationships between the nodes. They have a direction.
+Edges are relationships between the nodes (the lines). They have a direction.
 
-Relationships themselves can also have attached data, so name value pairs.
+Relationships themselves can also have attached data, so name-value pairs.
 We might want to store the start date of any employment relationship.
 
 Can store massive amounts of complex relationships between data or between
@@ -4085,7 +4084,7 @@ It is always a bad idea to do this.
 - DB or DB version that AWS doesn't provide.
 - You might need a specific version of an OS and DB that AWS doesn't provide.
 
-#### 1.10.2.2. Reasons why you really shouldn't run a database on EC2
+#### 1.10.2.2. Reasons why you REALLY shouldn't run a database on EC2
 
 - **Admin overhead** is intense to manage the EC2 host.
 - Backup and Disaster Management adds complexity.
@@ -4100,14 +4099,14 @@ It is always a bad idea to do this.
 - Database-as-a-service (DBaaS)
   - Not entirely true more of DatabaseServer-as-a-service.
   - Managed Database Instance for one or more databases.
-- No need to manage the HW or server itself.
+- No need to manage the hardware or server itself.
 - Handles engines such as MySQL, MariaDB, PostgreSQL, Oracle, Microsoft SQL.
 
-Amazon Aurora. This is so different from normal RDS, it is a separate product.
+Amazon Aurora. This is so different from normal RDS, it is considered a separate product.
 
 #### 1.10.3.1. RDS Database Instance
 
-Runs one of a few types of database engines and can contain multiple
+Runs one of a few different types of database engines (MySQL, Postgres, MongoDB etc) and can contain multiple
 user created databases. Create one when you provision the instance, but
 multiple ones can be created thereafter.
 
@@ -4171,8 +4170,7 @@ failover within 60 to 120 seconds to change to the new database.
 
 ![image](https://user-images.githubusercontent.com/52617475/145257287-4e5eba34-fff0-4343-9503-db5a85c461d5.png)
 
-
-This does not provide fault tolerance as there will be some impact during change.
+This does not provide fault tolerance as there will be some interuption during the change.
 
 #### 1.10.4.1. RDS Exam PowerUp
 
@@ -4253,7 +4251,7 @@ desired point in time.
 
 Kept in sync using **asynchronous replication**
 
-RDS Read-Replicas are read only replicas of an RDS instance.
+RDS Read-Replicas are read only replicas of an RDS instance. You can not write to them.
 
 ![image](https://user-images.githubusercontent.com/52617475/145320825-8842e8b1-3400-4f87-9554-22638ad39377.png)
 
@@ -4271,7 +4269,7 @@ encryption, configuration, and networking without intervention.
 - 5 direct read-replicas per DB instance.
 - Each of these provides an additional instance of read performance.
 - This allows you to scale out read operations for an instance.
-- Read-replicas can chain, but lag will become a problem.
+- Read-replicas can chain (read-replica connected to read-replica), but lag will become a problem.
 - Can provide global performance improvements.
 - Provides global resilience by using cross region replication.
 - They don't improve RTO
@@ -4293,8 +4291,14 @@ encryption, configuration, and networking without intervention.
 
 ![image](https://user-images.githubusercontent.com/52617475/145321926-99efedf1-c03d-4155-9c26-82e94ca80dad.png)
 
+Keys are provided by KMS or optionally CloudHSM. Dek is loaded onto the host so that KMS can identify which key was used to encrypt the data. The data is encrypted leaving the RDS host using the Transparent Data Encryption (TDE). The green arrow represents unerypted data and the red arrow represents encrypted data. You can use TDE in tandem with encryption at rest, however this may affect performance.
+
+You can only enable encryption when you create the database, and you can not disable it once enabled. Any snapshot you create of an encypted database will create an encrypted shapshot which shares the same dek. An encrypted database will produce an encrypted read replica (encrypted with the same KMS). To create an encrypted database from an unencypted database, you can take a snapshot, apply encryption, then launch.
+
 
 ![image](https://user-images.githubusercontent.com/52617475/145322234-2965a4a4-5ca4-463f-88fe-6402bf63452a.png)
+
+IAM provides generate-db--auth-token to either user or role, each of which has a policy granting RDS access (in red). With token and authentication, user can secure access to RDS.
 
 
 ### 1.10.7. Enhanced Monitoring
@@ -4321,9 +4325,9 @@ It uses a **cluster** which is:
 Aurora cluster functions across a number of availability zones.
 
 There is a primary instance and a number of replicas.
-The read applications from applications can use the replicas.
+The read requests from applications can use the replicas to read from. You can only write to the primary.
 
-There is a shared storage of **max 64 TiB** across all replicas.
+There is a shared storage of **max 64 TiB** across all replicas (the line in yellow).
 This uses 6 copies across AZs.
 
 All instances have access to these storage nodes. This replication
@@ -4336,7 +4340,7 @@ will only have read access.
 ![image](https://user-images.githubusercontent.com/52617475/145457952-a75a4031-1ef2-41cb-a821-bea692c6e515.png)
 
 
-Aurora automatically detect hardware failures on the shared storage. If there
+Aurora automatically detects hardware failures on the shared storage. If there
 is a failure, it immediately repairs that area of disk and
 recreates that data with no corruption.
 
@@ -4345,8 +4349,8 @@ can be a failover target. The failover operation will be quicker because
 it doesn't have to make any storage modifications.
 
 - Cluster shared volume is based on SSD storage by default.
-  - Provides so high IOPS and low latency.
-  - No way to select magnetic storage.
+  - Provides high IOPS and low latency.
+  - Magnetic storage not an option.
 - Aurora cluster does not specify the amount of storage needed.
   - This is based on what is consumed.
 - High water mark billing or billed for the most used.
@@ -4356,11 +4360,14 @@ it doesn't have to make any storage modifications.
 - Storage is for the cluster and not the instances which means Replicas can be
 added and removed without requiring storage, provisioning, or removal.
 
+![picture 245](../images/00163a6565c70bbce05e199a9e5b6b809c88761f92f83140dfb4aa522fb73a1b.png)  
+
+
 #### 1.10.8.1. Aurora Endpoints
 
-Aurora clusters like RDS use endpoints, so these are DNS addresses which
+Aurora clusters, like RDS, use endpoints which are DNS addresses which
 are used to connect to the cluster. Unlike RDS, Aurora clusters have
-multiple endpoints that are available for an application.
+multiple endpoints that are available for an application. These endpoints are cluster and reader.
 
  ![image](https://user-images.githubusercontent.com/52617475/145459844-3a7ba5b8-b1b0-4944-99fc-755dc47f2ed8.png)
 
@@ -4426,7 +4433,7 @@ storage in the same way as an Aurora Provisioned cluster.
 There is a shared proxy fleet. When a customer interacts with the data
 they are actually communicating with the proxy fleet. The proxy fleet
 brokers an application with the ACU and ensures you can scale in and out
-without worrying about usage. This is managed by AWS on your behalf.
+without worrying about usage. The resources you need (databases) are drawn from the pool as you need them. This is all managed by AWS on your behalf.
 
 
 #### 1.10.9.1. Aurora Serverless - Use Cases
@@ -4437,10 +4444,10 @@ without worrying about usage. This is managed by AWS on your behalf.
 - New applications with unpredictable workloads.
 - Great for variable workloads such as sales cycles.
 It can scale in and out based on demand
-- Good for development and test databases, can scale back when not needed. When not in use, you only pay for storage.
+- Good for development and test databases, can scale back when not needed. When not in use, you only pay for storage. Databases go back into pool for other customers to use.
 - Great for multi-tenant applications.
   - Billing a user a set dollar amount per month per license.
-  - If your incoming load is directly tied to more revenue this makes sense.
+
 
 ### 1.10.10. Aurora Global Database
 
