@@ -5586,6 +5586,8 @@ In this case the message is sent to an SNS topic, which is configured with fanou
   - guarantee the order and exactly once delivery
   - 3,000 messages p/s with batching or up to 300 messages p/s without
 
+![picture 256](images/54080dde27b7e0827d758468f646596667ef96518d05144dde4df4013be78c8c.png)  
+
 
 Billed on **requests** not messages. A request is a single request to SQS.
 One request can return 0 - 10 messages up to 256KB data in total.
