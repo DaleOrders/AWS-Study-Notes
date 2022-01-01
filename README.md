@@ -5044,7 +5044,7 @@ should be designed to hold session stickiness somewhere other than EC2. You can 
 
 #### 1.12.6.5. Gateway Load Balancer
 
-Some applications use a third party security device checking traffic into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
+Some applications use a third party security device checking traffic (represented as a shield in the image below) into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
 
 <p>
     <img src="images\a2bb4cbf4d6037caf55aa80cf738529eab7e32243e46ef6f95f4bd54c8f0d026.png" />
@@ -5057,14 +5057,14 @@ A Gateway Load Balancer:
 
 - Inbound and outbound traffic (transparent inspection and protection)
 
-- GWLB endpoings... traffic enters/leaves via endpoints.
+- GWLB endpoints... traffic enters/leaves via endpoints.
 
 - ... the GWLB balances across multiple backend appliances.
-- Traffic and metadata is tunnelled usinf Geneve protocol.
+- Traffic and metadata is tunnelled using Geneve protocol.
 
 ![picture 8](images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
 
-Traffic enters the VPC and goes through GLBE and the GLB. It is encapsulated and directed to one of the instances before going back through the GLB and to the App server. It allows for abstraction as you can use multiple applications. Designed to assist horizontal scaling of third party security devices.
+Traffic enters the VPC and goes through GWLBE and the GWLB. It is encapsulated and directed to one of the instances before going back through the GWLB and GWLBE and to the App server. It allows for abstraction as you can use multiple applications. Designed to assist horizontal scaling of third party security devices.
 
 ![picture 9](images/da70060e950dc0bfd425953a5c77a64c57120d3cb132228ac60306fd7ea2fba5.png)  
 
