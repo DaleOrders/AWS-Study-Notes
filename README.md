@@ -5215,8 +5215,7 @@ The Lambda runtime is stateless, so you should always use AWS services for input
 and output. Something like DynamoDB or S3. If a Lambda is invoked by an event,
 it gets details of the event given to it at startup.
 
-Lambda functions can run up to 15 minutes. That is the max limit.
-![picture 49](images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
+Lambda functions can run up to 15 minutes. That is the max limit. 
 
 #### 1.13.2.2. Key Considerations
 
