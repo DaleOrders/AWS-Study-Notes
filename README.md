@@ -2660,6 +2660,22 @@ full instance type
   - Volumes delivered over the network
   - Persistent storage lives on past the lifetime of the instance
 
+
+### 1.6.4. Root Device Storage
+
+When you launch an instance, the root device volume contains the image used to boot the instance. You can choose between AMIs backed by Amazon EC2 instance store and AMIs backed by Amazon EBS. AWS recommend that you use AMIs backed by Amazon EBS, because they launch faster and use persistent storage.
+
+![picture 248](images/c2b6804d729b739ef475232539f0a236f6dcd1c9b97ce244561ea7c6f6d0f6c7.png)  
+
+**Instance store-backed instances**
+
+Instances that use instance stores for the root device automatically have one or more instance store volumes available, with one volume serving as the root device volume. When an instance is launched, the image that is used to boot the instance is copied to the root volume. Note that you can optionally use additional instance store volumes, depending on the instance type.
+
+**Amazon EBS-backed instances**
+
+Instances that use Amazon EBS for the root device automatically have an Amazon EBS volume attached. When you launch an Amazon EBS-backed instance, we create an Amazon EBS volume for each Amazon EBS snapshot referenced by the AMI you use. You can optionally use other Amazon EBS volumes or instance store volumes, depending on the instance type.
+
+
 #### 1.6.4.1. Three types of storage
 
 - Block Storage: Volume presented to the OS as a collection of blocks. No
@@ -4360,7 +4376,7 @@ it doesn't have to make any storage modifications.
 - Storage is for the cluster and not the instances which means Replicas can be
 added and removed without requiring storage, provisioning, or removal.
 
-![picture 245](../images/00163a6565c70bbce05e199a9e5b6b809c88761f92f83140dfb4aa522fb73a1b.png)  
+![picture 245](images/00163a6565c70bbce05e199a9e5b6b809c88761f92f83140dfb4aa522fb73a1b.png)  
 
 
 #### 1.10.8.1. Aurora Endpoints
@@ -4419,7 +4435,7 @@ For a cluster, you can set a min and max ACU based on the load and can even
 go down to 0 to be paused. In this case you would only be billed for storage
 consumed.
 
-Billing is based on resources used on a per-second basis.
+Billing is based on resources used on a per-second basis.  It is cost-effective because it automatically starts up, scales compute capacity to match your application's usage, and shuts down when it's not in use.
 
 Same resilience as Aurora (6 copies across AZs).
 
@@ -4446,7 +4462,7 @@ without worrying about usage. The resources you need (databases) are drawn from 
 It can scale in and out based on demand
 - Good for development and test databases, can scale back when not needed. When not in use, you only pay for storage. Databases go back into pool for other customers to use.
 - Great for multi-tenant applications.
-  - Billing a user a set dollar amount per month per license.
+  - Multi-tenant applications – With Aurora Serverless, you don't have to individually manage database capacity for each application in your fleet. Aurora Serverless manages individual database capacity for you.
 
 
 ### 1.10.10. Aurora Global Database
@@ -4491,7 +4507,10 @@ cluster.
 
 ![image](https://user-images.githubusercontent.com/52617475/146088868-69e6d537-3ac5-4445-b5f2-bff5f508deda.png)
 
-When one of the R/W nodes receives a write request from the application, it
+
+In a multi-master cluster, all DB instances can perform write operations. The notions of a single read/write primary instance and multiple read-only Aurora Replicas don't apply. There isn't any failover when a writer DB instance becomes unavailable, because another writer DB instance is immediately available to take over the work of the failed instance. We refer to this type of availability as continuous availability, to distinguish it from the high availability (with brief downtime during failover) offered by a single-master cluster.
+
+When one of the R/W instances receives a write request from the application, it
 immediately proposes that data be committed to all of the storage nodes in that
 cluster. At this point, each node that makes up a cluster either confirms
 or rejects the proposed change. It will reject if this conflicts with something
@@ -4537,13 +4556,13 @@ and only changes need to be captured.
 
 Schema Conversion Tool or SCT can perform conversions between database types. It is not used for databases of the same type (On-premises MySQL to RDS MySQL).
 
-DMS can us snowball for large database migrations (multi-TB)
+DMS can use snowball for large database migrations (multi-TB)
 - Step 1: Use SCT to extract data locally and move to a snowball device.
 - Step 2: Ship the device back to AWS. They load onto an S3 bucket.
 - Step 3: DMS migrates from S3 into the target store.
 - Step 4: Change Data Capture (CDC) can capture changes, and via S3 intermediary they are also written to the target database. 
 
-This process uses SCT because you are converting the data engine into a generic file when you store it on a snowball device. 
+This process uses SCT because you are converting the data engine into a generic file when you store it on a snowball device. Hence it needs to be used even if the database type is not changing (On-premises MySQL to RDS MySQL).
 
 DMS is the default service used to migrate databases.
 
@@ -4575,16 +4594,19 @@ EFS moves the instances closer to being stateless.
 #### 1.11.1.1. Elastic File System Explained
 
 EFS runs inside a VPC. Inside EFS you create file systems and these use POSIX
-permissions (standard fro interoperability that is used in linux). EFS is made available inside a VPC via mount targets.
+permissions (standard for interoperability that is used in linux). EFS is made available inside a VPC via mount targets.
 Mount targets have IP addresses taken from the IP address range of the
 subnet they're inside. For HA, you need to make sure that you put mount
 targets in each AZ the system runs in.
 
 You can use hybrid networking to connect to the same mount targets.
 
+![picture 246](images/52fc53f9f561433225c32b0badeb26a37427ae74054e947389c5b1e657bcd39d.png)  
+
+
 #### 1.11.1.2. EFS Exam PowerUp
 
-- EFS is for use with Linux Only instances
+- EFS is for use with Linux instances **only**
 - Two performance modes:
   - **General purpose** is good for _latency sensitive_ use cases.
     - General purpose should be default for 99.9% of uses.
@@ -4598,6 +4620,11 @@ You can use hybrid networking to connect to the same mount targets.
   - Standard (default)
   - Infrequent access
 - Like S3, you can use lifecycle policies to move data between classes.
+
+
+#### 1.11.1.3. S3 vs EBS vs EFS
+
+![picture 247](images/0f81afb57664c28245693abbf33687b54b5bc949343ef4f893a20b534ff6e599.png)  
 
 ---
 
