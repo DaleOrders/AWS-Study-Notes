@@ -4562,9 +4562,12 @@ DMS can use snowball for large database migrations (multi-TB)
 - Step 3: DMS migrates from S3 into the target store.
 - Step 4: Change Data Capture (CDC) can capture changes, and via S3 intermediary they are also written to the target database. 
 
+![picture 250](images/b35bf7a9ea9f14728167e259218b6e971acfd39c41bf4dca521e426b371e79c5.png)  
+
+
 This process uses SCT because you are converting the data engine into a generic file when you store it on a snowball device. Hence it needs to be used even if the database type is not changing (On-premises MySQL to RDS MySQL).
 
-DMS is the default service used to migrate databases.
+DMS is the default service used to migrate databases. 
 
 ---
 
@@ -4593,15 +4596,18 @@ EFS moves the instances closer to being stateless.
 
 #### 1.11.1.1. Elastic File System Explained
 
+![picture 246](images/52fc53f9f561433225c32b0badeb26a37427ae74054e947389c5b1e657bcd39d.png)  
+
 EFS runs inside a VPC. Inside EFS you create file systems and these use POSIX
 permissions (standard for interoperability that is used in linux). EFS is made available inside a VPC via mount targets.
 Mount targets have IP addresses taken from the IP address range of the
 subnet they're inside. For HA, you need to make sure that you put mount
 targets in each AZ the system runs in.
 
-You can use hybrid networking to connect to the same mount targets.
+You can use hybrid networking to connect to the same mount targets via the network interface.
 
-![picture 246](images/52fc53f9f561433225c32b0badeb26a37427ae74054e947389c5b1e657bcd39d.png)  
+![picture 251](images/3d22501a4f0b4a41530870727ea81c3330812f9fff74b8d3b03cf5c93c18b4bb.png)  
+
 
 
 #### 1.11.1.2. EFS Exam PowerUp
@@ -4632,7 +4638,7 @@ You can use hybrid networking to connect to the same mount targets.
 
 ### 1.12.1. Regional and Global AWS Architecture
 
-Example: A user in Australia requests data stored in the US. Route53 provides DNS services, and cloudfront provides the CDN infrastructure. This is global instructure.
+Example: A user in Australia requests data stored in the US. Route53 provides DNS services, and cloudfront provides the CDN infrastructure. This is global architectural design.
 
 ![image](https://user-images.githubusercontent.com/52617475/146117800-687c7e0b-bb60-4fd9-8726-1e0a691d6e11.png)
 
@@ -4642,7 +4648,7 @@ Global Considerations
   - Content Delievery and Optimisation
   - Global Health Checks and Failover
 
-Once the request enters the US, it relates to regional architecture and design.
+Once the request enters the US, it pertains to regional architecture and design.
 
 ![image](https://user-images.githubusercontent.com/52617475/146118104-95a5041c-eb48-4e25-8121-4dd538f672f3.png)
 
@@ -4652,21 +4658,22 @@ Regional Considerations
   - Scaling and Resilence
   - Application services and components,
 
-The request enters via VPC or using public space AWS services. The request will generally enter the web tier, through an application load balancer or API Gateway. This acts as an entry point for regionally based applications.
-Compute tier includes EC2, Lambda and Container services which provide application functionality.
-The storage tier includes EBS, EFS and S3 (stores data which can be chached by cloudfront)
-DB tiers includes RDS, Aurora, DynamoDB and Redshift 
-Caching tiers includes Elastic-Cache and DAX. To improve performance, applications access the DB tier through the Caching layer. 
-App services include kinesis, step functions, SNS and SQS. 
+The request enters via VPC or using public space AWS services. 
+
+- The request will generally enter the web tier, through an application load balancer or API Gateway. This acts as an entry point for regionally based applications.
+- Compute tier includes EC2, Lambda and Container services which provide application functionality.
+- The storage tier includes EBS, EFS and S3 (S3 stores data which can be cached by cloudfront)
+- DB tiers includes RDS, Aurora, DynamoDB and Redshift 
+- Caching tiers includes Elastic-Cache and DAX. To improve performance, applications access the DB tier through the Caching layer. 
+- App services include kinesis, step functions, SNS and SQS. 
 
 
 ### 1.12.1. Load Balancing Fundamentals
 
 There are three types of load balancers (ELB) available in AWS.
-Split between v1(avoid/migrate) and v2(preferred)
-Application Load Balancer (ALB) -v2- HTTP/S, Websocket
-Network Load Balancer (NLB)- v2- TCP, TLS, UDP
-V2- faster, cheaper, supports target groups and rules.
+Split between V1(avoid) and V2(preferred)
+**Application Load Balancer (ALB)** -V2- HTTP/S, Websocket
+**Network Load Balancer (NLB)**- V2- TCP, TLS, UDP- V2- faster, cheaper, supports target groups and rules.
 
 ![image](https://user-images.githubusercontent.com/52617475/146122542-40cc20e3-3857-43ac-8b1b-b66517c4722d.png)
 
@@ -4676,10 +4683,10 @@ When you provision an ELB, you have to decide if you want to configure
   - Availability zones the load balancer will use (1, and 1 only, subnet in 2 or more availability zones)
   - Whether the Load Balancer should be internet facing or internal
  
- Nodes are placed in the subnet, and DNS used to route to the node. Node can scale up or down, additional nodes can be provisioned in the event of failure.
+ Load Balancers are called nodes and are placed in the subnet, and DNS used to route to the node of public instances. Node can scale up or down, additional nodes can be provisioned in the event of failure.
 
 
- Architectually, the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled).
+ Architectually, the load balancers abstract each of the surrounding infrastructure so that they can scale independently (loosly coupled). For example the web tier (composed of two subnets) can scale independently of the web tier (also composed of two subnets). This is represeneted by the orange outline.
  ![image](https://user-images.githubusercontent.com/52617475/146166437-8ffd6799-9be0-4cf9-974a-5950bbaaf84b.png)
 
 
@@ -4703,7 +4710,7 @@ Without load balancing, this could bring additional problems.
 #### 1.12.1.1. Load Balancers Architecture
 
 
-The user connects to a load balancer that is set to listens on port 80 and 443.
+The user connects to a load balancer that is set to listen on port 80 and 443.
 
 Within AWS, the configuration for which ports the load balancer listens on is
 called a **listener**.
@@ -4718,6 +4725,9 @@ talking directly to the application server.
 LB will run health checks against all of the servers. If one of the servers
 does fail, the load balancer will realize this and stop sending connections
 to that server. From the users client, the application always works.
+
+![picture 252](images/83d915be5d72ddbd65da656e5681c5ef97bdabf950e86e7bb4cc0623e83a9bc3.png)  
+
 
 As long as 1+ servers are operational, the LB is operational.
 Clients shouldn't see errors that occur with one server.
@@ -4739,15 +4749,15 @@ Clients shouldn't see errors that occur with one server.
 
 ALB is a layer 7 or Application Layer Load Balancer. It is capable of inspecting data that passes through it. It can only understand the application layer `http` and `https` protocols and take actions based on things in those protocols like paths, headers, and hosts. No TCP/UDP/TLS Listeners. L7 content including cookies, custom headers, user location and app behaviour.
 
-![OSI Model](/Learning-Aids/14-HA-and-Scaling/OSINetworkModel.png)
+- [1.19. Networking Fundamentals](#119-network-fundamentals)
 
-HTTP/HTTPS (which is just HTTP but transiting using SSL/TLS) always terminates on the ALB, this means that it is not possible to have an unbroken SSL connection. A new connection is made from the balancer to the application. Can't do end-toend ubroken SSL encryption. ALBS must have SSL certs if HTTPS used.
+HTTP/HTTPS (which is just HTTP but transiting using SSL/TLS) always terminates on the ALB, this means that it is not possible to have an unbroken SSL connection. A new connection is made from the balancer to the application. Can't do end-to-end ubroken SSL encryption. ALBS must have SSL certs if HTTPS used (note the SSL certifiate image sitting on top of the listeners in the image above).
 
 ALBs are slower than NLB as there are additional layers of the network stack to process. Health checks evaluate application health on layer 7.
 
 -Rules direct connections which arrive at a listener
 -Processed in priority order
--Default rule=catchall
+-Default rule=catch all for anything unmatched
 -Rule Conditions: host-header, http-header, hppt-request-method, path-pattern, query string & scource-ip.
 -Actions: forward, redirect, fixed-response, authenticate-oicd & authenticate-cognito
 
@@ -4757,6 +4767,8 @@ All AWS load balancers are scalable and highly available. Capacity that you have
 Internet facing LB is designed to be connected to, from public internet based clients, and load balance them across targets.
 
 Internal load balancer is not accessible from the internet and is used to load balance inside a VPC only.
+
+![image](https://user-images.githubusercontent.com/52617475/146122542-40cc20e3-3857-43ac-8b1b-b66517c4722d.png)
 
 Load balancer sits between a client and one or more servers. Front end or listening side, accepts connections from a client. Back end is used for distribution to the targets.
 
@@ -4769,7 +4781,7 @@ LB billed based on two things:
 
 ![image](https://user-images.githubusercontent.com/52617475/146167873-44352a4c-6f2b-46f7-abb8-1c5f69e72efe.png)
 
-The problem above? Unequal distribution of load due to there being more loads in the left subnet.
+The problem above? Unequal distribution of load due to there being more loads in the left subnet. The instance on the right is getting a full 50% of the total load, while the other 4 share 50%.
 
 
 ![image](https://user-images.githubusercontent.com/52617475/146168055-c658a03f-2432-49d3-b3da-97f044ad1bb9.png)
@@ -4784,12 +4796,12 @@ distribution of connections behind a load balancer. Comes enabled as standard.
 #### 1.12.2.2. ELB Exam PowerUp
 
 - ELB is a DNS A Record pointing at 1+ nodes per AZ
-- Nodes (in one subnet per AZ) can scale
+- Nodes can scale
 - Internet-facing means nodes have public IPv4 IPs
 - Internal is private only IPs
-- Ec2 doesn't need to be public IP to work with an internet facing LB
+- Ec2 doesn't need to have public IP to work with an internet facing LB
 - Listener Congiguration controls what the LB does
-- 8+ free IP addresses per subnet, which requires a /27 subnet mask
+- Requires 8+ free IP addresses per subnet, which equates to a /27 subnet mask
 
 It can also provide health checks on the target servers.
 If all instances are shown as healthy, it can distribute evenly.
@@ -4814,6 +4826,9 @@ towards. Targets represents Lambda functions, EC2 instances, ECS containers.
 - AWS does not suggest using Classic Load Balancer (CLB), these are legacy.
   - This can only use one SSL certificate.
 
+  ![picture 253](images/5d0a1eb3d1490938425921044291d52440514f1de46f95b42cf6162eb03170f4.png)  
+
+
 ### 1.12.3. Launch Configuration and Templates
 
 ![image](https://user-images.githubusercontent.com/52617475/146362570-392fb605-647a-4099-a8fe-0e5d947dbde5.png)
@@ -4822,9 +4837,9 @@ They are documents which allow you to define the configuration of an EC2 instanc
 
 They allow you to configure:
 
-- AMIs to use; Instance Type; Storate and Key Pairs.
+- AMIs to use; Instance Type; Storage and Key Pairs.
 - Networking and Security Groups
-- Userdata & IAM Role
+- User-data & IAM Role
 
 Anything you usually define at the point of launching an instance can be selected with a Launch Configuration (LC) or Launch Template (LT).
 
@@ -4842,14 +4857,15 @@ Provides a waiting period in which custom actions can be performed before instan
 
 ### 1.12.5. ASG Health Check
 
+- EC2 Health Check(default), ELB Health Check(can be enabled) & custom Health Check
+- EC2: Stopped, stopping, terminated, shutting down or impaired (not 2/2 status checks passed) = unhealthy
+- ELB: Running and passing ELB Health Checks
+- Custom: instances marked healthy and unhealthy by an external system.
+- Health check grace period (default 300s)- delay before health checks starts
+- If an ASG is provisioning and terminating instances in a continuous cycle it may be because the health check grace period is too short (application hasn't had enough time to launch bootstrap and be configured before the health check takes place).
+
 ![picture 3](images/f97297d8913440cb5b68a738380ecc75212c184b5ac6d7d04bde892d4ae4f32f.png)  
 
--EC2(default), ELB(can be enabled) & custom
--EC2-Stopped, stopping, terminated, shutting down or impaired (not 2/2 status checks passed)=unhealthy
--ELB- Healthy and passing ELB Health Checks
-Custom- instances marked healthy and unhealty by an external system.
--Health check grace period (default 300s)- delay before health checks starts
--If an ASG is provisioning and terminating instances in a continuous cycle it may be because the health check grace period is tpp short (application hasn't had enough time to launch bootstrap and be configured beofre the health check takes place).
 
 ### 1.12.4. Autoscaling Groups
 
@@ -4869,7 +4885,7 @@ Automatic scaling and self-healing for EC2
 Provision or terminate instances to keep at the desired level
 Scaling Policies can trigger this based on metrics.
 
-Autoscaling Groups will distribute EC2 instances to try and keep the AZs equal.
+Autoscaling Groups will distribute EC2 instances across the AZs to try and keep the load equal (resilence and HA).
 
 ![picture 2](images/1cc3d5673b76686a7c632ecca0ca40ec462dae5b04f3448fa94e76bd9388cf0f.png)  
 
@@ -4883,11 +4899,11 @@ There are three types of scaling policies:
 2. Scheduled Scaling - useful for known periods of high or low usage. They are time based adjustments e.g. Sales Periods.
 3. Dynamic Scaling:
 
-**Simple**: If CPU is above 50%, add one to capacity
+**Simple**: If CPU is above 50%, add two instances. If less than 50% remove two.
 
 ![image](https://user-images.githubusercontent.com/52617475/146294932-7204e5a6-24da-41c5-a04b-6512907fd5a9.png)
 
-**Stepped**: If CPU usage is above 50%, add one, if above 80% add three
+**Stepped**: If CPU usage is above 60%, add one, if above 70% add two, above 80% add three
 
 ![image](https://user-images.githubusercontent.com/52617475/146295359-a9dc9f82-f554-4ed5-b724-4cbaa95fed98.png)
 
@@ -4895,8 +4911,7 @@ There are three types of scaling policies:
 **Target**: Desired aggregate CPU = 40%, ASG will achieve this
 
 **Cooldown Period** is how long to wait at the end of a scaling action before
-scaling again. There is a minimum billable duration for an EC2 instance.
-Currently this is 300 seconds.
+scaling again. Default is 300 seconds. An adequate cooldown period helps to prevent the initiation of an additional scaling activity based on stale metrics. ASG won't wait for a cooldown period to expire if they locate an unhealthy instance (will just replace it).
 
 **Self healing** occurs when an instance has failed and AWS provisions a new
 instance in its place. This will fix most problems that are isolated to one
@@ -4912,14 +4927,17 @@ the status of HTTP and HTTPS requests. This makes them more application aware.
 - Generally, for anything client-facing you should always use Auto Scaling Groups (ASG) with Application Load Balancers (ALB) with autoscaling because they allow you to provide elasticity by abstracting the user away from individual servers. Since, the customers will be connecting through an ALB, they don't have any visibility of individual servers.
 - ASG defines WHEN and WHERE; Launch Templates defines WHAT.
 
+![picture 254](images/06d78920006c80e85071db6cbac9defb3a46902f5e747d57e407f348b021eea1.png)  
+
+
 ### 1.12.5. Network Load Balancer (NLB)
 
 1. NLBs are Layer 4, only understand TCP, TLS, UDP, TCP_UDP. No headers, no cookies, no session stickiness. SMTP, SSH, game servers, Financial Apps(not HTTP/s). Can't do detailed health check like ALB.
 
-2. Can't interpret HTTP or HTTPs, but this makes it much faster in latency.
+2. Can't interpret HTTP or HTTPs, but this makes it much faster.
 [**EXAM HINT]** => If you see anything about latency and HTTP and HTTPS are not involved, this should default to a NLB.
 
-3. Rapid Scaling: There is nothing stopping NLB from load balancing on HTTP just by routing data. They would do this really fast and can deliver millions of requests per second.
+3. Rapid Scaling: Really fast and can deliver millions of requests per second.
 
 4. Only member of the load balancing family that can be provided a static IP.
 There is 1 interface per AZ. Can also use Elastic IPs (whitelisting on firewalls) and should be used for this purpose.
