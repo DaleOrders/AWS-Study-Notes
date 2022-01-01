@@ -5553,6 +5553,9 @@ Public service that provides fully managed highly available message queues.
   - This is the amount of time that a client can wait before the message becomes visible after which they can explicity delete the message if they so choose.
   - If the client does not delete the message by the end, it will reappear in
   the queue.
+
+  ![picture 255](images/477cc52c583b3fa0b0e208a160936b5b35a6e95aae85c8a34c0dc929cdecdda1.png)  
+
 - **Dead-letter queue**
   - if a message is received multiple times but is unable to be finished, this
   puts it into a different workload to try and fix the corruption.
@@ -5562,7 +5565,7 @@ Public service that provides fully managed highly available message queues.
 **Simple Architecture**
 ![picture 35](images/235abd32494919b67eeecfb07fb2f00fd02435daccf585d8af13c601724cce4e.png)  
 
-Simplied architecture, Bob uploads a video to S3. A message, which contains a link to the video, is sent to the queue. The worker ASG will scale in and out depending on the length of the queue. Once all messages are processed, the work pool ASG will scale to 0. Decoupled system.
+Simplified architecture, Bob uploads a video to S3. A message, which contains a link to the video, is sent to the queue. The worker ASG will scale in and out depending on the length of the queue. Once all messages are processed, the work pool ASG will scale to 0. Decoupled system.
 
 **Production Architecture**
 ![picture 36](images/eb04385632cb59241e5e675ae6401585e9b22bca4fc2ead44841de4e070c6409.png)  
