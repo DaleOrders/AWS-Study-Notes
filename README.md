@@ -5797,7 +5797,7 @@ To address this, objects in the edge location can be programmed to expire (TTL) 
 ![picture 47](images/53072930f6997e688112f148b0f1453bc7bab597eb3de4ced96508da1e8a39b1.png)  
 
 
-- More frequent catche HITS=lower origin load (a cache HIT is when the edge location is actually storing your request content)
+- More frequent catche HITS=lower origin load (a cache HIT is when the edge location is actually storing your requested content)
 - Default TTL (behaviour)=24 hours (validity period)
 - You can set Minimum TTL and Maximum TTL values
 - Acts as limits on the origin header.
@@ -5808,14 +5808,16 @@ To address this, objects in the edge location can be programmed to expire (TTL) 
   - Sets the date and time after which the object will expire.
 - Custom Origin or S3 (via object metadata)
 
-- Cache Invalidation... performed on a distribution.
+- Cache Invalidation is performed on a distribution.
  - Expires any object regardless of TTL based on your invalidation pattern.
 
+ ![picture 263](images/d16dfd4c9f6df2a201bcadd5e2a0980bb54078ddbbe8a4e47d833d7984a4c345.png)  
 
-- ... applies to all edge locations... takes time
+
+- Applies to all edge locations... takes time to complete
 - Cost for performing cache invalidation is the same regardless of number of objects matched by the path pattern.
 - /images/whiskers1/jpg
-- /images/whiskers*'
+- /images/whiskers*
 - /images/*
 - /*
 - Versioned file names are a better alternative to Cache Invalidation... whiskers1_v1.jpg//_v2.jpg//v3.jpg. Simply point your application to the new version.
