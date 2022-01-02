@@ -1586,7 +1586,7 @@ Client-Side encryption
 
 - Data is encrypted in transit using HTTPS
 - Data inside the tunnel is in encrypted form.
-- Objectsencrypted by the client before they leave.
+- Objects encrypted by the client before they are sent to S3.
 - Data being sent the whole time is sent as ciphertext.
 - AWS has no way to see into the data.
 - The encryption burden is on the customer and not AWS.
@@ -1624,6 +1624,9 @@ To decrypt the object, you must tell S3 which object to decrypt and provide
 it with the key used to encrypt it. If the key that you supply is correct, S3 will decrypt the object, discard the key, and return the
 plaintext version of the object.
 
+![picture 260](images/dc7cf0a8a319c52e4fa82145f7291e52b422030b6901be86dc2fa84a9e43cacf.png)  
+
+
 #### 1.4.8.2. SSE-S3 AES256 (Server-side encryption w/ Amazon S3 managed keys)
 
 AWS handles both the encryption and decryption process as well as the
@@ -1647,6 +1650,9 @@ Three Problems with this method:
 - Not good for regulatory environment where keys and access must be controlled.
 - No way to control key material rotation.
 - No role separation. Anyone with S3 admin permissions can decrypt data and open objects.
+
+![picture 259](images/2874e6bb669f1feb244d388a201ab3ad6b9561a19da9f4851e0c35c843e5ded2.png)  
+
 
 #### 1.4.8.3. SSE-KMS (Server-side encryption w/ customer master keys stored in AWS KMS)
 
@@ -1673,6 +1679,9 @@ When uploading an object, you can create and use a customer managed CMK. This
 allows the user to control the permissions and the usage of the key material.
 In regulated industries, this is reason enough to use SSE-KMS
 You can also add logging and see any calls against this key from CloudTrail.
+
+![picture 258](images/cf15373696a6a2636217ff3c7a6bd1cece351d25c8aba922618be94c7619a615.png)  
+
 
 The best benefit is the role separation. To decrypt any object, you need
 access to the CMK that was used to generate the unique key that encrypted them.
@@ -4171,7 +4180,10 @@ standby replica.
 RDS Access ONLY via database CNAME. The CNAME will point at the primary
 instance. You cannot access the standby replica for any reason via RDS.
 
-The standby replica cannot be used for extra capacity.
+The standby replica cannot be used for extra capacity. A multi-AZ deployment deploys standby relicas in multiple zones.
+
+![picture 257](images/5c85fe295b0d2193c7c710cba68ff97740626878865381da4985ef2f3495f243.png)  
+
 
 
 **Synchronous Replication** means:
@@ -4307,7 +4319,7 @@ encryption, configuration, and networking without intervention.
 
 ![image](https://user-images.githubusercontent.com/52617475/145321926-99efedf1-c03d-4155-9c26-82e94ca80dad.png)
 
-Keys are provided by KMS or optionally CloudHSM. Dek is loaded onto the host so that KMS can identify which key was used to encrypt the data. The data is encrypted leaving the RDS host using the Transparent Data Encryption (TDE). The green arrow represents unerypted data and the red arrow represents encrypted data. You can use TDE in tandem with encryption at rest, however this may affect performance.
+Keys are provided by KMS or optionally CloudHSM. Dek is loaded onto the host so that KMS can identify which key was used to encrypt the data. Amazon RDS supports using Transparent Data Encryption (TDE) to encrypt stored data on your DB instances running Microsoft SQL Server. TDE automatically encrypts data before it is written to storage, and automatically decrypts data when the data is read from storage.
 
 You can only enable encryption when you create the database, and you can not disable it once enabled. Any snapshot you create of an encypted database will create an encrypted shapshot which shares the same dek. An encrypted database will produce an encrypted read replica (encrypted with the same KMS). To create an encrypted database from an unencypted database, you can take a snapshot, apply encryption, then launch.
 
@@ -4315,6 +4327,15 @@ You can only enable encryption when you create the database, and you can not dis
 ![image](https://user-images.githubusercontent.com/52617475/145322234-2965a4a4-5ca4-463f-88fe-6402bf63452a.png)
 
 IAM provides generate-db--auth-token to either user or role, each of which has a policy granting RDS access (in red). With token and authentication, user can secure access to RDS.
+
+
+IAM database authentication provides the following benefits:
+
+- Network traffic to and from the database is encrypted using Secure Sockets Layer (SSL).
+- You can use IAM to centrally manage access to your database resources, instead of managing access individually on each DB instance.
+- For applications running on Amazon EC2, you can use profile credentials specific to your EC2 instance to access your database instead of a password, for greater security
+
+![picture 261](images/53623cddb37ca5c1de823457a56e1a8c9af67b1d22e634354a4f2c6567003b20.png)  
 
 
 ### 1.10.7. Enhanced Monitoring
@@ -5057,10 +5078,10 @@ A Gateway Load Balancer:
 
 - Inbound and outbound traffic (transparent inspection and protection)
 
-- GWLB endpoints... traffic enters/leaves via endpoints.
+- Traffic enters/leaves via GWLB endpoints.
 
-- ... the GWLB balances across multiple backend appliances.
-- Traffic and metadata is tunnelled using Geneve protocol.
+- The GWLB balances across multiple backend appliances.
+- Traffic and metadata is tunnelled using Geneve protocol (in pink).
 
 ![picture 8](images/e83bc430b58465ce86784835460e634945f29d37b1f7d01c728ae063ac4269b2.png)  
 
@@ -5393,7 +5414,7 @@ Stages can be used to configure a more tailored solution.
 
 In this example, customers and developers deploy on different stages however you can enable the use of a canary to deploy one version (v2) onto the customer canary.
 
-### API Gateway Errors- REMEMBER
+### API Gateway Errors- Good to remember
 
 - 4XX- Client Error- Invalid Request on **client** side
 - 5XX- Server Error- Valid request, backend issue
@@ -5412,15 +5433,15 @@ Reduces load and cost. Calls to backend integration services will only be made i
 
 ### 1.13.5. Serverless
 
-This is not one single thing, you manage few if any servers. This aims to remove overhead and risk as much as possible. Applications are a collection of small and specialized functions that do one thing really well and then stop.
+This is not one single thing, you manage few if any servers. This aims to remove operational overhead and risk as much as possible. Applications are a collection of small and specialized functions that do one thing really well and then stop.
 
-These functions are stateless and run in ephemeral environments. Every time they run, they obtain the data that they need, they do something and then optionally, they store the result persistently somehow or deliver the output to something else.
+These functions are stateless and run in ephemeral or temporary environments. Every time they run, they obtain the data that they need, they do something and then either store the result persistently or deliver the output to something else.
 
-Serverless architecture should use function-as-a-service (FaaS) products such as Lambda for any general processing need. Lambda as a service is billed based on execution duration and functions only run when there a form of execution is happening. Because serverless is event-driven, it means while not being used a serverless architecture should be very close to zero cost until something in that environment generates an event. Serverless architectures generally have no persistent usage of compute within that system.
+Serverless architecture should use function-as-a-service (FaaS) products such as Lambda for any general processing needs. Lambda as a service is billed based on execution duration and functions only run when execution is happening. Because serverless is event-driven, it means while not being used a serverless architecture cost should be very close to zero  until something in that environment generates an event. Serverless architectures generally have no persistent usage of compute within that system.
 
 Serverless environments should use, where possible, managed services. It shouldn't re-invent the wheel. Examples include using S3 for any persistent object storage or dynamoDB for any persistent data storage and third party identity providers such as Google, Twitter, Facebook, or even corporate identities such as LDAP & Active Directory instead of building your own. Other services that AWS provides such as Elastic Transcoder can be used to convert media files or manipulate these files in other ways such as into different video sizes. 
 
-Your aim should be to use as-a-Service offerings as much as you can; code as little as possible and use function-as-a-service (FaaS) for any general compute needs. You all of those building blocks together to create your application.
+Your aim should be to use as-a-Service offerings as much as you can; code as little as possible and use function-as-a-service (FaaS) for any general compute needs. You use all of those building blocks together to create your application.
 
 #### 1.13.5.1. Example of Serverless
 
@@ -5570,7 +5591,7 @@ Simplified architecture, Bob uploads a video to S3. A message, which contains a 
 **Production Architecture**
 ![picture 36](images/eb04385632cb59241e5e675ae6401585e9b22bca4fc2ead44841de4e070c6409.png)  
 
-In this case the message is sent to an SNS topic, which is configured with fanout queue (3 separate queues), each designed to process a video of a different size (480p, 720p 1080p). A message is processed independently at each size. Each size has its own independent SQS queue and ASG. The videos are returned to the user as before. Suited for processing multiple jobs. Means 1 event can spawn multiple jobs. 
+In this case the message is sent to an SNS topic, which is configured with fanout queue (3 separate queues), each designed to process a video of a different size (480p, 720p 1080p). A message is processed independently at each size. Each size has its own independent SQS queue and ASG. The videos are returned to the user in three sizes(480, 720, 1080). Suited for processing multiple jobs. Means 1 event can spawn multiple jobs. 
 
 
 
@@ -5633,7 +5654,7 @@ that can be ingested during a 24 hour period. However much you ingest during
 
 
 **Kinesis data records (1MB)** are stored across shards and are the blocks
-of data for a stream.
+of data within a stream.
 
 **Kinesis Data Firehose** connects to a Kinesis stream. It can move the data from a stream onto S3 or another service. Kinesis Firehose allows for the long term persistence of storage of kinesis data into services like S3. Automatic scaling, serverless, resilent. 
 
@@ -5644,13 +5665,9 @@ Near real time delievery (60s). Kinesis is real time, but kinesis firehose is no
 ### Kinesis Data Analytics
 
 
-- Real time processing of data
-- ... using SQL
+- Real time processing of data using SQL
 - Ingests from Kinesis Data Streams or Firehose
-- Destinations include ...
-- Firehose(S3, Redshift, ElasticSearch, Splunk)
-- AWS Lambda
-- Kinesis Data Streams
+- Destinations include S3, Redshift, ElasticSearch, Splunk via Kinesis Firehose
 - Costly service
 - Can be sent to consumers or destinations
 - Remains real time unless you send it to kinesis firehose (then becomes near real time)
@@ -5679,7 +5696,7 @@ SQS
 
 - 1 thing sending messages to the queue
 - Generally 1 production group, 1 consumption group
-- Decoupling applications
+- Serves to decouple applications (the operation of one service is not dependent on another)
 - One consumption group from that tier
 - Allow for async communications
 - Once the message is processed, it is deleted
@@ -5708,7 +5725,7 @@ Cognito provides:
 
 - **User Pools**- Sign-in and get JSON Web Token (JWT)
   - User directory management and profiles, sign-up and sign-in (customisable web UI), mfa and other security features.
-  - Sign in from built in users and other proviers (google, facebook, amazon, saml etc)
+  - Sign in from built in users and other providers (google, facebook, amazon, saml etc)
   - Does not grant access to AWS services (with the exception of API Gateway)
 
 ![picture 42](images/449ee64e521a6dd67dff40fd24f16d8d3a8da70b86e3308ff1e8f222c5f3ed4e.png)  
@@ -5733,8 +5750,11 @@ Cognito provides:
 
 ### 1.14.1. Architecture Basics
 
-- CloudFront is a global object cache (CDN)
-- Download caching only, no write caching.
+![picture 262](images/7b04ca4b530cbb8a236d0d48c4e7a59723f9d09fc9d0a3d5a1bef325bd349574.png)  
+
+
+- CloudFront is a content delievery network (CDN)
+- Read caching only, no write caching.
 - Content is cached in locations close to customers.
 - If the content is not available on the local cache when requested, CloudFront
 will fetch the item and cache it and deliver it locally.
@@ -5757,7 +5777,9 @@ will fetch the item and cache it and deliver it locally.
 
 **Example**
 
-Julie and Moss are both in Europle. Julie goes to access Whiskers.jpg first and the object is neither cached in the local or regional edge location. NB: Regionional Edge Cache is only checked for custom origins, not an S3 bucket. Image is illustrative only.
+Julie and Moss are both in Europle. Julie goes to access Whiskers.jpg first and the object is neither cached in the local nor at a regional edge location. NB: Regional Edge Cache is only checked for custom origins, not an S3 bucket. Image is illustrative only.
+
+Regional edge cache locations are currently used only for requests that need to go back to a custom origin; i.e. **requests to S3 origins will skip regional edge cache locations.**
   
 
 **Cloudfront Behaviours**
