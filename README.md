@@ -976,6 +976,9 @@ Inside an AWS organization, you get a single monthly bill for the master
 account which covers all the billing for each users.
 Can offer a discount with consolidation of reservations and volume discounts due to pooling of resources.
 
+![picture 264](images/23678c865255867430b15db69bbb414e952a33aebb7077ffdfb1e5fc22e94566.png)  
+
+
 #### 1.3.6.3. Create new accounts in an org
 
 Adding accounts in an organization is easy with only an email needed.
@@ -4776,11 +4779,20 @@ HTTP/HTTPS (which is just HTTP but transiting using SSL/TLS) always terminates o
 
 ALBs are slower than NLB as there are additional layers of the network stack to process. Health checks evaluate application health on layer 7.
 
--Rules direct connections which arrive at a listener
--Processed in priority order
--Default rule=catch all for anything unmatched
--Rule Conditions: host-header, http-header, hppt-request-method, path-pattern, query string & scource-ip.
--Actions: forward, redirect, fixed-response, authenticate-oicd & authenticate-cognito
+- Rules direct connections which arrive at a listener
+- Processed in priority order
+- Default rule = catch all for anything unmatched
+- Actions: forward, redirect, fixed-response, authenticate-oicd & authenticate-cognito
+
+If your application is composed of several individual services, an Application Load Balancer can route a request to a service based on the content of the request such as Host field, Path URL, HTTP header, HTTP method, Query string, or Source IP address.
+
+**Rule Conditions**: 
+- Host-based Routing: You can route a client request based on the Host field of the HTTP header allowing you to route to multiple domains from the same load balancer.
+- Path-based Routing: You can route a client request based on the URL path of the HTTP header.
+- HTTP header-based routing: You can route a client request based on the value of any standard or custom HTTP header.
+- HTTP method-based routing: You can route a client request based on any standard or custom HTTP method.
+- Query string parameter-based routing: You can route a client request based on query string or query parameters.
+- Source IP address CIDR-based routing: You can route a client request based on source IP address CIDR from where the request originates.
 
 
 All AWS load balancers are scalable and highly available. Capacity that you have as part of an ALB increases automatically based on the load which passes through that ALB. This is made of multiple ALB nodes each running in different AZs. This makes them scalable and highly available.
@@ -6500,6 +6512,7 @@ requests to your website.
 - Shield Standard
   - Free with Route53 or CloudFront enabled as default
   - Provides layer 3 and layer 4 protection against DDoS attacks.
+
 - Shield advanced
   - $3000 per month
   - Includes EC2, ELB, CloudFront, Global Acceleration and R53
@@ -6515,6 +6528,16 @@ against increased costs.
     - rate awareness
   - WEBACL integrated with Load Balancers, API gateways, and CloudFront.
     - Rules are added to WEBACL and evaluated when traffic arrives.
+
+AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon API Gateway API, Amazon CloudFront or an Application Load Balancer. AWS WAF also lets you control access to your content.
+
+WAF lets you create rules to filter web traffic based on conditions that include IP addresses, HTTP headers and body, or custom URIs.
+
+You define your conditions, combine your conditions into rules, and combine the rules into a web ACL.
+Conditions define the basic characteristics that you want WAF to watch for in web requests.
+You combine conditions into rules to precisely target the requests that you want to allow, block, or count. WAF provides two types of rules:
+- **Regular rules** – use only conditions to target specific requests.
+- **Rate-based rules** – are similar to regular rules, with a rate limit. Rate-based rules count the requests that arrive from a specified IP address every five minutes. The rule can trigger an action if the number of requests exceed the rate limit.
 
 #### 1.17.2.1. Example of Architecture
 
