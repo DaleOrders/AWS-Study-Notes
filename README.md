@@ -4862,7 +4862,6 @@ towards. Targets represents Lambda functions, EC2 instances, ECS containers.
 - AWS does not suggest using Classic Load Balancer (CLB), these are legacy.
   - This can only use one SSL certificate.
 
-  ![picture 253](images/5d0a1eb3d1490938425921044291d52440514f1de46f95b42cf6162eb03170f4.png)  
 
 
 ### 1.12.3. Launch Configuration and Templates
