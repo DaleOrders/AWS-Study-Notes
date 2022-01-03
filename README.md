@@ -4509,6 +4509,9 @@ layer and typically occurs within one second.
   - All can be promoted to Read or Write in a DR situation.
 - Maximum of 5 secondary regions.
 
+![picture 265](images/83462de80c3b2f5582c552d8b2fe75060054d0196fc5c0661457c3fd18932ffa.png)  
+
+
 ### 1.10.11. Aurora Multi-Master Writes
 
 Allows an aurora cluster to have multiple instances capable of reads and writes.
@@ -6537,7 +6540,11 @@ You define your conditions, combine your conditions into rules, and combine the 
 Conditions define the basic characteristics that you want WAF to watch for in web requests.
 You combine conditions into rules to precisely target the requests that you want to allow, block, or count. WAF provides two types of rules:
 - **Regular rules** – use only conditions to target specific requests.
-- **Rate-based rules** – are similar to regular rules, with a rate limit. Rate-based rules count the requests that arrive from a specified IP address every five minutes. The rule can trigger an action if the number of requests exceed the rate limit.
+- **Rate-based rules** – are similar to regular rules, with a rate limit. Rate-based rules count the requests that arrive from a specified IP address every five minutes. The rule can trigger an action if the number of requests exceed the 
+rate limit.
+
+![picture 266](images/693d24a71729d3509667d7958b5e6481070f699e023c834658dc73bf83eb49ed.png)  
+
 
 #### 1.17.2.1. Example of Architecture
 
@@ -6569,7 +6576,7 @@ of hardware which are designed to manage keys and perform cryptographic
 operations.
 
 You can run your own HSM on premise.
-**Cloud HSM is a true "single tenant"hardware security module (HSM)** that's hosted within the AWS cloud.
+**Cloud HSM is a true "single tenant" hardware security module (HSM)** that's hosted within the AWS cloud.
 AWS provisions the HW, but it is impossible for them to help. There is no way
 to recover data from them if access is lost.
 
@@ -6597,6 +6604,9 @@ HSM needs an endpoint in the subnet of the VPC to allow resources access
 to the cluster.
 
 AWS has no access to the HSM appliances which store the keys.
+
+![picture 267](images/0dc9c9c2246bb2f68a03f4177bbbb29dbcbb3788c631877e4809940218780977.png)  
+
 
 #### 1.17.3.1. Cloud HSM Use Cases
 
