@@ -4324,12 +4324,31 @@ encryption, configuration, and networking without intervention.
 
 Keys are provided by KMS or optionally CloudHSM. Dek is loaded onto the host so that KMS can identify which key was used to encrypt the data. Amazon RDS supports using Transparent Data Encryption (TDE) to encrypt stored data on your DB instances running Microsoft SQL Server. TDE automatically encrypts data before it is written to storage, and automatically decrypts data when the data is read from storage.
 
-You can only enable encryption when you create the database, and you can not disable it once enabled. Any snapshot you create of an encypted database will create an encrypted shapshot which shares the same dek. An encrypted database will produce an encrypted read replica (encrypted with the same KMS). To create an encrypted database from an unencypted database, you can take a snapshot, apply encryption, then launch.
+- Encryption at rest can be enabled – includes DB storage, backups, read 
+replicas and snapshots
+- You can only enable encryption for an Amazon RDS DB instance when you 
+create it, not after the DB instance is created
+- DB instances that are encrypted can't be modified to disable encryption
+- Uses AES 256 encryption and encryption is transparent with minimal 
+performance impact
+- You can't have:
+- An encrypted read replica of an unencrypted DB instance
+- An unencrypted read replica of an encrypted DB instance
+- Read replicas of encrypted primary instances are encrypted
+- The same KMS key is used if in the same Region as the primary
+- If the read replica is in a different Region, a different KMS key is 
+used
+- You can't restore an unencrypted backup or snapshot to an 
+encrypted DB instance
 
+
+![picture 268](images/8ae665b93675baeea267a533d3ed701e80d97c37a924b2a315f21fd84b2958cd.png)  
+
+
+IAM provides generate-db--auth-token to either user or role, each of which has a policy granting RDS access (in red). With token and authentication, user can secure access to RDS.
 
 ![image](https://user-images.githubusercontent.com/52617475/145322234-2965a4a4-5ca4-463f-88fe-6402bf63452a.png)
 
-IAM provides generate-db--auth-token to either user or role, each of which has a policy granting RDS access (in red). With token and authentication, user can secure access to RDS.
 
 
 IAM database authentication provides the following benefits:
