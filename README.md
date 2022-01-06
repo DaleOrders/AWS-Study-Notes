@@ -4332,8 +4332,8 @@ create it, not after the DB instance is created
 - Uses AES 256 encryption and encryption is transparent with minimal 
 performance impact
 - You can't have:
-- An encrypted read replica of an unencrypted DB instance
-- An unencrypted read replica of an encrypted DB instance
+  - An encrypted read replica of an unencrypted DB instance
+  - An unencrypted read replica of an encrypted DB instance
 - Read replicas of encrypted primary instances are encrypted
 - The same KMS key is used if in the same Region as the primary
 - If the read replica is in a different Region, a different KMS key is 
@@ -4345,7 +4345,7 @@ encrypted DB instance
 ![picture 268](images/8ae665b93675baeea267a533d3ed701e80d97c37a924b2a315f21fd84b2958cd.png)  
 
 
-IAM provides generate-db--auth-token to either user or role, each of which has a policy granting RDS access (in red). With token and authentication, user can secure access to RDS.
+With IAM database authentication, you use an authentication token when you connect to your DB instance. An authentication token is a string of characters that you use instead of a password. After you generate an authentication token, it's valid for 15 minutes before it expires. If you try to connect using an expired token, the connection request is denied.
 
 ![image](https://user-images.githubusercontent.com/52617475/145322234-2965a4a4-5ca4-463f-88fe-6402bf63452a.png)
 
@@ -4362,9 +4362,11 @@ IAM database authentication provides the following benefits:
 
 ### 1.10.7. Enhanced Monitoring
 
-CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance, and Enhanced Monitoring gathers its metrics from an agent on the instance. As a result, you might find differences between the measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes, because then there are likely more virtual machines (VMs) that are managed by the hypervisor layer on a single physical instance. 
+Amazon RDS provides metrics in real time for the operating system (OS) that your DB instance runs on. You can view all the system metrics and process information for your RDS DB instances on the console. You can manage which metrics you want to monitor for each instance and customize the dashboard according to your requirements.
 
-> Enhanced Monitoring metrics are useful when you want to see how different processes or threads on a DB instance use the CPU.
+RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. You can create metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard. You can consume the Enhanced Monitoring JSON output from CloudWatch Logs in a monitoring system of your choice.
+
+Enhanced Monitoring metrics are useful when you want to see how different processes or threads on a DB instance are functioning.
 
 ### 1.10.8. Amazon Aurora
 
@@ -4902,6 +4904,10 @@ LTs are newer and provide more features than LCs such as T2/T3 unlimited, placem
 Both of these are not editable. You define them once and that configuration is locked. If you need to adjust a configuration, you must make a new one and launch it.
 
 LTs can be used to save time when provisioning EC2 instances from the console UI / CLI.
+
+
+![picture 269](../images/5cf27a9d0b33070f622a51055690be9ff260bcc013e335c98983e9ea8f317914.png)  
+
 
 ### 1.12.5. ASG Lifecycle Hooks
 
@@ -5695,7 +5701,7 @@ Near real time delievery (60s). Kinesis is real time, but kinesis firehose is no
 
 ![picture 38](images/53bb053ed8123c70e04b845bade16471b3cd8328f8b623d33d179f787f62cd92.png)  
 
-### Kinesis Data Analytics
+### Kinesis Data Analyticsn
 
 
 - Real time processing of data using SQL
