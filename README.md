@@ -935,6 +935,9 @@ When a **principal** wants to **request** to perform an action,
 it will **authenticate** against an identity within IAM. An IAM user is an
 identity which can be used in this way.
 
+![picture 272](images/caa0d787f41fbe9ce9a182230c29a6113db8156bd912aed7233f331c7e26ecce.png)  
+
+
 There are two ways to authenticate:
 
 - 1 Username and 1 Password
@@ -1029,12 +1032,16 @@ If have more than 5000 principals, it could be a candidate for an IAM Role due t
 
 IAM Roles are **assumed**, you become that role.
 
+![picture 271](images/19451f23d007eff1647a3cf4338e1a5e077e46b049dba93b52c0558b62e2e13f.png)  
+
+
 This can be used short term by other identities.
 
 IAM Users can have inline or managed policies which control which permissions
 the identity gets within AWS
 
 Policies which grant, allow or deny, permissions based on their associations.
+
 
 IAM Roles have two types of roles can be attached.
 
@@ -2082,6 +2089,9 @@ S3 will create a presigned URL and return it. This URL will have encoded inside
 it the details that IAM admin provided. It will be configured to expire at
 a certain date and time as requested by the IAM admin user.
 
+![picture 285](images/9558a2b01ae65fe1c97c6635a178f17beb4db8d224962ec21f7d3836a92e7180.png)  
+
+
 #### 1.4.12.1. S3 Presigned URL Exam PowerUp
 
 ![image](https://user-images.githubusercontent.com/52617475/145711282-fad45aea-f0c3-41d7-ad39-67ae52c12cd7.png)
@@ -2539,7 +2549,7 @@ back on a different port.
 
 NACLs require rules to allow inbound **and** outbound traffic. They are therefore stateless.
 
-- **Stateless Firewalls**
+**Stateless Firewalls**
 ![image](https://user-images.githubusercontent.com/52617475/143520699-de9a010d-1a37-4fc8-9252-cbe77c947409.png)
 
 - Initiation and response traffic are separate streams requiring two rules. The request (green) can be initated by the client to a server (top half) or a server to another server (bottom half). The resposne is in orange.
@@ -2558,12 +2568,13 @@ NACLs are processed in order starting at the lowest rule number until
 it gets to the catch all. A rule with a lower rule number will be processed
 before another rule with a higher rule number.
 
-
+![picture 278](images/68c173def1848ebf304b3437ed0ec338db69b0fe905eb6c5715c3ed5cac4d560.png) 
 
 
 ### 1.5.7. Security Groups
 
-Security Groups only require rules to allow inbound traffic (outbound traffic is automatically allowed). They are therefore stateful.
+Security Groups only require rules to allow inbound traffic (outbound traffic is automatically allowed). They are therefore stateful. 
+
 
 **Stateful Firewalls**
 
@@ -2577,7 +2588,6 @@ Logical references allow you to scale your applications. In this situation, the 
 If you use logical references, yo can add more instances to the subnet without needing to update the network configuration.
 
 ![image](https://user-images.githubusercontent.com/52617475/143908525-7aeb4fcc-9590-4950-9375-fdbd90155e0f.png)
-
 
 
 - SGs are boundaries which can filter traffic.
@@ -2608,6 +2618,9 @@ In the example above, using a self-reference to a security group means that you 
 - SGs is the default almost everywhere because they are stateful.
 - NACLs are associated with a subnet and only filter traffic that crosses
 that boundary. It does not direct traffic within the subnet.
+
+![picture 279](images/56f5b901182ce5196a0c136d7d65beaffc7636ca0d465b4d80a1a5c50b6e7483.png)  
+
 
 ### 1.5.8. Network Address Translation (NAT) Gateway
 
@@ -3186,6 +3199,10 @@ address will be lost. There is no way to recover the original address.
 - Source / destination checks
   - If traffic is on the interface, it will be discarded if it is not
   from or going to one of the IP addresses
+
+
+  ![picture 273](images/e4f3b3d15413cf64c41df64b411ad182ee0a855b4b642d79afe5896c6512e251.png)  
+
 
 Secondary interfaces function in all the same ways as primary interfaces except
 you can detach them and move them to other EC2 instances.
@@ -4530,8 +4547,6 @@ IAM database authentication provides the following benefits:
 - You can use IAM to centrally manage access to your database resources, instead of managing access individually on each DB instance.
 - For applications running on Amazon EC2, you can use profile credentials specific to your EC2 instance to access your database instead of a password, for greater security
 
-![picture 261](images/53623cddb37ca5c1de823457a56e1a8c9af67b1d22e634354a4f2c6567003b20.png)  
-
 
 
 
@@ -5025,6 +5040,9 @@ across all instances across all AZ that are registered with that LB,
 even if its not in the same AZ. It is the reason we can achieve a balanced
 distribution of connections behind a load balancer. Comes enabled as standard.
 
+![picture 277](images/db8b3a1a6db5027f1ee5ff57b28674bfc494533b5ccf9eeba2cdc809db11d9fd.png)  
+
+
 #### 1.12.2.2. ELB Exam PowerUp
 
 - ELB is a DNS A Record pointing at 1+ nodes per AZ
@@ -5145,12 +5163,23 @@ There are three types of scaling policies:
 
 **Target**: Desired aggregate CPU = 40%, ASG will achieve this
 
+![picture 275](images/78b755ad656ef8f32038dbb8c8c92074b45fd47552aa19d855152e61a1d94ee0.png)  
+
+**Target**: Scale according to predefined schedule.
+
+![picture 276](images/d916788437fbffdede43c9b805c1aae8c2b9deb13441662d99fc29c043fff011.png)  
+
+
+
 **Cooldown Period** is how long to wait at the end of a scaling action before
 scaling again. Default is 300 seconds. An adequate cooldown period helps to prevent the initiation of an additional scaling activity based on stale metrics. ASG won't wait for a cooldown period to expire if they locate an unhealthy instance (will just replace it).
 
 **Self healing** occurs when an instance has failed and AWS provisions a new
 instance in its place. This will fix most problems that are isolated to one
 instance.
+
+![picture 274](images/f304a257690088ee7762af2f3789c98e5ce646455d68d24e1ab039e04aa20807.png)  
+
 
 AGS can use the load balancer health checks rather than EC2.
 ALB status checks can be much richer than EC2 checks because they can monitor
@@ -5260,8 +5289,6 @@ sessions can't be load balanced across multiple servers.
 
 There is an option available within elastic load balancers called Session
 Stickiness.
-
-
 
 And within an application load balancer this is enabled on a
 target group. If enabled, the first time a user makes a request, the load
@@ -6259,6 +6286,9 @@ Can't access cross-region services. You cannot, for instance, access an S3 bucke
 
 A limitation is that they are only accessible from inside that specific VPC.
 
+![picture 281](images/26f942d591cd7690c1b8ae32d140e563210f632e9891d274e1f5033cf6152496.png)  
+
+
 
 ### 1.15.4. VPC Interface Endpoints
 
@@ -6290,6 +6320,9 @@ directly and immediately utilize interface endpoints.
 hosted zone carries a replacement DNS record for the default service
 endpoint DNS name. It overrides the default service DNS with a new version
 that points at your interface endpoint. Enabled by default.
+
+![picture 280](images/1bcc098d150900dd6f2dea974807d71d9053a2b87a60f507f61c71d211b00206.png)  
+
 
 #### 1.15.4.1. Gateway Endpoints vs Interface Endpoints
 
@@ -6346,6 +6379,9 @@ VPC Peering Connections CANNOT be created with overlapping VPC CIDRs.
 
 ### 1.16.1. AWS Site-to-Site VPN
 
+
+![picture 282](images/8af292cda79dbd768d344b77c03bbc50a76552f22642de4567c65315f4b9720e.png)  
+
 - A logical connection between a VPC and on-premise network encrypted in transit
 using IPSec, running over the public internet (in most cases).
 - This can be fully Highly Available if you design it correctly
@@ -6360,6 +6396,13 @@ using IPSec, running over the public internet (in most cases).
 ![picture 76](images/Site-to-Site-VPN.png)  
 - Highly available on the AWS side as there are two endopoints which are conntected to CGW. If one fails, then the network could still function.
 - On customer side, there is only one CGW. If that fails, the entire ntwork will fail.
+
+**Cloudhub**
+
+![picture 283](images/09a3e46a1ad25d5e4076ffbc9035bff60af5dae0c3651b8c9c291b25b326f083.png)  
+
+- Hub and spoke model
+- Multiple on-premise locations
 
 
 **Highly available VPN solution**
@@ -6391,6 +6434,9 @@ Static| Dynamic |
 - Can be used with Direct Connect (DX)
 
 ### 1.16.2. AWS Direct Connect (DX)
+
+![picture 284](images/3fb619338fd4f957a2487f9ad6568c64fe7ad246a64a83f9f1bf6a5505c99bc7.png)  
+
 
 - Port operating at a certain speed which belongs to a certain AWS account.
 - Allocated at a DX location which is a major data center.
