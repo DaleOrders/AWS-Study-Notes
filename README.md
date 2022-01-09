@@ -1284,6 +1284,9 @@ in that log group. Metric filters are also applied on the log groups.
 
 ### 1.3.9. CloudTrail Essentials
 
+![picture 326](images/3828f50c83862e9ea1543ffd34cbcdf97a0e881e074d14e5e935fc503f29920e.png)  
+
+
 Concerned with who did what.
 
 Logs API calls or activities as **CloudTrail Event**
@@ -3059,6 +3062,9 @@ available immediately.
   than reading from EBS directly.
   - You can force a read of every block all data immediately using DD through manual configuration.
 
+![picture 286](images/80f736d0149bc3eec9f8de44ec2d67c520f3da5d2a963324e12fc939aa529866.png)  
+
+
 Fast Snapshot Restore (FSR) allows for immediate restoration.
 You can create 50 of these FSRs per region. When you enable it on
 a snapshot, you pick the snapshot specifically and the AZ that you want to be
@@ -3085,6 +3091,9 @@ This is not how EBS itself works as you pay for the entire volume regardless of 
 In this example, the first you pay for 10GB, second you pay for 4GB (the changed data) and third you pay for 2 GB (the changed data). Each snapshot references the unchanged data in the previous snapshot.
 The data is incrementally stored which means doing a snapshot every 5 minutes
 will not necessarily increase the charge as opposed to doing one every hour.
+
+![picture 295](images/af45c8a23614f44287f69244baa39647f1f976d5593f2a842ede431c4101726e.png)  
+
 
 #### 1.6.8.3. EBS Encryption
 
@@ -3490,6 +3499,9 @@ in the container registry.
 
 #### 1.7.1.3. Container Key Concepts
 
+![picture 300](images/0d1faf3fd110549783faa0906ec142a63e290a1ab8a0352da695f9bef0071242.png)  
+
+
 - Docker files are used to build Docker images
 - Containers are portable and always run as expected.
   - Anywhere there is a compatible host, it will run exactly as you intended.
@@ -3560,7 +3572,8 @@ The container instances are not delivered as a managed service, they
 are managed as normal EC2 instances.
 You can use spot pricing or reserved EC2 servers. You pay for them while they are in a running state in your containers even if you don't use them. 
 
-![picture 236](images/a1fc5429fa26ad3bfd446791a8ae7dac0098a753a52a5fec7d801bc93c242639.png)  
+ ![picture 301](images/9c13a8cd9eb99e1a1757ca1827b6a72f487fc49c3ffb2dded862238ff1f0659a.png)  
+
 
 1. All docker container images are tagged and stored in AWS ECR (Elastic Container Repository)
 2. ECS Task Definition contains details about the docker image location and the tag that needs to be run on the ECS as a container.
@@ -3601,6 +3614,20 @@ This allows for spot pricing and prepayment discounts, but will probably require
 - Have a large workload but are overhead conscious.
 - Have small or burst style workloads.
 - Use batch or periodic workloads.
+
+![picture 302](images/3e51889d42683771e575c9ee89ee24049274f15584e36c9a722168458fcfbe9a.png)  
+
+#### 1.7.3.4. ECS and auto-scaling
+
+![picture 303](images/65e6c3f2b5b591c169412555763dc149b18d578c7aea49943d39d1d575fe2bd5.png)  
+
+![picture 304](images/c91a6d6a264a81c5a297c62cecaaeaa839714bfc4bd3ab4911e8d7d3a1d80887.png)
+
+#### 1.7.3.5. ECS and ALB
+
+![picture 305](images/791b9ba1be7e0a0a5e01e9a7dce66465798116513235b8376fa9ca429f37ebf2.png)  
+
+
 
 ---
 
@@ -4514,6 +4541,9 @@ encryption, configuration, and networking without intervention.
 
 Keys are provided by KMS or optionally CloudHSM. Dek is loaded onto the host so that KMS can identify which key was used to encrypt the data. Amazon RDS supports using Transparent Data Encryption (TDE) to encrypt stored data on your DB instances running Microsoft SQL Server. TDE automatically encrypts data before it is written to storage, and automatically decrypts data when the data is read from storage.
 
+![picture 315](images/2dc7bb0a4186eb41d1119dbdf929f85a6bfb7c95b2656ff4939ffb5c9ef9c33c.png)  
+
+
 - Encryption at rest can be enabled – includes DB storage, backups, read 
 replicas and snapshots
 - You can only enable encryption for an Amazon RDS DB instance when you 
@@ -4689,6 +4719,9 @@ without worrying about usage. The resources you need (databases) are drawn from 
 
 #### 1.10.9.1. Aurora Serverless - Use Cases
 
+![picture 318](images/5b022f5f6ba6852ade270d473bc663ef631f12fb0b86a431c8d2bc6e2ab633e3.png)  
+
+
 - Infrequently used applications.
   - Low volume blog site.
   - You only pay for resources as you consume them on a per second basis.
@@ -4701,6 +4734,9 @@ It can scale in and out based on demand
 
 
 ### 1.10.10. Aurora Global Database
+
+![picture 316](images/9b86c73f18212fddeb0690dc7c28e274c8054ad2c8e70084e1b7e8b74c510d72.png)  
+
 
 Introduces the idea of secondary regions with up to 16 read only replicas.
 Replication from primary region to secondary regions happens at the storage
@@ -4739,6 +4775,9 @@ Allows an aurora cluster to have multiple instances capable of reads and writes.
 
 **Multi-Master Mode**
 
+![picture 317](images/59a1715b8cf16c9689dfe3eab7eba46d3146b167638fccd36b52138b2eca094d.png)  
+
+
 Aurora Multi-master has no endpoint or load balancing. An application
 can connect with one or all of the instances inside a multi-master
 cluster.
@@ -4767,6 +4806,8 @@ all future load over to a new writer with little if any disruption.
 
 
 ### 1.10.12. Database Migration Service (DMS)
+
+![picture 329](images/e4ae1b314f78f68eed235b037b83854a7ccba8484000cdcb58c8ba6f0c11f48a.png)  
 
 A managed database migration service.
 Starts with a replication instance which runs on top of an EC2 instance.
@@ -4805,7 +4846,10 @@ DMS can use snowball for large database migrations (multi-TB)
 
 This process uses SCT because you are converting the data engine into a generic file when you store it on a snowball device. Hence it needs to be used even if the database type is not changing (On-premises MySQL to RDS MySQL).
 
-DMS is the default service used to migrate databases. 
+DMS is the default service used to migrate databases.
+
+![picture 330](images/5710649f45e7bfab84c01a290a55543ef574e5d6d6b006bc410447229dc53da4.png)  
+
 
 ---
 
@@ -4831,6 +4875,10 @@ EFS moves the instances closer to being stateless.
   - VPC peering
   - VPN connections
   - AWS direct connect
+  - Across accounts
+
+  ![picture 296](images/8c7c5fb553bee735d8663c6bb6cc29d361591aec04629f3d2e6d140ed26fb202.png)  
+
 
 #### 1.11.1.1. Elastic File System Explained
 
@@ -5396,9 +5444,15 @@ A collection of microservices. Microservices are tiny, self sufficient applicati
 
 It has its own logic; its own store of data; and its own input/output components. Microservices do individual things very well. In this example you have the upload microservice, process microservice, and the store and manage microservice. The upload process is a **producer**; the processing process is a **consumer**; and the store and manage process does both. Logically, producers produce data or messages; consumers consume data or messages; and then there are microservices that can do both things. Now the things that services produce or consume architecturally are events. Queues can be used to communicate events.
 
+![picture 299](images/9ceb87855dadf7c89e93dc9c56e0da5b05b7586f081d15025bac9524439256b3.png)  
+
+
 #### 1.13.1.5. Event Driven Architecture
 
 Event-driven architecture are just collection of event producers which might be components of your application which directly interacts with customers. Or, they might be part of your infrastructure such as EC2; or they might be system-monitoring components. They are pieces of software which generate or produce events in reaction to something. If a customer clicks submit, that might be an event. If an error occurs while packing a customer order, that is another event.
+
+![picture 306](images/b7f3980bce1e2950b00bd9ad11627af7dfcc009dc7a1946df960b6b1980cc8f8.png)  
+
 
 Event consumers are pieces of software which are ready and waiting for events to occur. If they see an event they care about they will do something to that event. They will take an action. It might displaying something for a customer or despatching a human to resolve an order-packing issue or it might be to retry an upload.
 
@@ -5610,6 +5664,9 @@ targets.
 
 API stands for Application Programming Interface. It's a way that you can take an application you developed and provide its functionality either directly to users, system utlities, or other applications to include that functionality inside their code. It's a way applications or services can communicate with each other.
 
+![picture 309](images/50cbe707544a982377091c2281aa8cea7e28f21496a3f8cccb62c58fd76e0231.png)  
+
+
 - API gateway is an AWS managed service:
   - Provides managed AWS endpoints.
   - Can also perform authentication to prove you are who you claim.
@@ -5647,6 +5704,9 @@ Can be performed via cognito (red) or Lambda Authorizer (yellow)before invoking 
 - Regional- usually for clients in the same region.
 - Private - Endpoint accessible only within a VPC via interface endpoint.
 
+![picture 310](images/e80ff41f8f319e43018bd29ff2c01f6be9d3f7cc3f5e917c1bb752f4f92fabf1.png)  
+
+
 ### API Gateway Stages
 
 Stages can be used to configure a more tailored solution.
@@ -5654,6 +5714,9 @@ Stages can be used to configure a more tailored solution.
 ![picture 32](images/172f3dbf4e36d25dc910f8de2bdf5a5de1629c8430979956d4fe73e9fbe3f21b.png)  
 
 In this example, customers and developers deploy on different stages however you can enable the use of a canary to deploy one version (v2) onto the customer canary.
+
+![picture 314](images/de7c3d1357cdbcf0f29e39269ffc1350f7512b55ce90f4a50eb896ef6aeb260b.png)  
+
 
 ### API Gateway Errors- Good to remember
 
@@ -5667,9 +5730,20 @@ In this example, customers and developers deploy on different stages however you
 - 504 - Integration Failure/Timeout -29s limit
 
 ### API Gateway Caching
+
+![picture 312](images/e536ab76ee4c1cc695519387fd026ecedfc45de6ae5721a28a447c4e10c1b32e.png)  
+
 Reduces load and cost. Calls to backend integration services will only be made if the cache does not meet the required request.
 
 ![picture 34](images/dd46e325037d0949b0c4a97cb7910a3f9acacb3edc2946c6d14fd0456e11b6d4.png)  
+
+### REST API
+
+![picture 311](images/e2b629a91488fbb4baa4ac6c27d9c50360dc0653d54be254b7835ac2d60c4f00.png)  
+
+
+![picture 313](images/81afebac6cc5dfd38c429b2572c77605ab0b9d5cf3b2ec8ccac8fe119ea6fa51.png)  
+
 
 
 ### 1.13.5. Serverless
@@ -5738,6 +5812,8 @@ Offers:
 - Topics can be used cross-account via Topic Policy
 
 ### 1.13.7. AWS Step Functions
+
+![picture 308](images/3d1880a7e9f98584451cc8987ab4a43f5d77dee2dd50d7e36f0a566c3330e5a9.png)  
 
 There are some crucial lambdas limitations:
 - Lambda is a FaaS product
@@ -5865,6 +5941,9 @@ short
 - long (waitTimeSeconds) : it will wait for up to 20 seconds for messages
 to arrive on the queue. It will sit and wait if none currently exist. More cost effective than short polling.
 
+![picture 307](images/6538b17e64dd57c3b93e6bfeed4a5377da8a8cf9a0c80d2f82a6aa1148ab4a54.png)  
+
+
 Messages can live on SQS Queue for up to 15 days. They offer KMS encryption
 at rest. Server side encryption. Data is encrypted in transit with SQS and any
 clients.
@@ -5873,6 +5952,9 @@ Access to a queue is based on identity policies or a queue policy. Queue
 policies only can allow access from an outside account. This is a resource policy.
 
 ### 1.13.9. Kinesis
+
+![picture 324](images/1835f23c0b779822d7f969798d4616d4ba266686bed70e3ba0526db8dd38b959.png)  
+
 
 - Scalable streaming service. It is designed to inject data from
 lots of devices or lots of applications.
@@ -5923,6 +6005,9 @@ Use cases:
 - Time series Analysis... elections/e-sports
 - Real-time dashboards-leaderboards for games
 - Real-time metrics- Security and response teams
+
+![picture 325](images/1f1d51c554c56f3ce06632376f95d258726509ba429a0d66a18c8839e2f4e9e1.png)  
+
 
 
 
@@ -5988,6 +6073,14 @@ Cognito provides:
 
 ![picture 44](images/2bbb7be885298d55fff732607be3d35fc501e811958d8b679b790d730ad829b1.png)  
 
+**Single Sign On**
+![picture 331](images/2fab81f5fe36fa5b3e4c053d7a78df1ed8dad7d730585483b5aa288a32be83c4.png)  
+
+**Identity Federation**
+![picture 332](images/03355a85e5dd796a9aee58760e802e2c409ee4d4b569a4727a95ee06e62091b9.png)  
+
+![picture 333](images/91c4cf664b5bc185822bd706450a3c385fa35fa431870fc882471bcbe3dc1064.png)  
+
 ---
 
 ## 1.14. CDN-and-Optimization
@@ -6024,6 +6117,9 @@ will fetch the item and cache it and deliver it locally.
 Julie and Moss are both in Europle. Julie goes to access Whiskers.jpg first and the object is neither cached in the local nor at a regional edge location. NB: Regional Edge Cache is only checked for custom origins, not an S3 bucket. Image is illustrative only.
 
 Regional edge cache locations are currently used only for requests that need to go back to a custom origin; i.e. **requests to S3 origins will skip regional edge cache locations.**
+
+![picture 292](images/0f6940ebd73265e2c06d78c6d819579708fdb566d3c637e2b8b343dd780072f9.png)  
+
   
 
 **Cloudfront Behaviours**
@@ -6054,8 +6150,6 @@ To address this, objects in the edge location can be programmed to expire (TTL) 
 
 - Cache Invalidation is performed on a distribution.
  - Expires any object regardless of TTL based on your invalidation pattern.
-
- ![picture 263](images/d16dfd4c9f6df2a201bcadd5e2a0980bb54078ddbbe8a4e47d833d7984a4c345.png)  
 
 
 - Applies to all edge locations... takes time to complete
@@ -6106,6 +6200,9 @@ website then uses that certificate to prove its authenticity.
 
 ### CloudFront and SSL/TLS
 
+![picture 294](images/20057574135fed65a8434ee11a9d419f40476cf7ac8c5749f9d12f7324763450.png)  
+
+
 - CloudDront Default Domain Name (CNAME)
 - e.g: https://d111111abcde8.cloudfron.net/
 - SSL Supported by default... *.cloudfront.net cert
@@ -6127,6 +6224,9 @@ website then uses that certificate to prove its authenticity.
 - SNI is TLS extension, allowing a host to be included
 - Resulting in many SSL Certs/Hosts using a shared IP
 - Old browsers don't support SNI... CF charges extra for dedicated IP
+
+![picture 293](images/3c6d221d5d937455681ebd4f9859ab5267b9fcad75e9ae30fad01307f70a998b.png)  
+
 
 
 ### 1.14.3. Origin Access Identity (OAI)
@@ -6178,6 +6278,10 @@ Two ways:
  - Migration Between two S3 Origins - Origin Request
  - Different objects based on Device - Origin Request
  - Content By Country - Origin Request
+ - Segregate users
+
+ ![picture 291](images/70e69f6c74ad2151284412c4086ce069493af4524f0e459435be13e39ace6c44.png)  
+
 
 
 ### 1.14.4. AWS Global Accelerator
@@ -6341,6 +6445,8 @@ use routing and only DNS.
 Interface endpoints because they use normal VPC network interfaces are **not highly available**. 
 > Make sure as a Solutions Architect when you are designing an architecture if you are utilizing multiple AZs then you need to put interface endpoints in every AZ that you use inside that VPC.
 
+![picture 289](images/e3dfb61c4a774697a4c9115f45f7ff02ac06e71f664a51d1c9341284b667e8bd.png)  
+
 ### 1.15.5. VPC Peering
 
 VPC Peering is a service that lets you create a private and encrypted network link between ***two and only two VPCs***.
@@ -6390,14 +6496,15 @@ using IPSec, running over the public internet (in most cases).
 - Virtual Private Gateway (VGW) is the target on one or more route tables
 - Customer Gateway (CGW) can represent two things:
   1. logical piece of configuration in AWS
-  2. A physical piece on-prem router which the VPN connects to.
+  2. A physical![picture 320](../images/e3dfb61c4a774697a4c9115f45f7ff02ac06e71f664a51d1c9341284b667e8bd.png)  
+ piece on-prem router which the VPN connects to.
 
 **One VPN**
 ![picture 76](images/Site-to-Site-VPN.png)  
 - Highly available on the AWS side as there are two endopoints which are conntected to CGW. If one fails, then the network could still function.
 - On customer side, there is only one CGW. If that fails, the entire ntwork will fail.
 
-**Cloudhub**
+**CloudHub**
 
 ![picture 283](images/09a3e46a1ad25d5e4076ffbc9035bff60af5dae0c3651b8c9c291b25b326f083.png)  
 
@@ -6468,6 +6575,9 @@ Generally use a VPN first then bring a DX in and leave VPN as backup.
 - Up to 40 Gbps with aggregation, 4 x 10 Gbps ports.
 - It does not use public internet and provides consistently low latency.
 - Does not consume any data (bandwidth).
+
+![picture 290](images/901b9209a209eed8fd327739b7ccc7b440b91762fefa1623696033a125662def.png)  
+
 
 DX provides NO ENCRYPTION and needs to be managed on a per application basis.
 There is a common way around this limitation.
@@ -6673,7 +6783,13 @@ can handle 50 million files.
     - server message block (SMB), common in Windows environments
     - AWS storage services (EFS, FSx, and S3)
 
+![picture 328](images/e314e6f06f52ea58959b0d1f1c85d60c5dfbc2a3d75ec155f0224b30cf601288.png)  
+
+
 ### 1.16.8. FSx for Windows File Server
+
+![picture 297](images/81ba54b3a6cafb7db95014db9bb86ad242621a1e9354d42a12cd30f29c170010.png)  
+
 
 - Fully managed native windows file servers/shares
 - Designed for integration with Windows environments.
@@ -6709,6 +6825,9 @@ windows filesystem or Directory Services are keywords to look for.
 - Designed for High Performance Computing - Linux workloads Clients (POSIX)
 - Designed for Machine Learning, Big Data, Financial Modelling
 - 100 GB/s throughout & sub-millisecond latencies
+
+![picture 298](images/6fd8cf90e96d69893866654a02eca45a7a59be9920edd8b9c56b6d4e141c066c.png)  
+
 - Deployment types **Persistent** or **Scratch**
   - Scratch - Optimized for Short term no replication & fast ( Designed for pure performance) - NO HA, NO REPLICATION
   - Persistent - longer term, HA ( IN ONE AZ ONLY), self-healing
@@ -6754,6 +6873,9 @@ Provides against DDoS attacks with AWS resources. This is a denial of
 service attack. Normally not possible to block them by using individual
 IP addresses. Without detailed analysis, the traffic looks like normal
 requests to your website.
+
+![picture 327](images/cda4945a6ae566184ff460e78a576f9155312d0cd81b0ec77bb56c8faf812e36.png)  
+
 
 
 **DDoS Attack**
@@ -7491,6 +7613,9 @@ to look at other attributes from the original purpose.
 
 ### 1.18.5. DynamoDB Global Tables
 
+![picture 323](images/d6537b1503362a44e6cb9c0392366ae3d51d7d02614e3d110f258d8de6245af2.png)  
+
+
 - Global tables provide multi-master cross-region replication.
   - All tables are the same.
 - Tables are created in multiple AWS regions. In one of the tables, you
@@ -7520,6 +7645,9 @@ the cache. If the cache doesn't have the data, this is known as a cache miss.
 The application then loads directly from the database. It then updates the
 cache with the new data. Subsequent queries will load data from the cache as
 a cache hit and it will be faster
+
+![picture 322](images/5263094eb8cac020cfd6fb15024c1fd5254f4b609e0916978144e94077198064.png)  
+
 
 **DAX**: The application instance has DAX SDK added on. DAX and dynamoDB are one
 in the same. Application uses DAX SDK and makes a single call for the data which
@@ -7639,6 +7767,9 @@ Scales well to accomodate increases in demand. Cost benefits are most evident at
 - Requires application code changes
 
 ![picture 202](images/757b7f689bbc52dc84777ce6a74eda9bf33abe60fbeb9f2536a0ab0c2c130c43.png)  
+
+![picture 319](images/46dd22bc1ba24560c10082b62a28c035f5243642f08f196efe8d92cad36464de.png)  
+
 
 ![picture 203](images/ba02366e6c4920f120057e178e2be863bde45abca572719958fc47c59f4d7070.png)  
 
