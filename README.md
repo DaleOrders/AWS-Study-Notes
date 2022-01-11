@@ -5147,7 +5147,7 @@ Both of these are not editable. You define them once and that configuration is l
 LTs can be used to save time when provisioning EC2 instances from the console UI / CLI.
 
 
-![picture 269](../images/5cf27a9d0b33070f622a51055690be9ff260bcc013e335c98983e9ea8f317914.png)  
+![picture 269](images/5cf27a9d0b33070f622a51055690be9ff260bcc013e335c98983e9ea8f317914.png)  
 
 
 ### 1.12.5. ASG Lifecycle Hooks
@@ -5988,7 +5988,7 @@ Near real time delievery (60s). Kinesis is real time, but kinesis firehose is no
 ![picture 270](images/ae6dba4b3fbbb9e975a5ff90e901c66598dc92b03d9e48e527636dc6cac72b4c.png)  
 
 
-### Kinesis Data Analyticsn
+### Kinesis Data Analytics
 
 
 - Real time processing of data using SQL
@@ -6015,6 +6015,9 @@ Use cases:
 ### 1.13.10. SQS vs Kinesis
 
 Kinesis
+
+![picture 334](images/b116341553d68b7452a793ef646ac563c8039eea90c747bc61fc8f4976d70a4b.png)  
+
 
 - Large throughput or large numbers of devices
 - Huge scale ingestion with multiple consumers
