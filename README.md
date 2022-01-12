@@ -142,11 +142,11 @@
 - [1.14. CDN-and-Optimization](#114-cdn-and-optimization)
   - [1.14.1. Architecture Basics](#1141-architecture-basics)
   - [1.14.2. AWS Certificate Manager (ACM)](#1142-aws-certificate-manager-acm)
-  - [CloudFront and SSL/TLS](#cloudfront-and-ssltls)
-  - [1.14.3. Origin Access Identity (OAI)](#1143-origin-access-identity-oai)
-  - [Secure Custom Origins](#secure-custom-origins)
-  - [1.14.3.(1/2) Lambda@Edge](#114312-lambdaedge)
-  - [1.14.4. AWS Global Accelerator](#1144-aws-global-accelerator)
+  - [1.14.3. CloudFront and SSL/TLS](#cloudfront-and-ssltls)
+  - [1.14.4. Origin Access Identity (OAI)](#1143-origin-access-identity-oai)
+  - [1.14.5. Secure Custom Origins](#secure-custom-origins)
+  - [1.14.6. Lambda@Edge](#114312-lambdaedge)
+  - [1.14.7. AWS Global Accelerator](#1144-aws-global-accelerator)
 - [1.15. Advanced-VPC](#115-advanced-vpc)
   - [1.15.1. VPC Flow Logs](#1151-vpc-flow-logs)
   - [1.15.2. Egress-Only Internet Gateway](#1152-egress-only-internet-gateway)
@@ -6499,8 +6499,9 @@ using IPSec, running over the public internet (in most cases).
 - Virtual Private Gateway (VGW) is the target on one or more route tables
 - Customer Gateway (CGW) can represent two things:
   1. logical piece of configuration in AWS
-  2. A physical![picture 320](../images/e3dfb61c4a774697a4c9115f45f7ff02ac06e71f664a51d1c9341284b667e8bd.png)  
- piece on-prem router which the VPN connects to.
+  2. A physical piece on-prem router which the VPN connects to.
+
+  ![picture 320](images/e3dfb61c4a774697a4c9115f45f7ff02ac06e71f664a51d1c9341284b667e8bd.png)  
 
 **One VPN**
 ![picture 76](images/Site-to-Site-VPN.png)  
