@@ -5924,7 +5924,7 @@ In this case the message is sent to an SNS topic, which is configured with fanou
   - guarantee the order and exactly once delivery
   - 3,000 messages p/s with batching or up to 300 messages p/s without
 
-![picture 256](images/54080dde27b7e0827d758468f646596667ef96518d05144dde4df4013be78c8c.png)  
+![picture 335](images/eccc6e9d4e24944d1e7b0e28f2e05bd7f8f8a6ccd362cab190bde80207524659.png)  
 
 
 Billed on **requests** not messages. A request is a single request to SQS.
@@ -6055,6 +6055,9 @@ Cognito provides:
 - **User management** of user identity.
   - Creates and manages serverless user database.
 
+  ![picture 337](images/1ff72c2afe2535413f657fcdbecbec47a7661e261c5f843363ad14ef94ffebbd.png)  
+
+
 - **User Pools**- Sign-in and get JSON Web Token (JWT)
   - User directory management and profiles, sign-up and sign-in (customisable web UI), mfa and other security features.
   - Sign in from built in users and other providers (google, facebook, amazon, saml etc)
@@ -6072,6 +6075,7 @@ Cognito provides:
 ![picture 43](images/99cc9232051cdc1c26b39591d4a10ffa8e4df1783880f5edf5f92ba9c71cef2e.png)  
 
 **User and Identity pools**
+
 - Allows you to use a standardise token (JWT) to simplify the authentication and authorization process.
 
 ![picture 44](images/2bbb7be885298d55fff732607be3d35fc501e811958d8b679b790d730ad829b1.png)  
@@ -6156,12 +6160,12 @@ To address this, objects in the edge location can be programmed to expire (TTL) 
 
 
 - Applies to all edge locations... takes time to complete
-- Cost for performing cache invalidation is the same regardless of number of objects matched by the path pattern.
-- /images/whiskers1/jpg
-- /images/whiskers*
-- /images/*
-- /*
-- Versioned file names are a better alternative to Cache Invalidation... whiskers1_v1.jpg//_v2.jpg//v3.jpg. Simply point your application to the new version.
+- Cost for performing cache invalidation is the same regardless of number of objects matched by the path pattern. For example, the cost of performing each of the following will be the same.
+  - /images/whiskers1/jpg (1 image)
+  - /images/whiskers* (1+ image)
+  - /images/* (all images)
+  - /* (all objects)
+- Versioned file names are a better alternative to Cache Invalidation... whiskers1_v1.jpg then whiskers1_v2.jpg whiskers1_v2.jpg. Simply point your application to the latest version.
   - Versioned file names do not impact the cached content on the users browser.
   - Retains all versions of the object so you can move between them.
   - Cheaper alternative to cache invalidation.
@@ -6501,7 +6505,7 @@ using IPSec, running over the public internet (in most cases).
   1. logical piece of configuration in AWS
   2. A physical piece on-prem router which the VPN connects to.
 
-  ![picture 320](images/e3dfb61c4a774697a4c9115f45f7ff02ac06e71f664a51d1c9341284b667e8bd.png)  
+![picture 320](images/e3dfb61c4a774697a4c9115f45f7ff02ac06e71f664a51d1c9341284b667e8bd.png)  
 
 **One VPN**
 ![picture 76](images/Site-to-Site-VPN.png)  
@@ -6685,6 +6689,9 @@ Designed to move large amounts of data IN and OUT of AWS.
 Physical storage the size of a suitcase or truck.
 physical device ordered from AWS, used, then returned.
 
+![picture 336](images/cf12614489010298dc90984b9b3da709887cf2186aeb7af7b4f74991fca19b0e.png)  
+
+
 #### 1.16.5.1. Snowball
 
 - Any data on Snowball uses KMS at rest encryption.
@@ -6743,7 +6750,7 @@ One common directory is **Active Directory** by Microsoft and its full name is
 ![picture 86](images/9a6ebaf7b7a2160799bbf0ffb0ae8078ff42e871aa658a22da2890f7c30293b6.png)  
 
 - **Microsoft AD**: is anything with Windows or if it needs a trust relationship
-with on-prem. This is not an emulation or adjusted by AWS.
+with on-prem directory. This is not an emulation or adjusted by AWS.
 ![picture 87](images/7e4358e9c9472d4da35e9f97628cadde4725d6b86da4773b3fdb085b4305339e.png)  
 
 
@@ -6978,8 +6985,6 @@ HSM needs an endpoint in the subnet of the VPC to allow resources access
 to the cluster.
 
 AWS has no access to the HSM appliances which store the keys.
-
-![picture 267](images/0dc9c9c2246bb2f68a03f4177bbbb29dbcbb3788c631877e4809940218780977.png)  
 
 
 #### 1.17.3.1. Cloud HSM Use Cases
