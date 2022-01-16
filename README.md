@@ -1,7 +1,6 @@
 # 1. SAA-C02 Notes
 
 
-
 > These are my personal notes from Adrian Cantrill's (SAA-C02) course.Learning Aids from [aws-sa-associate-saac02](https://github.com/acantril/aws-sa-associate-saac02). There may be errors, so please purchase his course to get the original content and show support https://learn.cantrill.io
 
 # Table of contents
@@ -2547,6 +2546,8 @@ as well as the inbound port. This is the ephemeral port.
 - If the webserver is not managing the apps server, it may communicate
 back on a different port.
 - This back and forth communication can be hard to configure for.
+
+![](2022-01-16-12-14-00.png)
 
 #### 1.5.6.2. NACL Exam PowerUp
 
