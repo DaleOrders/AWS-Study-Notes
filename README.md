@@ -2254,22 +2254,14 @@ VPC Consideration
 Reserve 2+ network ranges per region being used per account.
 Think of the highest region you will operate in and add extra as a buffer.
 
-An example using 4 AWS accounts.
+An example using bottom up approach:
 
-![image](https://user-images.githubusercontent.com/52617475/144762598-1f383724-037f-4f5c-af55-b8332a1c6c4b.png)
+![](images/2022-01-16-13-34-22.png)
 
+And an example using top down approach:
 
-- Regions
-  - 3 regions in US
-  - 1 region in Europe
-  - 1 region in AUS
+![](images/2022-01-16-13-35-15.png)
 
-= 5 regions
-
-Reserve 2 network ranges per region= 5*2=10 ranges
-Allocate these ranges for each account=10*4=40 ranges
-
-- Total of 40 ranges, 10 ranges for each account.
 
 #### 1.5.2.1. How to size VPC
 
@@ -2279,6 +2271,9 @@ Since each Region has at least 3 AZ's, it is a good practice to start
 splitting the network into 4 different AZs.
 This allows for at least one subnet in each AZ, and one spare.
 Taking a /16 subnet and splitting it 16 ways will make each a /20.
+
+![](images/2022-01-16-13-35-50.png)
+
 
 ### 1.5.3. Custom VPC
 
@@ -2675,6 +2670,8 @@ NATGW cannot do port forwarding or be a bastion server. In that case it might
 be necessary to run a NAT EC2 instance instead.
 
 ![image](https://user-images.githubusercontent.com/52617475/143522449-6fb40242-e5b6-46e0-9f9c-706750cc600b.png)
+
+![](images/2022-01-16-13-40-06.png)
 
 
 ---
@@ -4502,8 +4499,7 @@ Kept in sync using **asynchronous replication**
 
 RDS Read-Replicas are read only replicas of an RDS instance. You can not write to them.
 
-![image](https://user-images.githubusercontent.com/52617475/145320825-8842e8b1-3400-4f87-9554-22638ad39377.png)
-
+![](images/2022-01-16-12-56-49.png)
 It is written fully to the primary and standby instance first.
 Once its stored on disk, it is then pushed to the replica.
 This means there could be a small lag.
@@ -5353,6 +5349,8 @@ This could cause backend unevenness because one user will always be forced
 to the same server no matter what the distributed load is. Applications
 should be designed to hold session stickiness somewhere other than EC2. You can hold session state in, for instance, DynamoDB. If store session state data externally, this means EC2 instances will be completely stateless.
 
+![](images/2022-01-16-13-04-38.png)
+
 #### 1.12.6.5. Gateway Load Balancer
 
 Some applications use a third party security device checking traffic (represented as a shield in the image below) into and out of the application. Can present a problem as an appplication may have to scale and the instance and security device are tightly coupled (tied) together. 
@@ -5899,6 +5897,8 @@ Public service that provides fully managed highly available message queues.
   - if a message is received multiple times but is unable to be finished, this
   puts it into a different workload to try and fix the corruption.
 - ASG can scale and lambdas can be invoked based on queue length.
+
+![](images/2022-01-16-13-09-41.png)
 
 
 **Simple Architecture**
@@ -6478,13 +6478,27 @@ In different regions, you can utilize security groups, but you'll need to
 reference IP addresses or IP ranges. If VPC peers are in the same region,
 then you can do the logical referencing of an entire security group. 
 
+You can't route through interconnected VPCs.
+![](images/2022-01-16-14-02-43.png)
+
 VPC peering connects **ONLY TWO**
 
 VPC Peering does not support **transitive peering**.
-If you want to connect 3 VPCs, you need 3 connections. You can't route
-through interconnected VPCs.
+If you want to connect 3 VPCs, you need 3 connections.
+
+![](images/2022-01-16-13-56-34.png)
 
 VPC Peering Connections CANNOT be created with overlapping VPC CIDRs.
+
+![](images/2022-01-16-13-55-58.png)
+
+A partial solution:
+
+![](images/2022-01-16-13-58-43.png)
+
+A full solution:
+
+![](images/2022-01-16-14-01-17.png)
 
 
 ---
@@ -6520,6 +6534,8 @@ using IPSec, running over the public internet (in most cases).
 - Hub and spoke model
 - Multiple on-premise locations
 
+![](images/2022-01-16-14-09-34.png)
+
 
 **Highly available VPN solution**
 ![picture 77](images/Site-to-Site-VPN-HA.png) 
@@ -6549,9 +6565,12 @@ Static| Dynamic |
 - Great as a backup especially for Direct Connect (DX)
 - Can be used with Direct Connect (DX)
 
+![](images/2022-01-16-14-30-08.png)
+
+
 ### 1.16.2. AWS Direct Connect (DX)
 
-![picture 284](images/3fb619338fd4f957a2487f9ad6568c64fe7ad246a64a83f9f1bf6a5505c99bc7.png)  
+![picture 79](images/DirectConnect.png)    
 
 
 - Port operating at a certain speed which belongs to a certain AWS account.
@@ -6570,11 +6589,14 @@ Static| Dynamic |
   - **Private VIF** (VPC)
     - Connects to one AWS VPC
     - Can have as many Private VIFs as you want.
+
+![](images/2022-01-16-14-27-01.png)
   - **Public VIF** (Public Zone Services)
     - Only public services, not public internet
     - Can be used with a site-to-site VPN to enable a private encryption using IPSec.
 
-![picture 79](images/DirectConnect.png)  
+![](images/2022-01-16-14-27-53.png)
+
 
 Has one physical cable with **no high availability and no encryption**.
 DX Port Provisioning is quick, the cross-connect takes longer.
@@ -6585,7 +6607,7 @@ Generally use a VPN first then bring a DX in and leave VPN as backup.
 - It does not use public internet and provides consistently low latency.
 - Does not consume any data (bandwidth).
 
-![picture 290](images/901b9209a209eed8fd327739b7ccc7b440b91762fefa1623696033a125662def.png)  
+![](images/2022-01-16-14-24-04.png)
 
 
 DX provides NO ENCRYPTION and needs to be managed on a per application basis.
@@ -6603,6 +6625,9 @@ you get all of the benefits of Direct Connect such as high speeds, and all
 the benefits of IPSEC encryption.
 
 ![picture 75](images/493df51301e8b74f8d5d81bf2ad91d3f98e1cae889ce136d82979ed0b2a6eda3.png)  
+
+Edge routing is not allowed.
+![](images/2022-01-16-14-04-28.png)
 
 ### DX and resilence
 
@@ -6682,6 +6707,8 @@ is required.
   - Great for limited local storage capacity.
 
 ![picture 85](images/1fb957f06b3f8d320cc7282c56d028fab67aa52804fc4d289875826197e8568a.png)  
+
+
 
 
 ### 1.16.5. Snowball / Edge / Snowmobile
