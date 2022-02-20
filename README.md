@@ -940,12 +940,21 @@ identity which can be used in this way.
 
 There are two ways to authenticate:
 
-- 1 Username and 1 Password
-- 0, 1 or, at most, 2 Access Keys (CLI)
+- 1 Username and 1 Password (Password is optional if you only want to give CLI/API access)
+- 0-2 Access Keys (CLI)
 
 Once the **Principal** has authenticated, it becomes an **authenticated identity**
 
 ![image](https://user-images.githubusercontent.com/52617475/145615744-0a9f1207-0e17-4d8f-89ac-956b706c08b9.png)
+
+Access keys are long-term credentials used to authenicate users. They do not automatically update, you as the owner of the credentials have to explicitly update them. 
+
+
+![picture 1](images/1285913d5dd73503d35d7a732bd28baf3641a34a95650c41b4c43072d1e1ea14.png)  
+
+Access keys can be created, deleted, made active or made inactive. Default when created is active. The secret access key can only be seen once. You tend to use two sets of Access Keys when you rotate your credientials. You make a new set, update your applications then when you verify that they are working correctly you can delete your old set. 
+
+**IAM roles do not use access keys as they do not offer long-term access**
 
 
 #### 1.3.2.1. Amazon Resource Name (ARN)
@@ -2015,11 +2024,10 @@ bucket in **different** AWS regions.
   - Allows the replication of objects from a source bucket to a destination
 bucket in the **same** AWS region.
 
+![picture 2](images/17ea0773c945a28a980af553220ad9a439f6248bfeaca844b373494f3e6beb17.png)  
+
 Architecture for both is similar, only difference is if both buckets are
 in the same account or different accounts.
-
-![image](https://user-images.githubusercontent.com/52617475/145711174-3c57e40e-7c5d-4978-bb69-eb15e26bdccc.png)
-
 
 The replication configuration is applied to the source bucket and configures
 S3 to replicate from this source bucket to a destination bucket.
@@ -2032,6 +2040,9 @@ When different accounts are used, the role is not by default trusted
 by the destination account. If configuring between accounts, you must
 add a bucket policy on the destination account to allow the IAM role from
 the destination account access to the bucket.
+
+![picture 3](images/5163155a6cafb841a2fd6734fd21d98ffc25cf85818f25b4fd0a4f60e691c582.png)  
+
 
 #### 1.4.11.1. S3 Replication Options
 
@@ -2674,6 +2685,10 @@ NATGW cannot do port forwarding or be a bastion server. In that case it might
 be necessary to run a NAT EC2 instance instead.
 
 ![image](https://user-images.githubusercontent.com/52617475/143522449-6fb40242-e5b6-46e0-9f9c-706750cc600b.png)
+
+
+![picture 338](images/f18364f9c5c6bd8c01efb21a45df22a63958501ef3b17881e1f169b2477b8aef.png)  
+
 
 
 ---
