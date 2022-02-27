@@ -5731,7 +5731,147 @@ Possible solutions?
 - use provisioned currency to secure a warm start
 - use /tmp to pre-download resources 
 
+#### Lambda Handler Architecture & Overview
+
+![picture 62](images/f40c7ee6a5a5e1475fcd08f5fa497fbdb045712287f341d4306e564d84df15d0.png)  
+
+
+- Lambda executions have lifecycles.
+- Execution Environment.
+- INIT - Creates or unfreezes the execution environment.
+- INVOKE - Runs the function Handler (Cold start).
+- NEXT INVOKE(s) - WARM START - same environment.
+- SHUTDOWN - Terminate the environment.
+
+#### Lambda Versions
+
+You can use versions to manage the deployment of your functions. For example, you can publish a new version of a function for beta testing without affecting users of the stable production version. Lambda creates a new version of your function each time that you publish the function. The new version is a copy of the unpublished version of the function. 
+
+A function version includes the following information:
+
+The function code and all associated dependencies.
+The Lambda runtime that invokes the function.
+All of the function settings, including the environment variables.
+A unique Amazon Resource Name (ARN) to identify the specific version of the function.
+
+![picture 64](images/7a07a81f518c977c87f4f3b5aefc0dfc39e7d305456f1339d3c02e20115b6a65.png)  
+
+
+- Unpublished function - can be changed & deployed.
+- Deploys to $LATEST
+- Functions can be published which creates an immutable version.
+- locked so no editing of that published version.
+- Function Code, Dependencies, Runtime, Settings & Environment Variables.
+- A unique ARN for that function version (uniquely identifies it).
+- Qualified ARN points at a specific version.
+- Unqualified ARN points at the function ($LATEST), not a specific version.
+
+#### Lambda Aliases
+
+You can create one or more aliases for your Lambda function. A Lambda alias is like a pointer to a specific function version. Users can access the function version using the alias Amazon Resource Name (ARN).
+
+Aliases can point at a single version, or be configured to perform weighted routing between 2 versions.
+
+ ![picture 66](images/8297d714ae899bbbe1b0eddfd261e6c95124435042a44c1c711d2c091867141c.png)  
+
+
+- An Alias is a pointer to a function version.
+- PROD -> bestanimal:1, BETS -> bestanimal:2
+- Each Alias has a unique ARN, fixed for the alias.
+- Aliases can be updated, changing which version they reference.
+- Useful for PROD/DEV, BLUE/GREEN, A/B testing
+- Alias Routing. Percentage at v1 & percentage at v2.
+- need same role, same dead-letter queue and not $LATEST.
+
+#### Lambda Environment Variables
+
+An environment variable is a pair of strings that are stored in a function's version-specific configuration. The Lambda runtime makes environment variables available to your code and sets additional environment variables that contain information about the function and invocation request.  
+
+- Key & Value pairs (0 or more).
+- Associated with $LATEST (can be edited).
+- Associated with a version (immutable/fixed).
+- Can be accessed within the execution environment.
+- Can be encrypted with KMS.
+- Allow code execution to be adjusted based on variables.
+
+#### Monitoring & Logging & Tracing Lambda Based Applications
+
+AWS Lambda integrates with other AWS services to help you monitor and troubleshoot your Lambda functions. Lambda automatically monitors Lambda functions on your behalf and reports metrics through Amazon CloudWatch. To help you monitor your code when it runs, Lambda automatically tracks the number of requests, the invocation duration per request, and the number of requests that result in an error.
+
+**Lambda Monitoring**
+
+- All lambda metric are available within CloudWatch directly or via monitoring tab on a specific function.
+- Dimensions - Function Name, Resource (Alias/Version), Executed Version (combination alias and version ie weighted alias) and ALL FUNCTIONS.
+- Invoations, Errors, Duration, Concurrent Executions.
+- DeadLetterErrors, DestinationDelieveryFailures.
+
+**Lambda Logging**
+
+- Lambda Execution Logs go to CloudWatch Logs.
+- stdout or stderr.
+- Log Groups = /aws/lambda/functionname
+- Log Stream = YYYY/MM/DD[$LATEST||version]..random
+- Permissions via Execution Role, default role gives logging permissions.
+
+**Lambda Tracing**  
+
+- X-Ray shows the flow of requests through your application.
+- Enable 'Active Tracing' on a function.
+- AWS lambda update-function-configuration --function-name my-function --tracting-config Mode=Active.
+- AWSXRayDaemonWriteAccess managed policy.
+- Use X-Ray SDK within your function.
+- AWS_XRAY_DAEMON_ADDRESS.
+
+**VPC Lambda + EFS**
+
+![picture 71](images/b88c34d3977e3d5b795a797e1e9bb85b89c32de80b73aedc80d2167f208bfffb.png)  
+
+**Lambda Layers**
+You can configure your Lambda function to pull in additional code and content in the form of layers. A layer is a .zip file archive that contains libraries, a custom runtime, or other dependencies. With layers, you can use libraries in your function without needing to include them in your deployment package.
+
+![picture 72](images/781322ab5e85ee9478a6dde92a7bc8c617becf837e27695a1be6f3c863211560.png)  
+
+**Lambda Container Images**
+
+You can package your code and dependencies as a container image using tools such as the Docker command line interface (CLI). You can then upload the image to your container registry hosted on Amazon Elastic Container Registry (Amazon ECR).
+
+AWS provides a set of open-source base images that you can use to build the container image for your function code. You can also use alternative base images from other container registries. AWS also provides an open-source runtime client that you add to your alternative base image to make it compatible with the Lambda service.
+
+Additionally, AWS provides a runtime interface emulator for you to test your functions locally using tools such as the Docker CLI.
+
+![picture 74](images/df4e6955155bce834212aecffe6c305fc6210c0b4fd30467b9c985d1debab98c.png)  
+
+
+- Lambda is a function as a service (FaaS) product.
+- Create a function, upload code, it executes.
+- This is a great but there are two problems.
+- ORGS... use containers & CI/CD processes built for containers would like a way of locally testing lambda functions before deployment.
+- Lambda Runtime API - IN CONTAINER IMAGE.
+- AWS Lambda Runtime Interface Emulator (RIE) - Local test.
+
+
+
+**Lambda & ALB Integration**
+
+You can use a Lambda function to process requests from an Application Load Balancer. Elastic Load Balancing supports Lambda functions as a target for an Application Load Balancer. Use load balancer rules to route HTTP requests to a function, based on path or header values. Process the request and return an HTTP response from your Lambda function.
+
+Elastic Load Balancing invokes your Lambda function synchronously with an event that contains the request body and metadata.
+
+![picture 75](images/e9c452dae27e004f102b4f086f2bbffcf51c0d7d3587f7c8d8d58a0ccc8963a9.png)  
+
+![picture 76](images/8cb29fd7fe776736f612e3ec0c4acec38e4df050e19e3d8aeb307d41c8dac8b2.png)  
+
+![picture 77](images/0ca0681c0edfe53a7b19aed8ab7405ca57d0946844930eb10927359de0912753.png)  
+
 ### 1.13.3. CloudWatch Events and EventBridge
+
+CloudWatch Events and EventBridge have visibility over events generated by supported AWS services within an account.
+
+They can monitor the default account event bus - and pattern match events flowing through and deliver these events to multiple targets.
+
+They are also the source of scheduled events which can perform certain actions at certain times of day, days of the week, or multiple combinations of both - using the Unix CRON time expression format.
+
+Both services are one way how event driven architectures can be implemented within AWS.
 
 Delivers near real time stream of system events that describe changes in AWS
 products and services. EventBridge will replace CW Events.
@@ -5860,7 +6000,61 @@ Reduces load and cost. Calls to backend integration services will only be made i
 
 ![picture 313](images/81afebac6cc5dfd38c429b2572c77605ab0b9d5cf3b2ec8ccac8fe119ea6fa51.png)  
 
+### API Gateway - Methods and Resources
+![picture 78](images/c8f90ecc255f54e75f290ac64ed78ed6b177a7d91ad98835b4062397fde1ceb0.png)  
 
+### API Gateway - Integrations
+
+You choose an API integration type according to the types of integration endpoint you work with and how you want data to pass to and from the integration endpoint. For a Lambda function, you can have the Lambda proxy integration, or the Lambda custom integration. For an HTTP endpoint, you can have the HTTP proxy integration or the HTTP custom integration. For an AWS service action, you have the AWS integration of the non-proxy type only. API Gateway also supports the mock integration, where API Gateway serves as an integration endpoint to respond to a method request.
+
+![picture 79](../images/27e66ef67805071d8a4fef14771e008948f4582397f54285e801d29f579d12c5.png)  
+
+API Methods (client) are integrated with a backend endpoint.
+
+Different types of integrations are available.
+
+- **MOCK** - used for testing, no backend involvement.
+- **HTTP** - Backend HTTP Endpoint.
+- **HTTP PROXY** - pass through to integration unmodified, return to the client unmodified (backend need to use supporting format).
+- **AWS** - Lets an API expose AWS service actions.
+- **AWS_PROXY (LAMBDA)** - Low admin overhead Lambda endpoint.
+
+![picture 81](images/490f4628acec0ba5d625446abfa803c5cffa12865f8d14367c703aca7ab2e3e7.png)  
+
+- Used for AWS and HTTP (non PROXY) integrations.
+- Modify or Rename Parameters.
+- Modify the body or headers of the request.
+- Filtering - removing anything which isn't needed.
+- Uses Velocity Template Language (VTL).
+- Common exam scenario is REST API (on API Gateway) to a SOAP API, transform the request using mapping template.
+
+### API Gateway Stages and Deployments
+
+A stage is a named reference to a deployment, which is a snapshot of the API. You use a Stage to manage and optimize a particular deployment. For example, you can configure stage settings to enable caching, customize request throttling, configure logging, define stage variables, or attach a canary release for testing.
+
+![picture 84](images/2164c9f0ce33d74843e306b66db6ba3f44de4a30412222f9a1c6e03d4500597b.png)  
+
+
+- Changes made in API Gateway are not live.
+- The current API state needs to be deployed to a stage.
+- Stages can be environments (PROD, DEV, TEST) or versions (v1, v2, v3) for breaking changes.
+- Each stage has its own configuration, not immutable, can be overwritten and rolled back.
+
+![picture 85](images/6c41f90e35d57628227b88f6115f194592ef10e7a8b99c8d7e90a5379026ea68.png)  
+
+### Open API & Swagger
+
+![picture 86](images/2bbdf7555485bbc97069bc0e9fbc3b1528cedace65f1c28c6cf3f2cd30359049.png)  
+
+
+- OpenAPI (OAS) formally known as swagger.
+- Swagger- OpenAPI v2.
+- OpenAPI v3 is a more recent version.
+- API Description format for RESTAPIs.
+- Endpoints (/listcats) and Operations (GET /listcats).
+- Input and Output parameters & Authentication methods.
+- Non tech information - Contact info, License, Terms of use.
+- API Gateway can export to Swagger/OpenAPI & import from them.
 
 ### 1.13.5. Serverless
 
@@ -6000,7 +6194,8 @@ Public service that provides fully managed highly available message queues.
 - Messages up to 256KB in size.
   - Should link to larger sets of data if needed.
 - Polling is checking for any messages on the queue.
-- **Visibility timeout**
+
+**Visibility timeout**
   - The amount of time a client has to process a message in some way
   - When a client polls and receives messages, the messages aren't immediately deleted from the
   queue but are instead hidden for the length of the timeout.
@@ -6010,13 +6205,33 @@ Public service that provides fully managed highly available message queues.
 
   ![picture 255](images/477cc52c583b3fa0b0e208a160936b5b35a6e95aae85c8a34c0dc929cdecdda1.png)  
 
-- **Dead-letter queue**
-  - if a message is received multiple times but is unable to be finished, this
+**Dead-letter queue**
+
+Dead letter queues allow for messages which are causing repeated processing errors to be moved into a dead letter queue in this queue, different processing methods, diagnostic methods or logging methods can be used to identity message faults.
+
+  - if a message is received multiple times but is unable to be successfully processed, this
   puts it into a different workload to try and fix the corruption.
 - ASG can scale and lambdas can be invoked based on queue length.
 
 ![](images/2022-01-16-13-09-41.png)
 
+
+**Delay queue**
+
+Delay queues provide an initial period of invisibility for messages. Predefine periods can ensure that processing of messages doesn't begin until this period has expired.
+
+![picture 60](images/b777729bc090eba741c9a285887d016b0bb8db512da5f855acb70c1384b73436.png)  
+
+
+
+**SQS Extended Client Library**
+- Used when sending messages over SQS max (256KB).
+- Allows large payloads - stored in S3.
+- **Send Message** uploads to S3 and stores link in message.
+- **Recieve Message** loads large payload from S3.
+- **Delete Message** also deletes large S3 payload.
+- Interface for SQS+S3 and handles the integration workload.
+- Exam often mentions JAVA with Extended Client Library.
 
 **Simple Architecture**
 ![picture 35](images/235abd32494919b67eeecfb07fb2f00fd02435daccf585d8af13c601724cce4e.png)  
@@ -6027,8 +6242,6 @@ Simplified architecture, Bob uploads a video to S3. A message, which contains a 
 ![picture 36](images/eb04385632cb59241e5e675ae6401585e9b22bca4fc2ead44841de4e070c6409.png)  
 
 In this case the message is sent to an SNS topic, which is configured with fanout queue (3 separate queues), each designed to process a video of a different size (480p, 720p 1080p). A message is processed independently at each size. Each size has its own independent SQS queue and ASG. The videos are returned to the user in three sizes(480, 720, 1080). Suited for processing multiple jobs. Means 1 event can spawn multiple jobs. 
-
-
 
 
 
@@ -7945,6 +8158,13 @@ that uses DAX will also need to be deployed in that VPC.
 - Any questions which talk about caching with DynamoDB, assume it is DAX.
 - If you need strongly consistent reads or if your application uses reads infrequently, then DAX may not be best.
 
+#### 1.18.6.2. DynamoDB TTL
+
+Amazon DynamoDB Time to Live (TTL) allows you to define a per-item timestamp to determine when an item is no longer needed. Shortly after the date and time of the specified timestamp, DynamoDB deletes the item from your table without consuming any write throughput. TTL is provided at no extra cost as a means to reduce stored data volumes by retaining only the items that remain current for your workload’s needs
+
+![picture 88](images/979172cb632935c183e30688bb2f2aa484d94de9aab3c6d77388016c1e69bb4a.png)  
+
+
 ### 1.18.7. Amazon Athena
 
 - You can take data stored in S3 and perform Ad-hoc queries on data. Pay
@@ -7985,7 +8205,11 @@ for the data and reduce the costs for querying that data. For more information s
 
 #### 1.18.7.2. ElastiCache
 
-An in-memory database offering high performance
+An in-memory database offering high performance.
+
+Elasticache is a managed in-memory cache which provides a managed implementation of the redis or memcached engines.
+
+its useful for read heavy workloads, scaling reads in a cost effective way and allowing for externally hosted user session state.
 
 ![picture 201](images/09c66e06b7f11d1cf3b5e83c7707221d921439ea39d80a354c7af81ca59ab81b.png)  
 
@@ -8024,7 +8248,8 @@ Scales well to accomodate increases in demand. Cost benefits are most evident at
 - Leader Node you interact with- Query input, planning and aggregation
 - Compute Node - performing queries of data
 - VPC security, IAM permissions, KMS at rest encryption, CW Monitoring
-- Redshift Enhanced VPC Routing- Can be configured with your VPC network using Redshift Enhanced VPC Routing
+- Redshift Enhanced VPC Routing- Can be configured with your VPC network using Redshift Enhanced VPC Routing![picture 95](../images/636dd8f2f32497aa3ffffa72b167141cef49945c15903b5d64332f13cd4c5bc6.png)  
+
 
 #### 1.18.7.4. RedShift DR and Resilence
 
@@ -8161,7 +8386,7 @@ X-Ray requires IAM permissions if it needs to interact with other AWS services.
 ---
 ## 1.21. AWS CLI, DEVELOPER TOOLS & CICD
 
-#### 1.20.1. CI/CD using AWS Code
+#### 1.21.1. CI/CD using AWS Code
 
 CI/CD is handled within AWS by CodeCommit, CodeBuild, CodeDeploy and CodePipeline.
 
@@ -8176,7 +8401,7 @@ buildspec.yml reference https://docs.aws.amazon.com/codebuild/latest/userguide/b
 ![picture 44](images/ae1781b1d50c1224555161eb271422e39422c60308c477c5879261f39ded675c.png)  
 
 ![picture 45](images/a02b2738e0048f2ee3784057e71f8e89a49786bfbabdf7e26c6b13a0fd4c6e70.png)  
-#### 1.20.2. AWS CodePipeline for Developers
+#### 1.21.2. AWS CodePipeline for Developers
 
 AWS CodePipeline is a continuous delivery service you can use to model, visualize, and automate the steps required to release your software. You can quickly model and configure the different stages of a software release process. CodePipeline automates the steps required to release your software changes continuously 
 
@@ -8193,7 +8418,7 @@ AWS CodePipeline is a continuous delivery service you can use to model, visualiz
 - CloudTrail or console UI can be used to view or interact.
 
 
-#### 1.20.3. AWS CodeBuild for Developers
+#### 1.21.3. AWS CodeBuild for Developers
  
 AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy. With CodeBuild, you don’t need to provision, manage, and scale your own build servers. CodeBuild scales continuously and processes multiple builds concurrently, so your builds are not left waiting in a queue.
 
@@ -8229,7 +8454,7 @@ Environment variables  can include shell and variables and can integrate with pa
 Artifacts - outputs from stages. 
 
 
-#### 1.20.4. AWS CodeDeploy for Developers
+#### 1.21.4. AWS CodeDeploy for Developers
 
 CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, on-premises instances, serverless Lambda functions, or Amazon ECS services.
 
@@ -8258,14 +8483,134 @@ CodeDeploy is a deployment service that automates application deployments to Ama
 7. ValidateService
 
 
+## 1.22. Elastic Beanstalk In-Depth
+
+#### 1.22.1. Elastic Beanstalk (EB) Architecture
+
+Elastic Beanstalk is a Platform as a Service environment which can create and manage infrastructure for application code.
+
+- Platform as a service (PaaS).
+- Developer Focuessed, not end user.
+- High level - Managed Application Environements
+- User Provide code & EB handles the environment.
+- Focus on code, low infrastructure overhead.
+- Fully customisable - uses AWS products under the covers.
+- Requires app changes, doesn't come free. 
+
+Built in languages, docker & custom platforms.
+- Go, Java SE, Tomcat
+- .NET Core (Linux) & .NET (Windows).
+- Node.js, PHP, Python & Ruby.
+- Single Container Docker & Multicontainer Docker.
+- Proconfigured Docker.
+- Custom via packer.
+ 
+![picture 91](images/ec41f199b32e02ba5e91b7e40c2997b81bceeed62ca84b7fb7bd464aaba180c1.png)  
+
+![picture 92](images/489f3849dd0b1e2a3326b066acc879c17e3f189b36c4525e1f5c20a373a6017b.png)  
+
+![picture 93](images/0acef512f494b9487390009b96851617e8b913f8b861243a613efcecfdafabfa.png)   
+
+- It doesn't come for free - app tweaks.
+- Great for small development teams.
+- Use docker for anything unsupported.
+- Databases outside of Elastic Beanstalk.
+- DBs in an ENV are lost if the env is deleted.
 
 
+#### 1.22.2. Elastic Beanstalk Deployment Policies
+
+AWS Elastic Beanstalk provides several options for how deployments are processed, including deployment policies (All at once, Rolling, Rolling with additional batch, Immutable, and Traffic splitting) and options that let you configure batch size and health check behavior during deployments.
+
+How Application versions are deployed to environments.
+- **All at once** - deploy to all at once, brief outage.
+![picture 97](images/37b7fbb8eb5948a0c0c24a8b71ba292dadc7cbf2d6bdc2fe0bf741d44bcf73e3.png)  
 
 
+- **Rolling** - deploy in rolling batches.
+![picture 98](images/eefdd4ad0e914bfcd8996338b67da4c3552a28e58fb40ce33c9f368242aedde1.png)  
+
+- **Rolling with additional batch** - as above, with new batch to maintain capacity during the process.
+![picture 99](images/b75e1e17a975df84242da8b04f25d5cfa228eb23be244b3bffd1e939cee24ba9.png)  
 
 
+- **Immutable** - all new instances with new version.
+![picture 100](images/fba8f531d97ede51fede7da871da15cd142eb661941ca203d4f9deee9e52470c.png)  
+
+- **Traffic Splitting** - fresh instance, with a traffic split.
+![picture 103](images/ef43d0b3f5267bbeeb4a6ad7fa4115ad06efcff81137259ac95ba37abdd15b27.png)  
 
 
+- **Blue/Green Deployment**
+![picture 102](images/ee8b3ee9c5e2a1506992fa99692363be5b721a460117555be07676ae0571b205.png)  
 
 
+#### 1.22.3. Elastic Beanstalk and RDS
+ 
+- You can create an RDS instance within an EB environement.
+- It's then linked to the EB environment.
+- Delete the environment = delete RDS = data loss.
+- Different environments= different RDS= different data.
+- Environment Properties: RDS_HOSTNAME, RDS_PORT, RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD.
+- You can also create an RDS instance outside of EB.
+- Add environment properties to point at RDS instance: RDS_HOSTNAME, RDS_PORT, RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD.
+- Environments can be changed at will - data is outside of the lifecycle of that environment.
+- Decoupling existing RDS when EB from EB Environment.
+- Create an RDS Snapshot.
+- 'Enable Delete Protection'
+- Create a new EB Environment with the same app version.
+- Ensure new environment can connect to the DB.
+- Swap environments (CNAME or DNS).
+- Terminate the old environment - This will try and terminate the RDS instance.
+- Locate DELETE_FAILED stack, manually delete and pick to retain stuck resources.
+
+#### 1.22.4. Advanced Customisation via .ebextensions
+
+You can add AWS Elastic Beanstalk configuration files (.ebextensions) to your web application's source code to configure your environment and customize the AWS resources that it contains. Configuration files are YAML- or JSON-formatted documents with a .config file extension that you place in a folder named .ebextensions and deploy in your application source bundle.
+
+
+- Ebextensions are a way to customise EB environments.
+- Inside application source bundle (ZIP/WAR).
+- .ebextensions folder.
+- Add YAML or JSON files ending .config.
+- Uses CFN format to create additional resources within the environment.
+- oprtion_settings allows you to set options of resources.
+- Resources allows entirely new resource, packages, sources, files, users, groups commands, container_commands and services.
+
+#### 1.22.5. Elastic Beanstalk and HTTPS
+
+![picture 108](images/f643fc5d7b453ba9d25482bff42e7af4a0c3e2420abc803a64f345cb86dc9a15.png)  
+
+#### 1.22.6. EB Cloning  
+
+- Create a NEW environment by cloning an EXISTING one.
+- Copy PROD-ENV to a new TEST-ENV (for testing and Q/A), a new version of platform branch.
+- Copies options, env variable, resources and other settings.
+- Includes RDS in ENV, but no data is copied.
+- "unmanaged changes" are not included.
+- Console UI, API or "ev clone EXISTING-ENVNAME".
+
+#### 1.22.7. EB and Docker
+
+AWS Elastic Beanstalk can launch Docker environments by building an image described in a Dockerfile or pulling a remote Docker image. If you're deploying a remote Docker image, you don't need to include a Dockerfile. Instead, if you are also using Docker Compose, use a docker-compose.yml file, which specifies an image to use and additional configuration options. If you are not using Docker Compose with your Docker environments, use a Dockerrun.aws.json file instead.
+
+**EB and single-container**
+Single Docker Container.
+This mode uses Ec2 with docker, **NOT ECS**.
+
+Provides 1 of 3 things:
+- **Dockerfile**: EB will build a docker image and use this to runa a container.
+- **Dockerrun.aws.json (version 1)**: Use an exiting docker image - configures image, ports, volumes and other docker attributes.
+- **Docker-compose.yml** - if you use docker compose.
+
+**EB and multi-container**
+
+![picture 112](images/c67997ba86243ba7fe6116f47e02c4ac0a6ecf23f103288f7f8b42aaa49db3c2.png)  
+
+
+- Multiple container applications.
+- Creates an ECS Cluster. 
+- Ec2 instances provisioned in the cluster and an ELB for high availability.
+- You need to provide a Dockerrun.aws.json (version 2) file in the application source bundle (root level).
+- Any images need to be stored in a container registry such as ECR.
 
