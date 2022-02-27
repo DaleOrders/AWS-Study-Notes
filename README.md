@@ -1258,6 +1258,17 @@ services offered by AWS. A lot less admin overhead.
   ]
 }
 ```
+#### 1.3.7.2. Policy Evaluation Logic- Same Account
+
+![picture 15](images/a29ea78e15aff89479012350d317215354d13aac49478b75d25b0d8cb35c6606.png)  
+
+
+#### 1.3.7.2. Policy Evaluation Logic- Different Accounts
+
+![picture 16](images/2bf6b5cac50392929099aad1b1a5b6de1120d98926d4c8a9550663040d0611c9.png)  
+
+Account A contains identity policies, Account B resource policy.
+
 
 ### 1.3.8. CloudWatch Logs
 
@@ -2040,7 +2051,7 @@ by the destination account. If configuring between accounts, you must
 add a bucket policy on the destination account to allow the IAM role from
 the destination account access to the bucket.
 
-![picture 3](images/5163155a6cafb841a2fd6734fd21d98ffc25cf85818f25b4fd0a4f60e691c582.png)  
+![picture 4](images/da5cbf23512e94475ea04d3b72388d06bc22bbda8a6412547c6e94219e9ee00d.png)  
 
 
 #### 1.4.11.1. S3 Replication Options
@@ -2077,11 +2088,11 @@ some of those objects.
 
 #### 1.4.11.3. Why use replication
 
-Same Region Replication - Log Aggregation
-Same Region Replication - Sync production and test accounts
-Same Region Replication - Resilience with strict sovereignty requirements
-Cross Region Replication - Global resilience improvements
-Cross Region Replication - Latency reduction
+- Same Region Replication - Log Aggregation
+- Same Region Replication - Sync production and test accounts
+- Same Region Replication - Resilience with strict sovereignty requirements
+- Cross Region Replication - Global resilience improvements
+- Cross Region Replication - Latency reduction
 
 ### 1.4.12. S3 Presigned URL
 
@@ -2131,6 +2142,97 @@ object which is returned in a filtered way.
 The filtering happens at the S3 service itself saving time and data.
 
 ![image](https://user-images.githubusercontent.com/52617475/145711315-f7201687-cd4f-47cf-91bd-ac2e94fbb857.png)
+
+### 1.4.14. Cross-Origin Resource Sharing (CORS)
+
+![picture 5](images/8c654a1ff0f0d539fd0cdbecff66faa0cd2c6818175fa8a53d38f640bfc55bd5.png)  
+
+Catagram is the origin, or the site you visit in the browser. Three resources are requested from the catagram.io bucket with no issue (same-origin request). API call is made to API gateway to pull image metadata, which load casper_and_pixel png from another bucket. Catagram-img.io and API gateway (..amazonaws.com) constitute differnt domains are are therefore restricted by default. In this case, we would need CORS configuration on catagram-img.io bucket and the API Gateway otherwise there will be a security alert or an application failure.
+
+
+![picture 8](images/2db1c640db299db15c9a8b7c705ca59af05ae3e747ea1d3e69fa837455e76058.png)  
+
+CORS configuration written in JSON. 
+
+Two types of CORS requests:
+- Simple Request: Directly access a different domain using CORS configuration.
+- Preflight & Preflighted request: Send a HTTP check before performing request.
+
+CORS configuration contain the following headers:
+- Access-Control-Allow-Origin: '*' or a particular origin that can make request
+- Access-Control-Max-Age: how long a preflight can be cached before you need to do another preflight
+- Access-Control-Allow-Methods: '*' or list of methods that can be used (GET, PUT, DELETE).
+- Access-Control-Allow-Headers: Indicates which HTTP headers can be used in request.
+
+### 1.4.15. S3 Events
+
+A feature which allows you to create event notifications on a bucket. Can be delievered to SNS, SQS and Lambda functions.
+
+Events include:
+- Object created (Put, Post, Copy, CompleteMultiPartUpload).
+- Object Delete (*, Delete, DeleteMArkerCreated).
+- Object Restore from Glacier (Post(Initiated), Completed).
+- Replication (OperationMissedThreshold, OperationReplicatedAfterThreshold, OperationNotTracked, OperationFailedReplication). 
+
+
+![picture 10](images/10336bb7de16f53e43c9a8706275d86e8181c50280eaaf2ba1553daa80152328.png)  
+
+Events are written in JSON. Cloudwatch (EventBridge) is arguably preferable as it more flexible  and integrates with more services.
+
+### 1.4.16. S3 Access Logs
+
+
+![picture 11](images/5338b524e0b05bd4b6d2e1508a85499b2ecc0168003a8553c4f5dabd61cd135c.png)  
+
+Server access logging provides detailed records for the requests that are made to a bucket. Server access logs are useful for many applications. For example, access log information can be useful in security and access audits. It can also help you learn about your customer base and understand your Amazon S3 bill. You need to manage the movement of logs between classes and their deletion.
+
+### 1.4.17. S3 Requester Pays
+
+![picture 12](images/331fd1fc4ec8990167798131d301b532e0721dc2c524ca0d030844742bbb2165.png)  
+
+In general, bucket owners pay for all Amazon S3 storage and data transfer costs associated with their bucket. A bucket owner, however, can configure a bucket to be a Requester Pays bucket. With Requester Pays buckets, the requester instead of the bucket owner pays the cost of the request and the data download from the bucket. The bucket owner always pays the cost of storing data.
+
+- Must be authenticated user for billing purposes (static webstie hosting allows for unauthenticated users so is not suitable).
+- Users must supply the x-amz-request-payer header to confirm that they are assuming the cost. 
+
+
+### 1.4.18. S3 Object Lock
+
+![picture 13](images/6cbe0d044b4568ad6c1a1df036bc1d044f0d5f8bf12b026af29b8a2a2261488d.png)  
+
+- Enable on new buckets (you will need to contact AWS support if you want to turn it on for existing buckets).
+- If you enable Object Lock on a bucket, versioning is also enabled.
+- Once you create a bucket with Object Lock, you can not disable it or suspend versioning.
+- Write-once-read-many (WORM). When versions are created can not be overwritten or deleted.
+- Requires versioning. Individuals versions are locked.
+
+Two retention methods:
+
+ **Retention Period**
+ - Specify days and/or years - the retention period.
+
+ - **Compliance Mode**
+    - Objects can not be overwritten, deleted or modified for the duration of the retention period.
+    - Retention period can not be changed and retention mode can not be adjusted by anyone **including the root user**
+    - No changes allowed to the objects or the settings.
+    - Good for meeting compliance standards.
+
+- **Governance Mode**
+    - Objects can not be overwritten, deleted or modified for the duration of the retention period.
+    - You can grant permisssions for specific individuals to modify the lock settings or delete/replace object version.
+    - Permission required: s3:BypassGovernanceRetention
+    - Header required: x-amx-bypass-governance-retention:true
+    - With both, they can override the settings.
+
+**Legal Hold**
+  - No retention period, it is only on or off.
+  - No deletes or changes until removed
+  - s3:PutObjectLegalHold is required to add or remove lock.
+  - Prevents accidental deletion of critical object versions.
+
+ An object version can employ both, one or neither of these retention methods.
+
+ A bucket can have default object lock settings.
 
 
 
@@ -2767,7 +2869,7 @@ handles it all. In EC2 this feature is called **enhanced networking**.
 
 ### 1.6.2. EC2 Architecture and Resilience
 
-EC2 instances are virtual machines run on EC2 hosts (which are physical hardware managed by aws). Generally runs instances of all the same type, but different sizes.
+EC2 instances are virtual machines run on EC2 hosts (which are physical hardware managed by aws). Generally runs instances of all the same type, but different sizes. In this example, your instances are in red, other customer's instances are in blue and unused capacity is in grey/light pink. 
 
 ![picture 192](images/5645a0dcbf04f87c5d0d9090e8565785783b5cad614421d0400c2d6687c5a454.png)  
 
@@ -3314,7 +3416,7 @@ make changes, then make new AMI
 
 #### 1.6.11.2. Spot Instances
 
-![image](https://user-images.githubusercontent.com/52617475/143900660-7467f81f-f5ec-4f17-a1bf-df8c1f925f9b.png)
+![picture 17](images/ae47e266580374019be9cb3b95decfb202f1c2f20fc7655305073fa2ce2a07fc.png)  
 
 
 Up to 90% off on-demand, but depends on the spare capacity.
@@ -3942,6 +4044,9 @@ You can pay for a host on-demand or reservation with 1 or 3 year terms.
 
 The host hardware has physical sockets and cores. This dictates how
 many instances can be run on the Hardware.
+
+![picture 18](images/13c268f7416f95bf41658a836e62ee7ad910fda8b43588aa5c5d19c0b5b3c571.png)  
+
 
 Hosts are designed for a specific size and family. If you purchase one host, you configure what type of instances you want to run on it. With the older VM
 system you cannot mix and match. The new Nitro system allows for mixing and
@@ -5157,9 +5262,6 @@ LTs are newer and provide more features than LCs such as T2/T3 unlimited, placem
 Both of these are not editable. You define them once and that configuration is locked. If you need to adjust a configuration, you must make a new one and launch it.
 
 LTs can be used to save time when provisioning EC2 instances from the console UI / CLI.
-
-
-![picture 269](images/5cf27a9d0b33070f622a51055690be9ff260bcc013e335c98983e9ea8f317914.png)  
 
 
 ### 1.12.5. ASG Lifecycle Hooks
@@ -6496,7 +6598,7 @@ then you can do the logical referencing of an entire security group.
 You can't route through interconnected VPCs.
 ![](images/2022-01-16-14-02-43.png)
 
-VPC peering connects **ONLY TWO**
+VPC peering connects **ONLY TWO** VPCs.
 
 VPC Peering does not support **transitive peering**.
 If you want to connect 3 VPCs, you need 3 connections.
@@ -7024,20 +7126,20 @@ HSM is not highly available and runs only within one AZ. To be HA, you need at l
 two HSM devices and one in each AZ you use. Once HSM is in a cluster, they
 replicate all policies in sync automatically.
 
-HSM needs an endpoint in the subnet of the VPC to allow resources access
-to the cluster.
+HSM needs an ENI endpoint in the subnet of the VPC to allow resources access
+to the cluster. For HA, you can load balance across the Availability Zones. CloudHSM Client needs to be installed on EC2.
 
 AWS has no access to the HSM appliances which store the keys.
 
 
 #### 1.17.3.1. Cloud HSM Use Cases
 
-- No native AWS integration with AWS products. You can't use S3 SSE with
+- No native AWS integration with any AWS products. You can't use S3 SSE with
 CloudHSM.
 - Can offload the SSL/TLS processing from webservers. CloudHSM
 is much more efficient to do these encryption processes.
 - Oracle Databases can use CloudHSM to enable **transparent data encryption (TDE)**
-- Can protect the private keys an issuing certificate authority.
+- Can protect the private keys for an issuing certificate authority (CA).
 - Anything that needs to interact with non AWS products.
 
 ## AWS Config
@@ -7852,7 +7954,7 @@ Scales well to accomodate increases in demand. Cost benefits are most evident at
 ![picture 207](images/5edcfedf61f82c634ad51b79871704aded38cee0d5fe354dcde9f1d3d3aef2ec.png)  
 
 ---
-## 119-network-fundamentals
+## 1.19-network-fundamentals
 
 ![picture 215](images/187088dfa4a46be8116f7aa23b20415ef41eb78976a489c5e257706206f69df5.png)  
 
@@ -7899,6 +8001,98 @@ Scales well to accomodate increases in demand. Cost benefits are most evident at
 **Layer 5 - Session**
 
 ![picture 232](images/757e4868b8671451d6ca07afc143ebf894b5837d97e1e947f7d6dab0cf4d9a4d.png)  
+
+---
+## 1.20. CloudWatch
+
+#### 1.20.1. CloudWatch Architecture
+
+- Ingestion, storage and management of **Metrics**
+- As an AWS public service it has public space endpoints which means it can be accessed from both AWS services and on-premise environments.
+- Many services offer integrated management plane access to CW (example, EC2 provides CW with metrics without any user configuration required)
+- For internal metrics, you are required to install CW agent.
+- You can integrate CW with on-premises via agent/API (delievers custom metrics)
+- You can integrate CW with applications via agent/API (delievers custom metrics)
+- View data via console UI, CLI, API. Provides dashboard and anomaly detection.
+- Provides Alarms. Can react to metrics to notify or perform actions.
+
+![picture 20](images/40f744edeefc21e704b8521bdbd71c4767effa5a4d012b6e7767c79204d44382.png)  
+
+- Namespace=container for metrics e.g AWS/EC2 & AWS/Lambda. AWS services always start with AWS/, custom ones do not.
+- Datapoint= Timestamp, Value, unit of measure (optional e.g %)
+- Metric= time-ordered set of data points examples EC2 include CPUUtiliation, Networkin, DiskWriteBytes (EC2)
+- Every metric has a MetricName (CPUUtilization) and a Namespace (AWS/EC2)
+- Dimension= name/value pair. Can povide 0 or more dimensions to a datapoint.
+  - CPUUtilization Name=InstanceId, Value=i.1111111111(cat)
+  - CPUUtilization Name=InstanceId, Value=i.2222222222(dog)
+  - AutoScalingGroupName, Imageid, instanceid, InstanceType are other options.
+
+
+
+- Resolution. Standard (60s granularity), High (1s). Minimum time period you can get a valid datapoint for.
+- Retention period:
+  - Under 60s retained for 3 hours
+  - 60s (1 min) retained for 15 days
+  - 300s (5 minutes) retained for 63 days
+  - 3600s (1 hour) retained for 455 days
+- As data ages, it's aggregated and stored for longer with less resolution. For example, data with high (1s) resolution will be retained for 3 hours before it it retained as 60s resolution for 15 days, then 300s resolution for 63 days and so on.
+- Statistics. Aggreated over a period of time (e.g min, max, sun, average...).
+- Percentile e.g P95 & P97.5
+
+![picture 24](images/e2175844ee6012e50f246549876ae37ebaf4f0826802e80132cbd792753994fc.png)  
+
+- Alarm - watches a metric over a time period. Can be in Alarm or OK state.
+- Can compare value of a metric vs threshold over a period of time.
+- Can take one ore more actions.
+- Alarm resolution can be configured.
+#### 1.20.2. CloudWatch Logs Architecture
+
+![picture 25](images/bd5bc8bca53e1ad8d11e2f7ece7df6e75c9bddae960cf4a04079568aae26938d.png)  
+
+Log stream is a series of log events from the same source (same EC2 for example)
+Log group is a collection of log streams that are monitoring the same thing (CPUUtilization for example).
+
+![picture 26](images/d2d0a79174bc891f2e855c1f2401fe35b30997ccebe7ae29cb160318b2733327.png)  
+
+For real time data you need to use Lambda or Kinesis Data Streams. For near real time you can use Kinesis Firehose.
+
+![picture 27](images/1948b9245658811d5b96188ed912d129deee4da5f3ca33c55d5c3a848ac58ffb.png)  
+
+Can aggregate logs across accounts or applications. In this example, we have three different accounts which are architected to aggreate and store the data.
+
+
+#### 1.20.3. AWS X-Ray
+
+- Tracing Header - first service generates unique trace ID, used to track a request through your distributed application.
+- Segments - Data Blocks- host/ip, request, response, work done (times), issues
+- Subsegments- more granular version of the above. Calls to other services as part of a segment (endoints etc)
+- Service Graph- JSON Document detailing services and resources which make up your application.
+- Service Map - Visual version of the service graph showing traces.
+
+![picture 29](images/f4663e738ed8f7c44028b298c33838daaf163245b48af5256068cb78f8e725a4.png)  
+
+- EC2 - requires X-Ray Agent
+- ECS - requires Agent in tasks
+- Lambda - enable X-Ray
+- Beanstalk - agent pre-installed
+- API Gateway - per stage option
+- SNS & SQS
+
+X-Ray requires IAM permissions if it needs to interact with other AWS services.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
