@@ -6323,7 +6323,7 @@ website then uses that certificate to prove its authenticity.
 ![picture 53](images/059dcd154cff2d8bdd6f220cf6e1ef7da5bc578d9c685783c188dc3bb82fcb4b.png)  
 
 
-### CloudFront and SSL/TLS
+### 1.14.3. CloudFront and SSL/TLS
 
 ![picture 294](images/20057574135fed65a8434ee11a9d419f40476cf7ac8c5749f9d12f7324763450.png)  
 
@@ -6354,7 +6354,7 @@ website then uses that certificate to prove its authenticity.
 
 
 
-### 1.14.3. Origin Access Identity (OAI)
+### 1.14.4. Origin Access Identity (OAI)
 
 Terms:
 S3 Origin: An S3 bucket serving as an origin source on the cloudfront network. Not using the static website hosting feature of S3. OAI applies to S3 origin sources.
@@ -6376,7 +6376,7 @@ will only get the implicit deny.
 Best practice is to create one OAI per CloudFront distribution to manage
 permissions.
 
-### Secure Custom Origins
+### 1.14.5. Secure Custom Origins
 
 Two ways:
 - Transfer Custom Header from cloudfront to custom origin
@@ -6385,7 +6385,84 @@ Two ways:
 ![picture 63](images/bf88c690353fde1ce6831cdcc589bb7d41c090a47cb2bf7a7a3f9d13ddc1386e.png)  
 
 
-### 1.14.3.(1/2) Lambda@Edge
+### 1.14.6. Cloudfront Security- Private Distributions
+
+
+
+Cloudfront has two modes: Public (default) and Private.
+  - Public - Open Access to objects
+  - Private - requests to cloudfront require signed cookie or URL
+
+- One behaviour - each is public or private.
+- Mulitples behaviours - each is public or private.
+- A cloudfront key is created by an Account Root User. That account is added as a **Trusted Signer**.
+
+Signed URL
+  - URL provides access to one object.
+  - Legacy RTMP distributions can't use cookies.
+  - Use URL's if your client doesn't support cookies.
+
+Signed Cookie
+- Cookies provide access to groups of objects.
+- Use for groups of files/ all files of a type e.g all cat gifs.
+- Or if maintaining URL's is important.
+
+Lambda checks that account is a trusted signer. Creates and sends cookie to requesting mobile application. Need to use OAI to ensure that user can not bypass Cloudfront to access the S3 bucket directly.
+
+![picture 33](images/c71e5dcd9b9de149fcd76ca202706fd6b047a01726052c5c0f961ac79197c9dd.png)  
+
+
+Cookie is checked by cloudfront distribution and the private cat image is returned to user. 
+![picture 34](images/5716dacd752d6c4dd2dc35e187d132fe92530a7c128e43aed00f6dc25c83275d.png)  
+
+
+### 1.14.7. Cloudfront Geo-Restriction
+
+
+Restrict content to a particular location.
+
+Two types of restriction: Geo-Restriction and Geolocation.
+
+![picture 36](images/17225dcb1b45af246f9f7a8976fe95df603677a4c9b3933de556ffa60cc81400.png)  
+
+
+Geo-Restriction
+- Whitelist or Blacklist users based on **Country Only**.
+- GeoIP Database 99.8%+ accurate
+- Applies to the entire distribution. 
+
+
+![picture 37](images/d7206d3c3b6b06df9ea29428491caf8757cdbaee3180e5ebde125b3c638270d7.png)  
+
+
+Geolocation
+- Completely customisable. 
+- More accurate.
+- Can restrict based on user, browser, licenses, headers, states, long/lat etc. 
+- Uses compute resource (App server in this example).
+- Use for anything other than country.
+
+
+### 1.14.8. Cloudfront Field Level Encryption
+
+Field-Level encryption allows CloudFront to encrypt certain sensitive data at the edge using a public key, ensuring its protection through all levels of an application stack. Only the corresponding private key can decrypt the data, meaning you have complete control over who has access.
+
+- Client to origin connection can be encrypted using HTTPS
+- Information is processed at the web server as HTTP i.e plaintext.
+- Field Level encryption happens at the edge location.
+- Happens separately from the HTTPS tunnel.
+- A private key is needed to decrypt individual fields.
+
+Sensitive data travels through HTTPS tunnel in unecrypted form.
+
+ ![picture 40](images/69cc2fa0be63ae7c99d7c10e25557c91ab2f367585a52330a4d8d571dbd7196b.png)  
+
+ Sensitive data is encrypted with public key at edge location and decryted with private key by an entity with elevated permissions.
+
+![picture 41](images/7d8327142b25c56958576988c212a4a9557aa230391261d509eb8bbd75205b52.png)  
+
+
+### 1.14.9. Lambda@Edge
 
 - Permits to run lightweight Lambda functions at Edge Locations
  - Adjust data between Viewer & Origin
@@ -6397,7 +6474,7 @@ Two ways:
  ![picture 64](images/a33aa63cd50eb1cb1c6685211d5240c5f394959b444e991700d3ddffca76dcff.png)  
 
 
- **Lambda@Edge Use Cases**
+ ### 1.14.10. Use Cases**
 
  - A/B Testing - Viewer Request function
  - Migration Between two S3 Origins - Origin Request
@@ -6409,7 +6486,7 @@ Two ways:
 
 
 
-### 1.14.4. AWS Global Accelerator
+### 1.14.11. AWS Global Accelerator
 
 - Move the AWS network closer to customers.
 - Designed to optimize the flow of data from users to your AWS infrastructure.
@@ -6595,7 +6672,7 @@ In different regions, you can utilize security groups, but you'll need to
 reference IP addresses or IP ranges. If VPC peers are in the same region,
 then you can do the logical referencing of an entire security group. 
 
-You can't route through interconnected VPCs.
+You can't route through interconnected VPCs. For example. VPC B can not access the internet through VPC A's internet connection.
 ![](images/2022-01-16-14-02-43.png)
 
 VPC peering connects **ONLY TWO** VPCs.
@@ -6743,7 +6820,7 @@ the benefits of IPSEC encryption.
 
 ![picture 75](images/493df51301e8b74f8d5d81bf2ad91d3f98e1cae889ce136d82979ed0b2a6eda3.png)  
 
-Edge routing is not allowed.
+Edge routing is not allowed. VPC B can not use the DC or VPN connection between VPC A to on-premises to access the on-premise environment.
 ![](images/2022-01-16-14-04-28.png)
 
 ### DX and resilence
@@ -6752,15 +6829,15 @@ How to create High Availability Architecture
 
 ![picture 76](images/e06eb7fc4622d6b421c158f6f9a3ca0d9079dc14acae1295fbb452a62f936284.png)  
 
-Inital design has 7 points of failure.
+Initial design has 7 points of failure.
 
 ![picture 77](images/336d8c5c8a9161519f8f40243acbf4682c656ebcddaab2c88d199298fe9ce141.png)  
 
-
+Modification improves the architecture but still presents failure if one of the premises and a router in the other location fails.
 ![picture 78](images/644f4ccb2eb6a981b491582914542860f003eb8114b0d9b2ac04a047a11a6d23.png)  
 
 
-
+Highly Available architecture. Can withstand the failure of a router and/or the failr of a router.
 ![picture 79](images/a503b80cb524467189d3c8b584b2bcd4335337cd806a4de5c7129bacd795ab56.png)  
 
 
@@ -8081,12 +8158,104 @@ Can aggregate logs across accounts or applications. In this example, we have thr
 X-Ray requires IAM permissions if it needs to interact with other AWS services.
 
 
+---
+## 1.21. AWS CLI, DEVELOPER TOOLS & CICD
+
+#### 1.20.1. CI/CD using AWS Code
+
+CI/CD is handled within AWS by CodeCommit, CodeBuild, CodeDeploy and CodePipeline.
+
+appspec.yml or appspec.json reference https://docs.aws.amazon.com/codedeploy/latest/userguide/reference-appspec-file.html
+
+buildspec.yml reference https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
+
+![picture 42](images/4dbddb946a6d9c259b1749c931bce6960839dbc02481744562a804205fbbd71e.png)  
+
+![picture 43](images/19bfacc77d966cb67adaf773e3b1c6cea9f76f16d6e913c629d3e3e23979002a.png)  
+
+![picture 44](images/ae1781b1d50c1224555161eb271422e39422c60308c477c5879261f39ded675c.png)  
+
+![picture 45](images/a02b2738e0048f2ee3784057e71f8e89a49786bfbabdf7e26c6b13a0fd4c6e70.png)  
+#### 1.20.2. AWS CodePipeline for Developers
+
+AWS CodePipeline is a continuous delivery service you can use to model, visualize, and automate the steps required to release your software. You can quickly model and configure the different stages of a software release process. CodePipeline automates the steps required to release your software changes continuously 
+
+![picture 48](images/69dc4a9f0d2502e144d696cef9d8a1b32f1afe3051c0be011ce9a86a09eca5ad.png)  
 
 
+- Pipeline is a Continuous Delievery tool.
+- Controls the flow from source, through build towards deployment.
+- Pipelines are built from stages.
+- Stages can have sequential or parallel actions.
+- Movement between stages can require manual approval.
+- Artifacts can be loaded into an action, and generated from an action.
+- State changes can trigger event bridge (e.g success, failed, cancelled).
+- CloudTrail or console UI can be used to view or interact.
 
 
+#### 1.20.3. AWS CodeBuild for Developers
+ 
+AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy. With CodeBuild, you don’t need to provision, manage, and scale your own build servers. CodeBuild scales continuously and processes multiple builds concurrently, so your builds are not left waiting in a queue.
 
 
+![picture 53](images/d9a40c075f99cea8078ecba854e7707ca8e10f3928d338c313e6b08ee198c83f.png)  
+
+
+- Code Build as a service - fully managed.
+- Pay only for the resources consumed during builds.
+- Alternative to Jenkins functionality.
+- Used for builds and tests.
+- Uses docker for build environment, can be customised.
+- Integrates with AWS services - KMS, IAM, VPC, CloudTrail, S3...
+- Architecture - Gets source from Github, codecommit, codepipeline, S3...
+- Then builds and tests the code.
+- Customised via buildspec.yml file (in root of source).
+- Logs sent to S3 and CloudWatch.
+- Metrics recorded in CloudWatch
+- Events driven by EventBridge
+- Able to build code written in Java, Ruby, Python, Node.Js, PHP, .NET, GO...
+ 
+
+**buildspec.yml**
+
+Four main phases in the file
+
+- **install** - install packages in the build environment (frameworks etc).
+- **pre_build** - sign-in to things or install dependancies.
+- **build** - commands run during the build process.
+- **post_build** - package things up, push docker image, explicit notifications.
+
+Environment variables  can include shell and variables and can integrate with parameter-store and secrets-manager.
+Artifacts - outputs from stages. 
+
+
+#### 1.20.4. AWS CodeDeploy for Developers
+
+CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, on-premises instances, serverless Lambda functions, or Amazon ECS services.
+
+- Code Deployment as a services
+- Similar alternatives out there include Jenkins, Ansible, Chef, Puppet, Cloudformation etc.
+- Deploys code, not resources.
+- Can deploy to EC2, On-Presmises, Lambda Functions and ECS.
+- Can deploy Code, Web, Configuration, EXE files, Packages, Scripts, media and more.
+- CodeBuild integrates with AWS services & AWS Code family tools
+- CodeDeploy agent require for On-premises or EC2 deployment.
+
+**Appspec.yml**
+- YAML or JSON format.
+- Manage Deployments using configuation and lifecycle event hooks.
+
+**Configuration**
+- Includes **Files** (only for EC2/ On-prem), **Resources** (only for ECS/Lambda), **Permissions** (only for EC2/On-prem).
+
+**Lifecycle event hooks**
+1. ApplicationStop
+2. DownloadBundle
+3. BeforeInstall
+4. Install
+5. AfterInstall
+6. ApplicationStart
+7. ValidateService
 
 
 
