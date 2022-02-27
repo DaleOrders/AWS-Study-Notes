@@ -7160,8 +7160,13 @@ Max is 100 PB per snowmobile.
 
 ### 1.16.6. AWS Directory Service
 
-Directories stores objects, users, groups, computers, servers, file shares with
-a structure called a domain / tree. Multiple trees can be grouped into a forest.
+The Directory service is a product which provides managed directory service instances within AWS it functions in three modes
+
+1. Simple AD - An implementation of Samba 4 (compatibility with basics AD functions)
+2. AWS Managed Microsoft AD - An actual Microsoft AD DS Implementation
+3. AD Connector which proxies requests back to an on-premises directory.
+
+Directories stores objects, users, groups, computers, servers, file shares with a structure called a domain / tree. Multiple trees can be grouped into a forest.
 
 Devices can join a directory so laptops, desktops, and servers can all have
 a centralized management and authentication. You can sign into multiple
@@ -7181,7 +7186,6 @@ One common directory is **Active Directory** by Microsoft and its full name is
 #### 1.16.6.1. Directory Modes
 
 - **Simple AD**: should be default. Designed for simple requirements.
-
 ![picture 86](images/9a6ebaf7b7a2160799bbf0ffb0ae8078ff42e871aa658a22da2890f7c30293b6.png)  
 
 - **Microsoft AD**: is anything with Windows or if it needs a trust relationship
@@ -7507,6 +7511,8 @@ is much more efficient to do these encryption processes.
 
 ### Cloudformation Logical and Physical Resources
 
+CloudFormation defines logical resources within templates (using YAML or JSON). The logical resource defines the WHAT, and leaves the HOW up to the CFN product. A CFN stack creates a physical resource for every logical resource - updating or deleting them as a template changes.
+
 ![picture 108](images/3e1537718386e64524192f7af090e3a8cd904b2155f08653e80576d29eb4d80f.png)  
 
 - CloudFormation Template - written in YAML or JSON
@@ -7521,6 +7527,8 @@ is much more efficient to do these encryption processes.
 
 ### CloudFormation Template and Pseudo Parameters
 
+Template and Pseudo Parameters are two methods to provide input to a template, which can influence what resources are provisioned, and the configuration of those resources.
+
 ![picture 111](images/fb7eb626b294a9799f560ad2056f25dab76f30a132bc3f267f0cc2d981d19583.png)  
 
 
@@ -7532,6 +7540,8 @@ is much more efficient to do these encryption processes.
 ![picture 112](images/ec60932900c8ced13add8cbeb814d116b90bb709bde12a9041dffe79456b68e7.png)  
 
 ### CloudFormation Intrinsic Functions
+
+AWS CloudFormation provides several built-in functions that help you manage your stacks. Use intrinsic functions in your templates to assign values to properties that are not available until runtime.
 
 
 **Ref & Fn::GetAtt**
@@ -7559,6 +7569,8 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation Mappings
 
+The optional Mappings section matches a key to a corresponding set of named values. For example, if you want to set values based on a region, you can create a mapping that uses the region name as a key and contains the values you want to specify for each specific region. You use the Fn::FindInMap intrinsic function to retrieve values in a map.
+
 ![picture 120](images/787e8526f4a8ed8cce098d2cf55eb7346e7869c8f0e817cd3d4f42f736da58e7.png)  
 
 - Templates can contain a Mappings object which can contain many mapping logical resources
@@ -7570,6 +7582,8 @@ Note you can **not** self-reference as is shown here.
 
 
 ### CloudFormation Outputs
+
+The optional Outputs section declares output values that you can import into other stacks (to create cross-stack references), return in response (to describe stack calls), or view on the AWS CloudFormation console. For example, you can output the S3 bucket name for a stack to make the bucket easier to find.
 
 ![picture 122](images/d2730ad80aea8ce88b3c83ea2ae22378cb4466ea120c2584d5b13fab4e1f5ad1.png)  
 
@@ -7584,6 +7598,8 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation Conditions
 
+The optional Conditions section contains statements that define the circumstances under which entities are created or configured. You might use conditions when you want to reuse a template that can create resources in different contexts, such as a test environment versus a production environment. In your template, you can add an EnvironmentType input parameter, which accepts either prod or test as inputs. Conditions are evaluated based on predefined pseudo parameters or input parameter values that you specify when you create or update a stack. Within each condition, you can reference another condition, a parameter value, or a mapping. After you define all your conditions, you can associate them with resources and resource properties in the Resources and Outputs sections of a template.
+
 ![picture 124](images/80f699fe5d0bf4b65dbf19e014ee4e1c90165aa42a1e9aada92f0e620e3ddb56.png)  
 
 
@@ -7597,6 +7613,8 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation DependsOn
 
+With the DependsOn attribute you can specify that the creation of a specific resource follows another. When you add a DependsOn attribute to a resource, that resource is created only after the creation of the resource specified in theDependsOn attribute.
+
 ![picture 126](images/db92810ba20271993cc7dfe6c8d3dad19c2eab3ecaa00d8b2e673112768e8909.png)  
 
 - CloudFormation tries to be efficient
@@ -7608,6 +7626,8 @@ Note you can **not** self-reference as is shown here.
 
 
 ### CloudFormation Wait Conditions & cfn-signal
+
+CreationPolicy, WaitConditions and cfn-signal can all be used together to prevent the status if a resource from reaching create complete until AWS CloudFormation receives a specified number of success signals or the timeout period is exceeded.The cfn-signal helper script signals AWS CloudFormation to indicate whether Amazon EC2 instances have been successfully created or updated.
 
 
 - Logical Resources in the template
@@ -7633,6 +7653,10 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation Nested Stacks
 
+Nested stacks allow for a hierarchy of related templates to be combined to form a single product. A root stack can contain and create nested stacks .. each of which can be passed parameters and provide back outputs.
+
+Nested stacks should be used when the resources being provisioned share a lifecycle and are related.
+
 ![picture 131](images/d5569f27fb9d9970dcca9d62252e5d1ea2f861ff84a8ebb2c9f7aba78fce0a7d.png)  
 
 
@@ -7646,6 +7670,10 @@ Note you can **not** self-reference as is shown here.
 ![picture 132](images/c461a8db64a29c476c45642dfdad3d36fbb4e525bffdae9b3c3e261a77ecf4af.png)  
 
 ### CloudFormation Cross-Stack References
+
+Cross stack references allow one stack to reference another. Outputs in one stack reference logical resources or attributes in that stack
+
+They can be exported, and then using the !ImportValue intrinsic function, referenced from another stack.
 
 
 ![picture 135](images/dd6cf7a343983a8cca994292535efe6928d3045bff46ba71cd59c3b4784bdc6c.png)   
@@ -7662,6 +7690,10 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation Stack Sets 
 
+StackSets are a feature of CloudFormation allowing infrastructure to be deployed and managed across multiple regions and multiple accounts from a single location.
+
+Additionally it adds a dynamic architecture - allowing automatic operations based on accounts being added or removed from the scope of a StackSet.
+
 - Deploy CFN stacks across many accounts & regions
 - StackSets are containers in an admin account (account which created the stack)
 - They contain stack instances which reference stacks
@@ -7675,12 +7707,15 @@ Note you can **not** self-reference as is shown here.
 - Term: Concurrent Accounts-how many individual accounts can be deployed into at the same time
 - Term: Failure Tolerance-amount of individual deployments can fail before the stackset fails
 - Term: Retain Stacks- remove stack instances from a target account while keeping others
+
 **When you may use StackSets**
 - Scenario: Enable AWS Config
 - Scenario: AWS config Rules - MFA, EIPS, EBS Encryption
 - Scenario: Create IAM Roles for cross-account access
 
 ### CloudFormation Deletion Policy
+
+With the DeletionPolicy attribute you can preserve or (in some cases) backup a resource when its stack is deleted. You specify a DeletionPolicy attribute for each resource that you want to control. If a resource has no DeletionPolicy attribute, AWS CloudFormation deletes the resource by default.
 
 ![picture 142](images/dd4c7718c0bd7a891cbbe9c4e325d990fb41e1074d5c1703ed152378005f56ec.png)  
 
@@ -7694,6 +7729,10 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation Stack Roles
 
+Stack roles allow an IAM role to be passed into the stack via PassRole. A stack uses this role, rather than the identity interacting with the stack to create, update and delete AWS resources.
+
+It allows role separation and is a powerful security feature.
+
 ![picture 144](images/964b979a3441eb9552b780d60da61ac12820a650881f0fb8f742ae999094cf12.png)  
 
 - When you create a stack - CFN creates physical resources
@@ -7705,6 +7744,10 @@ Note you can **not** self-reference as is shown here.
 
 
 ### CloudFormation Init (CFN-INIT)
+
+CloudFormationInit and cfn-init are tools which allow a desired state configuration management system to be implemented within CloudFormation
+
+Use the AWS::CloudFormation::Init type to include metadata on an Amazon EC2 instance for the cfn-init helper script. If your template calls the cfn-init script, the script looks for resource metadata rooted in the AWS::CloudFormation::Init metadata key. cfn-init supports all metadata types for Linux systems & It supports some metadata types for Windows
 
 ![picture 146](images/e4f64efc0452a1a57c32481fcb235ba6993652ba62844df536c59fdbeb7a0c12.png)
 
@@ -7719,6 +7762,8 @@ Note you can **not** self-reference as is shown here.
 
 ### CloudFormation cfn-hup
 
+The cfn-hup helper is a daemon that detects changes in resource metadata and runs user-specified actions when a change is detected. This allows you to make configuration updates on your running Amazon EC2 instances through the UpdateStack API action.
+
 ![picture 148](images/76962a32c6bf4cec2eaf042b24b8a8d00ab2a2b54caebd331fad590f1bb79a43.png)  
 
 - cfn-init is run once as part of bootstrapping (user data)
@@ -7729,6 +7774,8 @@ Note you can **not** self-reference as is shown here.
 - UpdateStack=> updated config on Ec2 instances
 
 ### CloudFormation ChangeSets
+
+When you need to update a stack, understanding how your changes will affect running resources before you implement them can help you update stacks with confidence. Change sets allow you to preview how proposed changes to a stack might impact your running resources, for example, whether your changes will delete or replace any critical resources, AWS CloudFormation makes the changes to your stack only when you decide to execute the change set, allowing you to decide whether to proceed with your proposed changes or explore other changes by creating another change set.
 
 
 ![picture 150](images/079ba42cbcb1b174b62a91edab954c28de3f80e88e04355f49905e299b25fc13.png)  
@@ -7742,6 +7789,8 @@ Note you can **not** self-reference as is shown here.
 - Chosen changes can be applied by executing the selected change set
 
 ### CloudFormation Custom Resources
+
+Custom resources enable you to write custom provisioning logic in templates that AWS CloudFormation runs anytime you create, update (if you changed the custom resource), or delete stacks
 
 ![picture 152](images/1cea1e9799efd0fd2e627675c02f85c28919844ac4f5959500c170e16f2dcf0d.png) 
 
@@ -8209,7 +8258,7 @@ An in-memory database offering high performance.
 
 Elasticache is a managed in-memory cache which provides a managed implementation of the redis or memcached engines.
 
-its useful for read heavy workloads, scaling reads in a cost effective way and allowing for externally hosted user session state.
+It's useful for read heavy workloads, scaling reads in a cost effective way and allowing for externally hosted user session state.
 
 ![picture 201](images/09c66e06b7f11d1cf3b5e83c7707221d921439ea39d80a354c7af81ca59ab81b.png)  
 
