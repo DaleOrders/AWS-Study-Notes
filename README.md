@@ -5994,6 +5994,8 @@ Possible solutions?
 - use provisioned currency to secure a warm start
 - use /tmp to pre-download resources 
 
+Each execution context provides 512 MB of additional disk space in the /tmp directory. The directory content remains when the execution context is frozen, providing transient cache that can be used for multiple invocations. You can add extra code to check if the cache has the data that you stored.
+
 #### Lambda Handler Architecture & Overview
 
 ![picture 62](images/f40c7ee6a5a5e1475fcd08f5fa497fbdb045712287f341d4306e564d84df15d0.png)  
@@ -6044,11 +6046,19 @@ Aliases can point at a single version, or be configured to perform weighted rout
 - Aliases can be updated, changing which version they reference.
 - Useful for PROD/DEV, BLUE/GREEN, A/B testing
 - Alias Routing you can configure distubution. Percentage at v1 & percentage at v2.
-- Need same role, same dead-letter queue and not $LATEST.
+
+You can point an alias to a maximum of two Lambda function versions. In addition:
+
+ - Both versions must have the same IAM execution role.
+ - Both versions must have the same AWS Lambda Function Dead Letter Queues configuration, or no DLQ configuration.
+ - When pointing an alias to more than one version, the alias cannot point to $LATEST.
+
 
 #### Lambda Environment Variables
 
 An environment variable is a pair of strings that are stored in a function's version-specific configuration. The Lambda runtime makes environment variables available to your code and sets additional environment variables that contain information about the function and invocation request.  
+
+![](2022-03-04-00-48-53.png)
 
 - Key & Value pairs (0 or more).
 - Associated with $LATEST (can be edited).
@@ -6261,16 +6271,36 @@ Reduces load and cost. Calls to backend integration services will only be made i
 ![picture 311](images/e2b629a91488fbb4baa4ac6c27d9c50360dc0653d54be254b7835ac2d60c4f00.png)  
 
 
+Representational state transfer (REST) refers to architectures that follow six constraints:
+
+- **Separation of concerns** via a client-server model.
+State is stored entirely on the client and the communication between the client and server is stateless.
+- The client will cache data to improve network efficiency.
+There is a uniform interface (in the form of an API) between the server and client.
+As complexity is added into the system, **layers** are introduced. There may be multiple layers of RESTful components.
+- Follows a code-on-demand pattern, where code can be downloaded on the fly (in our case implemented in Lambda) and changed without having to update clients.
+- Clients send requests to backend Lambda functions (server). The logic of service is encapsulated within the Lambda function and it is providing a uniform interface for clients to use.
+
 ![picture 313](images/81afebac6cc5dfd38c429b2572c77605ab0b9d5cf3b2ec8ccac8fe119ea6fa51.png)  
 
 ### API Gateway - Methods and Resources
 ![picture 78](images/c8f90ecc255f54e75f290ac64ed78ed6b177a7d91ad98835b4062397fde1ceb0.png)  
 
+- **Resource**: Represented as a URL endpoint and path. For example, api.mysite.com/questions. You can associate HTTP methods with resources and define different backend targets for each method. In a microservices architecture, a resource would represent a single microservice within your system.
+- **Method**: In API Gateway, a method is identified by the combination of a resource path and an HTTP verb, such as GET, POST, and DELETE.
+- **Method Request**: The method request settings in API Gateway store the methods authorization settings and define the URL Query String parameters and HTTP Request Headers that are received from the client.
+- **Integration Request**: The integration request settings define the backend target used with the method. It is also where you can define mapping templates, to transform the incoming request to match what the backend target is expecting.
+Integration Response: The integration response settings is where the mappings are defined between the response from the backend target and the method response in API Gateway. You can also transform the data that is returned from your backend target to fit what your end users and applications are expecting.
+- **Method Response**: The method response settings define the method response types, their headers and content types.
+- **Model**: In API Gateway, a model defines the format, also known as the schema or shape, of some data. You create and use models to make it easier to create mapping templates. Because API Gateway is designed to work primarily with JavaScript Object Notation (JSON)-formatted data, API Gateway uses JSON Schema to define the expected schema of the data.
+- **Stage**: In API Gateway, a stage defines the path through which an API deployment is accessible. This is commonly used to deviate between versions, as well as development vs production endpoints, etc.
+- **Blueprint**: A Lambda blueprint is an example lambda function that can be used as a base to build out new Lambda functions.
+
 ### API Gateway - Integrations
 
 You choose an API integration type according to the types of integration endpoint you work with and how you want data to pass to and from the integration endpoint. For a Lambda function, you can have the Lambda proxy integration, or the Lambda custom integration. For an HTTP endpoint, you can have the HTTP proxy integration or the HTTP custom integration. For an AWS service action, you have the AWS integration of the non-proxy type only. API Gateway also supports the mock integration, where API Gateway serves as an integration endpoint to respond to a method request.
 
-![picture 79](../images/27e66ef67805071d8a4fef14771e008948f4582397f54285e801d29f579d12c5.png)  
+![picture 79](images/27e66ef67805071d8a4fef14771e008948f4582397f54285e801d29f579d12c5.png)  
 
 API Methods (client) are integrated with a backend endpoint.
 
