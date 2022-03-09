@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "aws-sdk": "^2.1087.0"
+  }
+}

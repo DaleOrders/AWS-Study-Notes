@@ -1543,7 +1543,11 @@ AWS Organizations **service control policies (SCPs)** – Organizations SCPs spe
 
 ![picture 16](images/2bf6b5cac50392929099aad1b1a5b6de1120d98926d4c8a9550663040d0611c9.png)  
 
-Account A contains identity policies, Account B resource policy.
+To allow cross-account access, you attach a resource-based policy to the resource that you want to share. You must also attach an identity-based policy to the identity that acts as the principal in the request. The resource-based policy in the trusting account must specify the principal of the trusted account that will have access to the resource. You can specify the entire account or its IAM users, federated users, IAM roles, or assumed-role sessions. You can also specify an AWS service as a principal. 
+
+The principal's identity-based policy must allow the requested access to the resource in the trusting service. You can do this by specifying the ARN of the resource or by allowing access to all resources (*).
+
+
 
 
 ### 1.3.8. CloudWatch Logs
@@ -1566,16 +1570,9 @@ Can generate metrics based on **metric filters**
 
 It is a regional service, for example, `us-east-1`
 
-Need logging sources such as external APIs or databases. This sends
-information as **log events**. These are stored in **log streams**. This is a
-sequence of log events from the same source.
+A log stream is a sequence of log events that share the same source. Each separate source of logs in CloudWatch Logs makes up a separate log stream.
 
-**Log Groups** are containers for multiple logs streams of the same
-type of logging. This also stores configuration settings such as
-retention settings and permissions.
-
-Once the settings are defined on a log group, they apply to all log streams
-in that log group. Metric filters are also applied on the log groups.
+A log group is a group of log streams that share the same retention, monitoring, and access control settings. You can define log groups and specify which streams to put into each group. There is no limit on the number of log streams that can belong to one log group.
 
 ### 1.3.9. CloudTrail Essentials
 
@@ -6005,6 +6002,13 @@ Possible solutions?
 
 Each execution context provides 512 MB of additional disk space in the /tmp directory. The directory content remains when the execution context is frozen, providing transient cache that can be used for multiple invocations. You can add extra code to check if the cache has the data that you stored.
 
+**X-Ray tracing (Cold Start)**
+
+![](2022-03-07-18-55-21.png)
+
+**X-Ray tracing (Warm Start)**
+![](2022-03-07-18-57-12.png)
+
 #### Lambda Handler Architecture & Overview
 
 ![picture 62](images/f40c7ee6a5a5e1475fcd08f5fa497fbdb045712287f341d4306e564d84df15d0.png)  
@@ -6705,6 +6709,7 @@ Cognito provides:
     - Credentials are not stored in this procees.
 
     Example with google token where user assumes authenticated role:
+
 ![picture 43](images/99cc9232051cdc1c26b39591d4a10ffa8e4df1783880f5edf5f92ba9c71cef2e.png)  
 
 **User and Identity pools**
@@ -8841,31 +8846,39 @@ CodeDeploy is a deployment service that automates application deployments to Ama
 Elastic Beanstalk is a Platform as a Service environment which can create and manage infrastructure for application code.
 
 - Platform as a service (PaaS).
-- Developer Focuessed, not end user.
+- Developer Focussed, not end user.
 - High level - Managed Application Environements
 - User Provide code & EB handles the environment.
 - Focus on code, low infrastructure overhead.
 - Fully customisable - uses AWS products under the covers.
 - Requires app changes, doesn't come free. 
 
-Built in languages, docker & custom platforms.
+Built-in languages, docker & custom platforms.
+Supported built-in languages:
 - Go, Java SE, Tomcat
 - .NET Core (Linux) & .NET (Windows).
 - Node.js, PHP, Python & Ruby.
-- Single Container Docker & Multicontainer Docker.
-- Proconfigured Docker.
+
+Single Container Docker & Multicontainer Docker for applications that are not supported.
+- Pre-configured Docker.
 - Custom via packer.
+
+Send traffic to prod environment.
  
 ![picture 91](images/ec41f199b32e02ba5e91b7e40c2997b81bceeed62ca84b7fb7bd464aaba180c1.png)  
 
+Send partial traffic to test environment hosting a new version.
+
 ![picture 92](images/489f3849dd0b1e2a3326b066acc879c17e3f189b36c4525e1f5c20a373a6017b.png)  
+
+Redirect all traffic to test environment once the new version is shown to be working.
 
 ![picture 93](images/0acef512f494b9487390009b96851617e8b913f8b861243a613efcecfdafabfa.png)   
 
-- It doesn't come for free - app tweaks.
+- It doesn't come for free.
 - Great for small development teams.
 - Use docker for anything unsupported.
-- Databases outside of Elastic Beanstalk.
+- Databases should be outside of Elastic Beanstalk.
 - DBs in an ENV are lost if the env is deleted.
 
 
@@ -8900,20 +8913,21 @@ How Application versions are deployed to environments.
  
 - You can create an RDS instance within an EB environement.
 - It's then linked to the EB environment.
-- Delete the environment = delete RDS = data loss.
-- Different environments= different RDS= different data.
+- Delete the environment means that you delete the environment and all data in it.
+- Different environments= different RDS= different data. If you clone an environment, you will still have the same database engine but the data will not be cloned (you will need to migrate it).
 - Environment Properties: RDS_HOSTNAME, RDS_PORT, RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD.
-- You can also create an RDS instance outside of EB.
-- Add environment properties to point at RDS instance: RDS_HOSTNAME, RDS_PORT, RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD.
+- You can also create an RDS instance outside of EB. Recommended approach.
+- Then add the following environment properties to point at your external RDS instance: RDS_HOSTNAME, RDS_PORT, RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD.
 - Environments can be changed at will - data is outside of the lifecycle of that environment.
-- Decoupling existing RDS when EB from EB Environment.
-- Create an RDS Snapshot.
-- 'Enable Delete Protection'
-- Create a new EB Environment with the same app version.
-- Ensure new environment can connect to the DB.
-- Swap environments (CNAME or DNS).
-- Terminate the old environment - This will try and terminate the RDS instance.
-- Locate DELETE_FAILED stack, manually delete and pick to retain stuck resources.
+
+Steps to Decouple existing RDS in EB from EB Environment.
+1. Create an RDS Snapshot.
+2. 'Enable Delete Protection'
+3. Create a new EB Environment with the same app version.
+4. Ensure new environment can connect to the DB.
+5. Swap environments (CNAME or DNS).
+6. Terminate the old environment - This will try and terminate the RDS instance.
+7. Locate DELETE_FAILED stack, manually delete and pick to retain stuck resources.
 
 #### 1.22.4. Advanced Customisation via .ebextensions
 
@@ -8921,12 +8935,11 @@ You can add AWS Elastic Beanstalk configuration files (.ebextensions) to your we
 
 
 - Ebextensions are a way to customise EB environments.
-- Inside application source bundle (ZIP/WAR).
-- .ebextensions folder.
+- Inside application source bundle (ZIP/WAR) in a .ebextensions folder.
 - Add YAML or JSON files ending .config.
 - Uses CFN format to create additional resources within the environment.
-- oprtion_settings allows you to set options of resources.
-- Resources allows entirely new resource, packages, sources, files, users, groups commands, container_commands and services.
+- **option_settings** allows you to set options of resources.
+- **Resources** allows you to configure entirely new resources, packages, sources, files, users, groups commands, container_commands and services.
 
 #### 1.22.5. Elastic Beanstalk and HTTPS
 
@@ -8939,7 +8952,7 @@ You can add AWS Elastic Beanstalk configuration files (.ebextensions) to your we
 - Copies options, env variable, resources and other settings.
 - Includes RDS in ENV, but no data is copied.
 - "unmanaged changes" are not included.
-- Console UI, API or "ev clone EXISTING-ENVNAME".
+- Console UI, API or via "ev clone EXISTING-ENVNAME".
 
 #### 1.22.7. EB and Docker
 
@@ -8949,7 +8962,7 @@ AWS Elastic Beanstalk can launch Docker environments by building an image descri
 Single Docker Container.
 This mode uses Ec2 with docker, **NOT ECS**.
 
-Provides 1 of 3 things:
+Requires one of the following:
 - **Dockerfile**: EB will build a docker image and use this to runa a container.
 - **Dockerrun.aws.json (version 1)**: Use an exiting docker image - configures image, ports, volumes and other docker attributes.
 - **Docker-compose.yml** - if you use docker compose.
