@@ -5901,6 +5901,8 @@ The execution role is passed into the runtime environment.
 Whenever that function executes, the code inside has access to whatever
 permissions the role's permission policy provides.
 
+![picture 621](images/4.png) 
+
 Lambda can be invoked in an **event-driven** or **manual** way.
 Each time you invoke a lambda function, the environment provided is new.
 Never store anything inside the runtime environment, it is ephemeral. They are _stateless_, which means no data is left over from the previuos invocation.
@@ -5988,7 +5990,17 @@ Is used with kinesis streams, dynamodb streams, SQS, Amazon streaming for apache
 - A version is the code+ the configuration of the lambda function
 - It's immutable- it never changes once published and has its own ARN
 - $Latest points at the latest version
-- Aliases(Dev, Stage, Prod) point at a version- can be changed
+- Aliases(Dev, Stage, Prod) point at a version- can be changed.
+
+Publish makes a snapshot copy of $LATEST. 
+
+
+Enable versioning to create immutable snapshots of your function every time you publish it. 
+
+Publish as many versions as you need. 
+Each version results in a new sequential version number. 
+Add the version number to the function ARN to reference it.
+The snapshot becomes the new version and is immutable.
 
 #### Lambda Cold and Warm starts
 
@@ -6009,6 +6021,7 @@ Each execution context provides 512 MB of additional disk space in the /tmp dire
 **X-Ray tracing (Warm Start)**
 ![](2022-03-07-18-57-12.png)
 
+
 #### Lambda Handler Architecture & Overview
 
 ![picture 62](images/f40c7ee6a5a5e1475fcd08f5fa497fbdb045712287f341d4306e564d84df15d0.png)  
@@ -6022,6 +6035,26 @@ Each execution context provides 512 MB of additional disk space in the /tmp dire
 - INVOKE - Runs the function Handler (Cold start). Cold Start is inefficient and can be slow as execution environment has to boot from start.
 - NEXT INVOKE(s) - WARM START - running the same function in the same envirnoment soon after the previous function has finished. Better alternative to cold start. 
 - SHUTDOWN - Terminate the environment.
+
+**Event Object vs Context Object**
+
+The **event object** is required.
+When your Lambda function is invoked in one of the supported languages, one of the parameters provided to your handler function is an event object. 
+* The event object differs in structure and contents, depending on which event source created it. 
+The contents of the event parameter include all of the data and metadata your Lambda function needs to drive its logic.
+ For example, an event created by Amazon API Gateway will contain details related to the HTTPS request that was made by the API client (for example, path, query string, request body). An event created by Amazon S3 when a new object is created will include details about the bucket and the new object.
+
+The **context object** allows your function code to interact with the Lambda execution environment.
+The contents and structure of the context object vary, based on the language runtime your Lambda function is using. At minimum it contains the elements:
+* AWS RequestID – Used to track specific invocations.
+* Runtime – The amount of time in milliseconds remaining before a function timeout.
+* Logging – Information about which Amazon CloudWatch Logs stream your log statements will be sent.
+
+**Concurrency**
+
+Concurrency is the number of invocations your function runs at any given moment. When your function is invoked, Lambda launches an instance of the function to process the event. When the function code finishes running, it can handle another request. If the function is invoked again while the first request is still being processed, another instance is allocated. Having more than one invocation running at the same time is the function's concurrency. The minimum is 100 unreserved concurrency. Having at least 100 available allows all your functions to run when they are invoked.
+
+![picture 99](images/5.png) 
 
 #### Lambda Versions
 
@@ -6039,6 +6072,9 @@ A unique Amazon Resource Name (ARN) to identify the specific version of the func
 
 - Unpublished function - can be changed & deployed. Deploys to $LATEST
 - Published function - creates an immutable version. Locked so no editing of that published version.
+
+![picture 649](images/6.png) 
+
 - Function Code, Dependencies, Runtime, Settings & Environment Variables.
 - A unique ARN for that function version (uniquely identifies it).
 - Qualified ARN points at a specific version.
@@ -6056,15 +6092,22 @@ Aliases can point at a single version, or be configured to perform weighted rout
 - An Alias is a pointer to a function version.
 - Example: PROD (alias) -> bestanimal:1, BETA (alias) -> bestanimal:2
 - Each Alias has a unique ARN, fixed for the alias.
+
+![picture 649](images/7.png) 
+
 - Aliases can be updated, changing which version they reference.
 - Useful for PROD/DEV, BLUE/GREEN, A/B testing
 - Alias Routing you can configure distubution. Percentage at v1 & percentage at v2.
+
+ ![picture 67](images/1.png) 
 
 You can point an alias to a maximum of two Lambda function versions. In addition:
 
  - Both versions must have the same IAM execution role.
  - Both versions must have the same AWS Lambda Function Dead Letter Queues configuration, or no DLQ configuration.
  - When pointing an alias to more than one version, the alias cannot point to $LATEST.
+
+ ![picture 67](images/2.png)
 
 
 #### Lambda Environment Variables
@@ -8977,4 +9020,9 @@ Requires one of the following:
 - Ec2 instances provisioned in the cluster and an ELB for high availability.
 - You need to provide a Dockerrun.aws.json (version 2) file in the application source bundle (root level).
 - Any images need to be stored in a container registry such as ECR.
+
+**SAM**
+
+AWS SAM is an open-source framework for building serverless applications. It provides shorthand syntax to express functions, APIs, databases, and event source mappings. With just a few lines per resource, you can define the application you want and model it using YAML.
+
 
